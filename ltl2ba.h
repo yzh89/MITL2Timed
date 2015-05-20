@@ -4,8 +4,6 @@
 /* Copyright (c) 2001  Denis Oddoux                                       */
 /* Modified by Paul Gastin, LSV, France                                   */
 /* Copyright (c) 2007  Paul Gastin                                        */
-/* Modified by Scott C. Livingston, Caltech, USA                          */
-/* Copyright (c) 2013 Scott C. Livingston                                 */
 /*                                                                        */
 /* This program is free software; you can redistribute it and/or modify   */
 /* it under the terms of the GNU General Public License as published by   */
@@ -31,9 +29,6 @@
 /*                                                                        */
 /* Some of the code in this file was taken from the Spin software         */
 /* Written by Gerard J. Holzmann, Bell Laboratories, U.S.A.               */
-#ifndef LTL2BA_H
-#define LTL2BA_H
-
 
 #include <stdio.h>
 #include <string.h>
@@ -153,8 +148,11 @@ enum {
 	TRUE,		/* 266 */
 	U_OPER,		/* 267 */
 	V_OPER		/* 268 */
+  U_I,    /*269*/
+  EVENTUALLY_I /*270*/
+  ALWAYS_I /*271 */
 #ifdef NXT
-	, NEXT		/* 269 */
+	, NEXT		/* 272 */
 #endif
 };
 
@@ -252,12 +250,4 @@ typedef Node	*Nodeptr;
 			  Fatal(": assertion failed\n",(char *)0); } }
 #define min(x,y)        ((x<y)?x:y)
 
-
-#define OUT_TYPE_SPIN 0
-#define OUT_TYPE_DOT 1
-#define OUT_TYPE_GEXF 2
-
-typedef unsigned char byte;
-
-
-#endif
+// MITL specific functions
