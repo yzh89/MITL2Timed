@@ -147,9 +147,9 @@ enum {
 	PREDICATE,	/* 265 */
 	TRUE,		/* 266 */
 	U_OPER,		/* 267 */
-	V_OPER		/* 268 */
+	V_OPER,		/* 268 */
   U_I,    /*269*/
-  EVENTUALLY_I /*270*/
+  EVENTUALLY_I, /*270*/
   ALWAYS_I /*271 */
 #ifdef NXT
 	, NEXT		/* 272 */
@@ -250,4 +250,8 @@ typedef Node	*Nodeptr;
 			  Fatal(": assertion failed\n",(char *)0); } }
 #define min(x,y)        ((x<y)?x:y)
 
-// MITL specific functions
+#define OUT_TYPE_SPIN 0
+#define OUT_TYPE_DOT 1
+#define OUT_TYPE_GEXF 2
+
+typedef unsigned char byte;

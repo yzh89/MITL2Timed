@@ -30,15 +30,17 @@
 #       F-75251 Paris Cedex 05                                          
 #       FRANCE                                                               
 
+# -ansi is commented out to use comment //
+
 CC=gcc
-CFLAGS= -O3 -ansi -pedantic -DNXT
+CFLAGS= -O3 -g -DNXT
 
-LTL2GBA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o
+LTL2BA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o
 
-ltl2gba: $(LTL2GBA)
-	$(CC) $(CFLAGS) -o ltl2gba $(LTL2GBA)
+ltl2ba: $(LTL2BA)
+	$(CC) $(CFLAGS) -o ltl2ba $(LTL2BA)
 
-$(LTL2GBA): ltl2ba.h
+$(LTL2BA): ltl2ba.h
 
 clean:
-	rm -f ltl2gba *.o core
+	rm -f ltl2ba *.o core

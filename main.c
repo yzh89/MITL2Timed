@@ -147,7 +147,7 @@ tl_main(int argc, char *argv[])
 				for (i = 0; i < argv[1][i]; i++)
 				{	if (argv[1][i] == '\t'
 					||  argv[1][i] == '\"'
-					||  argv[1][i] == '\n')
+					||  argv[1][i] == 'n')
 						argv[1][i] = ' ';
 				}
 				strcpy(uform, argv[1]);
