@@ -127,7 +127,10 @@ tl_lex(void)
 	{	c = tl_Getchar();
 		if (c == '>')
 		{	
-			c = tl_Getchar();	 
+			#ifndef TIMED
+				Token(EVENTUALLY);
+			#else
+			c = tl_Getchar();
 			if (c=='_') {
 				float* tmp=malloc(sizeof(float)*2);
 				tmp=tl_GetIntvl(tmp);
@@ -136,10 +139,15 @@ tl_lex(void)
 				tl_UnGetchar();
 				Token(EVENTUALLY);
 			}
+			#endif			
 		}
 		if (c != '-')
 		{	tl_UnGetchar();
-			tl_yyerror("expected '<>' or '<->' or '<>_'");
+			#ifdef TIMED
+				tl_yyerror("expected '<>' or '<->' or '<>_' for -DTIMED flag");
+			#else
+				tl_yyerror("expected '<>' or '<->' without DTIMED flag");
+			#endif
 		}
 		c = tl_Getchar();
 		if (c == '>')
@@ -148,16 +156,54 @@ tl_lex(void)
 		tl_UnGetchar();
 		tl_yyerror("expected '<->'");
 	}
+	if (c == '[')
+		{	c = tl_Getchar();
+		if (c == ']')
+		{	
+			#ifndef TIMED
+				Token(ALWAYS);
+			#else
+			c = tl_Getchar();
+			if (c=='_') {
+				float* tmp=malloc(sizeof(float)*2);
+				tmp=tl_GetIntvl(tmp);
+				Token_t(ALWAYS_I,tmp);
+			} else {
+				tl_UnGetchar();
+				Token(ALWAYS);
+			}
+			#endif			
+		}else {
+			tl_UnGetchar();
+			tl_yyerror("expected '[]' or '[]_'");
+		}
+	}
+	if (c == 'U')
+		{		
+			#ifndef TIMED
+				Token(U_OPER);
+			#else
+			c = tl_Getchar();
+			if (c=='_') {
+				float* tmp=malloc(sizeof(float)*2);
+				tmp=tl_GetIntvl(tmp);
+				Token_t(U_I,tmp);
+			} else {
+				tl_UnGetchar();
+				Token(U_OPER);
+			}
+			#endif
+	}
 
 	switch (c) {
 	case '/' : c = follow('\\', AND, '/'); break;
 	case '\\': c = follow('/', OR, '\\'); break;
 	case '&' : c = follow('&', AND, '&'); break;
 	case '|' : c = follow('|', OR, '|'); break;
-	case '[' : c = follow(']', ALWAYS, '['); break;
+	// case '[' : c = follow(']', ALWAYS, '['); break;
 	case '-' : c = follow('>', IMPLIES, '-'); break;
 	case '!' : c = NOT; break;
-	case 'U' : c = U_OPER; break;
+	// case 'U' : c = U_OPER; break;
 	case 'V' : c = V_OPER; break;
 #ifdef NXT
 	case 'X' : c = NEXT; break;
