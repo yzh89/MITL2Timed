@@ -255,7 +255,6 @@ sameform(Node *a, Node *b)
 			return 0;
 		if (!sameform(a->rgt, b->rgt))
 			return 0;
-		
 		if (a->intvl[0]!=b->intvl[0])
 			return 0;
 		if (a->intvl[1]!=b->intvl[1])
@@ -263,6 +262,7 @@ sameform(Node *a, Node *b)
 		return 1;
 	#endif
 		
+
 	default:
 		printf("type: %d\n", a->ntyp);
 		fatal("cannot happen, sameform", (char *) 0);
