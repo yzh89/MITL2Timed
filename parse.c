@@ -44,7 +44,7 @@ static Node	*tl_level(int);
 
 static int	prec[2][4] = {
 	{ U_OPER,  V_OPER, 0, 0},  /* left associative */
-	{ OR, AND, IMPLIES, EQUIV, },	/* left associative */
+	{ OR, AND, IMPLIES, EQUIV},	/* left associative */
 };
 
 static int
@@ -415,6 +415,52 @@ bin_simpler(Node *ptr)
 		        break;
 		}
 		break;
+
+#ifdef TIMED	 
+	case U_I: ;
+		float intvl_a[2], intvl_b[2];
+		if (ptr->intvl[0]!=0) {
+			intvl_a[0]=0;
+			intvl_a[1]=ptr->intvl[0];
+
+			intvl_b[0]=ptr->intvl[0];
+			intvl_b[1]=ptr->intvl[1];
+
+			// build a = not( <>_[0,a] (not(p) V not(q)) ) 
+			a = rewrite(tl_nn(V_OPER,Not(ptr->lft),Not(ptr->rgt)));
+			b = rewrite(tl_nn_t(EVENTUALLY_I,dupnode(a),ZN,intvl_a));
+			a = Not(b); 
+
+			// build c = <>_[a,b]q
+			Node* c;
+			c = rewrite(tl_nn_t(EVENTUALLY_I,dupnode(ptr->rgt),ZN,intvl_b));
+
+			ptr = tl_nn(AND, a, c);
+			ptr = rewrite(ptr);
+		} else {
+			intvl_b[0]=ptr->intvl[0];
+			intvl_b[1]=ptr->intvl[1];
+
+			//build a = p U q
+			a = rewrite(tl_nn(U_OPER,dupnode(ptr->lft),dupnode(ptr->rgt)));
+
+			//build b = <>_[a,b]q
+			b = rewrite(tl_nn_t(EVENTUALLY_I,dupnode(ptr->rgt),ZN,intvl_b));
+
+			ptr = tl_nn(AND, a, b);
+			ptr = rewrite(ptr);
+
+		}
+		break;
+
+	// case ALWAYS_I:
+		
+	// 	a = tl_nn_t(EVENTUALLY_I, Not(ptr->lft), ZN, ptr->intvl);
+
+	// 	ptr= rewrite(Not(a));	
+	
+	// 	break;
+#endif
 	}
 	return ptr;
 }
@@ -436,7 +482,7 @@ bin_minimal(Node *ptr)
 static Node *
 tl_factor(void)
 {	Node *ptr = ZN;
-
+	float intvl[2];
 	switch (tl_yychar) {
 	case '(':
 		ptr = tl_formula();
@@ -510,12 +556,26 @@ tl_factor(void)
 	case EVENTUALLY_I:
 		ptr = tl_yylval;
 		tl_yychar = tl_yylex();
-		float intvl[2];
+		
 		intvl[0]=ptr->intvl[0];
 		intvl[1]=ptr->intvl[1];
 
 		ptr = tl_factor();
 		ptr = tl_nn_t(EVENTUALLY_I, ptr, ZN,intvl);
+		goto simpl;
+
+	case ALWAYS_I:
+		ptr = tl_yylval;
+		tl_yychar = tl_yylex();
+		
+		intvl[0]=ptr->intvl[0];
+		intvl[1]=ptr->intvl[1];
+
+		ptr = tl_factor();
+		ptr = tl_nn_t(EVENTUALLY_I, Not(ptr), ZN, intvl);
+		ptr = Not(ptr);
+		goto simpl;
+
 #endif
 	simpl:
 		if (tl_simp_log) 
@@ -554,6 +614,14 @@ again:
 		{	tl_yychar = tl_yylex();
 			ptr = tl_nn(prec[nr][i],
 				ptr, tl_level(nr-1));
+			if(tl_simp_log) ptr = bin_simpler(ptr);
+			else ptr = bin_minimal(ptr);
+			goto again;
+		}else if (tl_yychar== U_I){
+			Node* tmp = tl_yylval;
+			tl_yychar = tl_yylex();
+			ptr = tl_nn_t(U_I,
+				ptr, tl_level(nr-1),tmp->intvl);
 			if(tl_simp_log) ptr = bin_simpler(ptr);
 			else ptr = bin_minimal(ptr);
 			goto again;

@@ -148,6 +148,8 @@ getnode(Node *p)
 	if (!p) return p;
 
 	n =  (Node *) tl_emalloc(sizeof(Node));
+	n->intvl[0] = p->intvl[0];
+	n->intvl[1] = p->intvl[1];
 	n->ntyp = p->ntyp;
 	n->sym  = p->sym; /* same name */
 	n->lft  = p->lft;
@@ -247,7 +249,20 @@ sameform(Node *a, Node *b)
 	case AND:
 	case OR:	/* the hard case */
 		return sametrees(a->ntyp, a, b);
-
+	#ifdef TIMED
+	case EVENTUALLY_I:
+		if (!sameform(a->lft, b->lft))
+			return 0;
+		if (!sameform(a->rgt, b->rgt))
+			return 0;
+		
+		if (a->intvl[0]!=b->intvl[0])
+			return 0;
+		if (a->intvl[1]!=b->intvl[1])
+			return 0; 
+		return 1;
+	#endif
+		
 	default:
 		printf("type: %d\n", a->ntyp);
 		fatal("cannot happen, sameform", (char *) 0);

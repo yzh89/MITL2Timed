@@ -168,8 +168,8 @@ void trans(Node *p)
   if (tl_terse)
     return;
 
-  mk_alternating(p);
-  mk_generalized();
-  mk_buchi();
+  // mk_alternating(p);
+  // mk_generalized();
+  // mk_buchi();
 }
 
