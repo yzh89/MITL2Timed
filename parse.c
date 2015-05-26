@@ -504,6 +504,19 @@ tl_factor(void)
 		}
 
 		ptr = tl_nn(U_OPER, True, ptr);
+		goto simpl;
+
+#ifdef TIMED
+	case EVENTUALLY_I:
+		ptr = tl_yylval;
+		tl_yychar = tl_yylex();
+		float intvl[2];
+		intvl[0]=ptr->intvl[0];
+		intvl[1]=ptr->intvl[1];
+
+		ptr = tl_factor();
+		ptr = tl_nn_t(EVENTUALLY_I, ptr, ZN,intvl);
+#endif
 	simpl:
 		if (tl_simp_log) 
 		  ptr = bin_simpler(ptr);

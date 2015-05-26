@@ -1,6 +1,6 @@
-# ltl2gba - forked from LTL2BA in September 2013.  (See original comments below.)
+# MITL2Timed makefile based on LTL2BA (See original comments below.)
 #
-# SCL; 3 Sep 2013.
+# ARC; May 22 2015.
 
 # LTL2BA - Version 1.0 - October 2001
 # Written by Denis Oddoux, LIAFA, France                                 
@@ -33,8 +33,8 @@
 # -ansi is commented out to use comment //
 
 CC=gcc
-CFLAGS= -O3 -g -DNXT
-
+# CFLAGS= -O3 -g -DNXT -DTIMED
+CFLAGS= -g -DNXT -DTIMED
 LTL2BA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o
 
 ltl2ba: $(LTL2BA)

@@ -46,7 +46,7 @@ int tl_simp_fly  = 1; /* on the fly simplification */
 int tl_simp_scc  = 1; /* use scc simplification */
 int tl_fjtofj    = 1; /* 2eme fj */
 int	tl_errs      = 0;
-int	tl_verbose   = 0;
+int	tl_verbose   = 1;
 int	tl_terse     = 0;
 unsigned long	All_Mem = 0;
 
@@ -103,6 +103,23 @@ tl_Getchar(void)
 	return -1;
 }
 
+//MITL get interval from formula
+#ifdef TIMED
+float *
+tl_GetIntvl(float out[2])
+{
+	if (cnt < hasuform){
+		char* tmp=&uform[++cnt];
+		sscanf(tmp,"%f, %f]", &out[0], &out[1]);
+		while (uform[cnt]!=']') cnt++;
+		cnt++;
+		return out;
+	}
+	cnt++;
+	return NULL;
+}
+#endif
+
 void
 put_uform(void)
 {
@@ -147,7 +164,7 @@ tl_main(int argc, char *argv[])
 				for (i = 0; i < argv[1][i]; i++)
 				{	if (argv[1][i] == '\t'
 					||  argv[1][i] == '\"'
-					||  argv[1][i] == 'n')
+					||  argv[1][i] == '\n')
 						argv[1][i] = ' ';
 				}
 				strcpy(uform, argv[1]);
@@ -295,6 +312,14 @@ dump(Node *n)
 		fprintf(tl_out, ")");
 		break;
 #endif
+#ifdef TIMED
+	case EVENTUALLY_I:	
+		fprintf(tl_out, "<>_[%.3f, %.3f]",n->intvl[0], n->intvl[1]);
+		fprintf(tl_out, " (");
+		dump(n->lft);
+		fprintf(tl_out, ")");
+		break;
+#endif
 	case NOT:
 		fprintf(tl_out, "!");
 		fprintf(tl_out, " (");
@@ -334,6 +359,12 @@ tl_explain(int n)
 	case NOT:	printf("!"); break;
 	case U_OPER:	printf("U"); break;
 	case V_OPER:	printf("V"); break;
+#ifdef TIMED
+	case ALWAYS_I:	printf("[]_"); break;
+	case EVENTUALLY_I:	printf("<>_"); break;
+	case U_I:	printf("U_"); break;
+	case V_I:	printf("V_"); break;
+#endif
 #ifdef NXT
 	case NEXT:	printf("X"); break;
 #endif

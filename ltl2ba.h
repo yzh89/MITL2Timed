@@ -43,6 +43,7 @@ char		*name;
 
 typedef struct Node {
 	short		ntyp;	/* node type */
+  float intvl[2]; /*interval*/
 	struct Symbol	*sym;
 	struct Node	*lft;	/* tree */
 	struct Node	*rgt;	/* tree */
@@ -147,12 +148,15 @@ enum {
 	PREDICATE,	/* 265 */
 	TRUE,		/* 266 */
 	U_OPER,		/* 267 */
-	V_OPER,		/* 268 */
-  U_I,    /*269*/
-  EVENTUALLY_I, /*270*/
-  ALWAYS_I /*271 */
+	V_OPER		/* 268 */
+#ifdef TIMED
+  , U_I,    /*269*/
+  V_I,    // 270
+  EVENTUALLY_I, /*271*/
+  ALWAYS_I /*272 */
+#endif
 #ifdef NXT
-	, NEXT		/* 272 */
+	, NEXT		/* 273 */
 #endif
 };
 
@@ -255,3 +259,9 @@ typedef Node	*Nodeptr;
 #define OUT_TYPE_GEXF 2
 
 typedef unsigned char byte;
+
+//MITL functions
+#ifdef TIMED
+  float *tl_GetIntvl(float *);
+  Node  *tl_nn_t(int, Node *, Node *,float *);
+#endif

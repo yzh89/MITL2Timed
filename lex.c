@@ -41,6 +41,7 @@ extern YYSTYPE	tl_yylval;
 char	yytext[2048];
 
 #define Token(y)        tl_yylval = tl_nn(y,ZN,ZN); return y
+#define Token_t(y,intvl)  tl_yylval = tl_nn_t(y,ZN,ZN,intvl); return y
 
 int
 isalnum_(int c)
@@ -125,11 +126,20 @@ tl_lex(void)
 	if (c == '<')
 	{	c = tl_Getchar();
 		if (c == '>')
-		{	Token(EVENTUALLY);
+		{	
+			c = tl_Getchar();	 
+			if (c=='_') {
+				float* tmp=malloc(sizeof(float)*2);
+				tmp=tl_GetIntvl(tmp);
+				Token_t(EVENTUALLY_I,tmp);
+			} else {
+				tl_UnGetchar();
+				Token(EVENTUALLY);
+			}
 		}
 		if (c != '-')
 		{	tl_UnGetchar();
-			tl_yyerror("expected '<>' or '<->'");
+			tl_yyerror("expected '<>' or '<->' or '<>_'");
 		}
 		c = tl_Getchar();
 		if (c == '>')

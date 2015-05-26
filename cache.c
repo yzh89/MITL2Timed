@@ -128,6 +128,19 @@ tl_nn(int t, Node *ll, Node *rl)
 	return n;
 }
 
+#ifdef TIMED
+Node *
+tl_nn_t(int t, Node *ll, Node *rl, float *intvl)
+{	Node *n = (Node *) tl_emalloc(sizeof(Node));
+	n->intvl[0] = intvl[0];
+	n->intvl[1] = intvl[1];
+	n->ntyp = (short) t;
+	n->lft  = ll;
+	n->rgt  = rl;
+	return n;
+} 
+#endif
+
 Node *
 getnode(Node *p)
 {	Node *n;
