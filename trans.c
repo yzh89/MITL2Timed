@@ -4,6 +4,8 @@
 /* Copyright (c) 2001  Denis Oddoux                                       */
 /* Modified by Paul Gastin, LSV, France                                   */
 /* Copyright (c) 2007  Paul Gastin                                        */
+/* Modified by Yuchen Zhou, College Park, USA                             */
+/* Copyright (c) 2015  Yuchen Zhou                                        */
 /*                                                                        */
 /* This program is free software; you can redistribute it and/or modify   */
 /* it under the terms of the GNU General Public License as published by   */
@@ -132,6 +134,14 @@ common1:		sdump(n->lft);
 	case NEXT:	strcat(dumpbuf, "X");
 			goto common1;
 #endif
+
+#ifdef TIMED
+    case EVENTUALLY_I:  strcat(dumpbuf, "<>_(");
+            char intvlText[20];
+            sprintf(intvlText,"[%.3f, %.3f]", n->intvl[0],n->intvl[1]);
+            strcat(dumpbuf, intvlText);
+            goto common1;
+#endif
 	case NOT:	strcat(dumpbuf, "!");
 			goto common1;
 	case TRUE:	strcat(dumpbuf, "T");
@@ -167,9 +177,13 @@ void trans(Node *p)
   }
   if (tl_terse)
     return;
+  #ifndef TIMED
+    mk_alternating(p);
+    mk_generalized();
+    mk_buchi();
+  #else
+    mk_timed(p);
+  #endif
 
-  // mk_alternating(p);
-  // mk_generalized();
-  // mk_buchi();
 }
 

@@ -4,6 +4,8 @@
 /* Copyright (c) 2001  Denis Oddoux                                       */
 /* Modified by Paul Gastin, LSV, France                                   */
 /* Copyright (c) 2007  Paul Gastin                                        */
+/* Modified by Yuchen Zhou, College Park, USA                             */
+/* Copyright (c) 2015  Yuchen Zhou                                        */
 /*                                                                        */
 /* This program is free software; you can redistribute it and/or modify   */
 /* it under the terms of the GNU General Public License as published by   */
@@ -24,9 +26,6 @@
 /* Verification, CAV 2001, Paris, France.                                 */
 /* Proceedings - LNCS 2102, pp. 53-65                                     */
 /*                                                                        */
-/* Send bug-reports and/or questions to Paul Gastin                       */
-/* http://www.lsv.ens-cachan.fr/~gastin                                   */
-/*                                                                        */
 /* Some of the code in this file was taken from the Spin software         */
 /* Written by Gerard J. Holzmann, Bell Laboratories, U.S.A.               */
 
@@ -35,6 +34,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <unistd.h>
 
 typedef struct Symbol {
 char		*name;
@@ -86,7 +86,6 @@ typedef struct AProd {
   struct AProd *nxt;
   struct AProd *prv;
 } AProd;
-
 
 typedef struct GTrans {
   int *pos;
@@ -232,6 +231,8 @@ int  included_set(int *, int *, int);
 int  in_set(int *, int);
 int  *list_set(int *, int);
 
+void put_uform(void);
+
 int timeval_subtract (struct timeval *, struct timeval *, struct timeval *);
 
 #define ZN	(Node *)0
@@ -262,6 +263,57 @@ typedef unsigned char byte;
 
 //MITL functions
 #ifdef TIMED
+
+typedef struct CCstr{  //clock constraint for invariant and transition
+  int cIdx; //clock index associated with the constraint
+  unsigned short gType; //type of inequality
+  int bndry; //constraint boundary
+} CCstr;
+
+typedef struct CGuard{
+  int nType; //guard logic tree AND = 258, OR = 264, PREDICATE = 265
+  CCstr *cCstr;
+  struct CGuard *lft; 
+  struct CGuard *rgt;
+} CGuard;
+
+typedef struct TState { //Timed automata state
+  char *tstateId;   // state id
+  int *sym;    //all the node predicates involves
+  CGuard *inv;    // invariant conidition on the clock
+  unsigned short *input;    // input array for different bool
+  unsigned short inputNum;   //number of input
+  unsigned short output;   // output
+  // struct TState *next; 
+} TState;
+
+typedef struct TTrans{  //time automata transitions
+  CGuard *cguard;  //guard condition on the clock variables
+  int *cIdx; //clocks to be reset
+  struct TState *to; 
+  struct TState *from;
+  struct TTrans *nxt; //linked list for TTrans
+} TTrans;
+
+enum {
+  LESSEQUAL=5,
+  LESS,    /* 6 */
+  GREATER,    /* 7 */
+  GREATEREQUAL, /* 8 */
+};
+
+typedef struct TAutomata{
+  TTrans* tTrans;
+  TState* tStates;
+  int stateNum;
+} TAutomata;
+
   float *tl_GetIntvl(float *);
   Node  *tl_nn_t(int, Node *, Node *,float *);
+  TTrans* emalloc_ttrans(int , int );
+  void free_ttrans(TTrans *, int );
+  void free_all_ttrans();
+  void mk_timed(Node *);
+  int calculate_sym_size(Node *);
+
 #endif

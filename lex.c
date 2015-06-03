@@ -4,6 +4,8 @@
 /* Copyright (c) 2001  Denis Oddoux                                       */
 /* Modified by Paul Gastin, LSV, France                                   */
 /* Copyright (c) 2007  Paul Gastin                                        */
+/* Modified by Yuchen Zhou, College Park, USA                             */
+/* Copyright (c) 2015  Yuchen Zhou                                        */
 /*                                                                        */
 /* This program is free software; you can redistribute it and/or modify   */
 /* it under the terms of the GNU General Public License as published by   */
@@ -23,9 +25,6 @@
 /* presented at the 13th International Conference on Computer Aided       */
 /* Verification, CAV 2001, Paris, France.                                 */
 /* Proceedings - LNCS 2102, pp. 53-65                                     */
-/*                                                                        */
-/* Send bug-reports and/or questions to Paul Gastin                       */
-/* http://www.lsv.ens-cachan.fr/~gastin                                   */
 /*                                                                        */
 /* Some of the code in this file was taken from the Spin software         */
 /* Written by Gerard J. Holzmann, Bell Laboratories, U.S.A.               */

@@ -58,6 +58,11 @@ int aallocs = 0, afrees = 0, apool = 0;
 int gallocs = 0, gfrees = 0, gpool = 0;
 int ballocs = 0, bfrees = 0, bpool = 0;
 
+#ifdef TIMED
+  TTrans *ttrans_list = (TTrans *)0; //Transition list after been freed. 
+  int tallocs = 0, tfrees = 0, tpool = 0;
+#endif
+
 union M {
 	long size;
 	union M *link;
@@ -165,6 +170,62 @@ void free_all_atrans() {
     tfree(t);
   }
 }
+
+#ifdef TIMED
+// Allocate ttrans , transNum = the num of the transitions, cNum is the maximum
+// clocks on the guards
+TTrans* emalloc_ttrans(int transNum, int cNum) { 
+  TTrans *result;
+  if(!ttrans_list) {
+
+    result = (TTrans *)tl_emalloc(sizeof(TTrans));
+    TTrans *tmp=result;
+    tmp->cIdx = (int *) malloc(sizeof(int)*cNum);
+    tmp->to = (TState *)0;
+    tmp->from = (TState *)0;
+    tpool++;
+
+    for (int i=1; i<transNum; i++){
+      tmp->nxt = (TTrans *)tl_emalloc(sizeof(TTrans));
+      tmp = tmp->nxt;
+      tmp->cIdx = (int *) malloc(sizeof(int)*cNum);
+      tmp->to = (TState *)0;
+      tmp->from = (TState *)0;    
+      tpool++;
+    }
+    
+ }
+  else {
+    result = ttrans_list;
+    ttrans_list = ttrans_list->nxt;
+    result->nxt = (TTrans *)0;
+    if (transNum>1) emalloc_ttrans(transNum -1, cNum);
+
+  }
+  tallocs++;
+  return result;
+} 
+void free_ttrans(TTrans *t, int rec) {
+  if(!t) return;
+  if(rec) free_ttrans(t->nxt, rec);
+  t->nxt = ttrans_list;
+  ttrans_list = t;
+  tfrees++;
+}
+
+void free_all_ttrans() {
+  TTrans *t;
+  while(ttrans_list) {
+    t = ttrans_list;
+    ttrans_list = t->nxt;
+    tfree(t->to);
+    tfree(t->from);
+    tfree(t->cIdx);
+    tfree(t);
+  }
+}
+
+#endif
 
 GTrans* emalloc_gtrans() {
   GTrans *result;

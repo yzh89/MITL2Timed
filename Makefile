@@ -21,7 +21,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #                                                                        
 # Based on the translation algorithm by Gastin and Oddoux,               
-# presented at the CAV Conference, held in 2001, Paris, France 2001.     
+# presented at the CAV Conference, held in 2001, Paris, Fance 2001.     
 # Send bug-reports and/or questions to: Denis.Oddoux@liafa.jussieu.fr    
 # or to Denis Oddoux                                                     
 #       LIAFA, UMR 7089, case 7014                                       
@@ -30,12 +30,12 @@
 #       F-75251 Paris Cedex 05                                          
 #       FRANCE                                                               
 
-# -ansi is commented out to use comment //
+# -ansi is removed and -sd=c11 is added to use comment // and for-loop with initialization
 
 CC=gcc
 # CFLAGS= -O3 -g -DNXT -DTIMED
-CFLAGS= -g -DNXT -DTIMED
-LTL2BA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o
+CFLAGS= -g -DNXT -DTIMED -std=c11
+LTL2BA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o timed.o
 
 ltl2ba: $(LTL2BA)
 	$(CC) $(CFLAGS) -o ltl2ba $(LTL2BA)

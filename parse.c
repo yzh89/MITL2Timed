@@ -4,6 +4,8 @@
 /* Copyright (c) 2001  Denis Oddoux                                       */
 /* Modified by Paul Gastin, LSV, France                                   */
 /* Copyright (c) 2007  Paul Gastin                                        */
+/* Modified by Yuchen Zhou, College Park, USA                             */
+/* Copyright (c) 2015  Yuchen Zhou                                        */
 /*                                                                        */
 /* This program is free software; you can redistribute it and/or modify   */
 /* it under the terms of the GNU General Public License as published by   */
@@ -23,9 +25,6 @@
 /* presented at the 13th International Conference on Computer Aided       */
 /* Verification, CAV 2001, Paris, France.                                 */
 /* Proceedings - LNCS 2102, pp. 53-65                                     */
-/*                                                                        */
-/* Send bug-reports and/or questions to Paul Gastin                       */
-/* http://www.lsv.ens-cachan.fr/~gastin                                   */
 /*                                                                        */
 /* Some of the code in this file was taken from the Spin software         */
 /* Written by Gerard J. Holzmann, Bell Laboratories, U.S.A.               */
@@ -617,7 +616,9 @@ again:
 			if(tl_simp_log) ptr = bin_simpler(ptr);
 			else ptr = bin_minimal(ptr);
 			goto again;
-		}else if (tl_yychar== U_I){
+		}
+		#ifdef TIMED
+		else if (tl_yychar== U_I){
 			Node* tmp = tl_yylval;
 			tl_yychar = tl_yylex();
 			ptr = tl_nn_t(U_I,
@@ -626,6 +627,8 @@ again:
 			else ptr = bin_minimal(ptr);
 			goto again;
 		}
+		#endif
+				
 	if (!ptr) tl_yyerror("syntax error");
 #if 0
 	printf("level %d:	", nr);
