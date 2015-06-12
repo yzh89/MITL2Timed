@@ -30,7 +30,7 @@
 #include "ltl2ba.h"
 
 extern FILE *tl_out;
-extern int node_size, sym_size, scc_size, t_sym_size;
+extern int node_size, sym_size, scc_size, t_sym_size, t_clock_size;
 extern char **sym_table;
 
 int mod = 8 * sizeof(int);
@@ -38,7 +38,7 @@ int mod = 8 * sizeof(int);
 
 /* type = 2 for scc set, 1 for symbol sets, 0 for nodes sets */
 
-#define set_size(t) (t==1?sym_size:(t==2?scc_size:(t==3?t_sym_size:node_size)))
+#define set_size(t) (t==1?sym_size:(t==2?scc_size:(t==3?t_sym_size:(t==4?t_clock_size:node_size))))
 
 int *new_set(int type) /* creates a new set */
 {

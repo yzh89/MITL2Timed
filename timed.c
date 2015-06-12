@@ -41,11 +41,11 @@ TAutomata *tAutomata;
 // TTrans **t_transition; //array of timed automata transitions
 int cCount; //clock count
 // int ttrans_count = 0;
-int t_sym_size, t_sym_id = 0, t_node_size;
+int t_sym_size, t_sym_id = 0, t_node_size, t_clock_size;
 // struct rusage tr_debut, tr_fin;
 // struct timeval t_diff;
 // int *final_set, node_id = 1, sym_id = 0, node_size, sym_size;
-// int astate_count = 0, atrans_count = 0;
+// int astate_count = 0, atrans_count = 0; 
 
 // ATrans *build_alternating(Node *p);
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t);
@@ -53,19 +53,40 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t);
 |*              Generation of the timed automata                    *|
 \********************************************************************/
 
-int t_calculate_node_size(Node *p) /* returns the number of temporal nodes */
+// int t_calculate_node_size(Node *p) /* returns the number of temporal nodes */
+// {
+//   switch(p->ntyp) {
+//   case AND:
+//   case OR:
+//     return(t_calculate_node_size(p->lft) + t_calculate_node_size(p->rgt)+ 1);
+//   case U_OPER:
+//   case V_OPER:
+//     return(t_calculate_node_size(p->lft) + t_calculate_node_size(p->rgt) + 4);
+// #ifdef NXT
+//   case NEXT:
+//     return(t_calculate_node_size(p->lft) + 2);
+// #endif
+//   default:
+//     return 1;
+//     break;
+//   }
+// }
+
+
+int t_calculate_clock_size(Node *p) /* returns the number of clocks needed */
 {
   switch(p->ntyp) {
   case AND:
   case OR:
-    return(t_calculate_node_size(p->lft) + t_calculate_node_size(p->rgt) + 1);
+    return(t_calculate_clock_size(p->lft) + t_calculate_clock_size(p->rgt)+ 1);
   case U_OPER:
   case V_OPER:
-    return(t_calculate_node_size(p->lft) + t_calculate_node_size(p->rgt) + 4);
+    return(t_calculate_clock_size(p->lft) + t_calculate_clock_size(p->rgt) + 4);
 #ifdef NXT
   case NEXT:
-    return(t_calculate_node_size(p->lft) + 2);
+    return(t_calculate_clock_size(p->lft) + 2);
 #endif
+  case NOT:
   default:
     return 1;
     break;
@@ -92,16 +113,13 @@ int t_calculate_node_size(Node *p) /* returns the number of temporal nodes */
 //   }
 // }
 
-// ATrans *dup_trans(ATrans *trans)  /* returns the copy of a transition */
-// {
-//   ATrans *result;
-//   if(!trans) return trans;
-//   result = emalloc_atrans();
-//   copy_set(trans->to,  result->to,  0);
-//   copy_set(trans->pos, result->pos, 1);
-//   copy_set(trans->neg, result->neg, 1);
-//   return result;
-// }
+TTrans *dup_ttrans(TTrans *trans)  /* returns the copy of a transition */
+{
+  TTrans *result;
+  if(!trans) return trans;
+  result = emalloc_ttrans(1,1);
+  return result;
+}
 
 // void do_merge_trans(ATrans **result, ATrans *trans1, ATrans *trans2) 
 // { /* merges two transitions */
@@ -201,12 +219,51 @@ int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
 //   return result;
 // }
 
+TState *create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p){
+  s->tstateId = tstateId;
+  s->inv = inv;
+  
+  s->input = input;
+  s->inputNum = inputNum;
+  s->output = output;  //output true
+  if (p){
+    s->sym = new_set(3); //3 is symolic set. sym_set_size is used to determine the allocation size
+    clear_set(s->sym, 3);
+    add_set(s->sym, t_get_sym_id(p->sym->name));
+  }
+  return s;
+}
+
+TTrans *create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to){
+  t->cguard=cguard;
+  t->cIdx = new_set(4);
+  for (int i=0; i<clockNum ; i++){
+    
+  }
+      // tmp->cguard = malloc(sizeof(CGuard)); 
+      // tmp->cguard->nType = PREDICATE;  
+      // tmp->cguard->cCstr = malloc(sizeof(CCstr));;
+      // tmp->cguard->cCstr->cIdx = cCount;
+      // tmp->cguard->cCstr->gType = GREATER; 
+      // tmp->cguard->cCstr->bndry = 0;
+      // tmp->cIdx[0] = cCount;
+      // tmp->from = &s[0];
+      // tmp->to = &s[1];
+      // tmp = tmp->nxt;
+  return t;
+}
+
+
+
+
 TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 //TODO change the U_OPER to timed automata
-//TODO change logic NEG ADD OR to automata
-//TODO linking NEG with U_OPER
+//TODO change logic NOT ADD OR to automata
+//TODO linking NOT with U_OPER
 {
+
    TAutomata *t1, *t2;
+  
    TTrans *t = (TTrans *)0, *tmp ;
    TState *s;
    TAutomata *tA;
@@ -218,6 +275,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
     case TRUE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
+
       s[0].tstateId = "true";
       s[0].inv = (CGuard *) 0;
       s[0].input = (unsigned short*) 0;
@@ -352,7 +410,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       s[3].input = malloc(sizeof(unsigned short)*1);
       s[3].input[0] = 0b11;
       s[3].inputNum = 1;
-      s[3].output = 1;            
+      s[3].output = 1;
+
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
       tmp->cguard = malloc(sizeof(CGuard)); 
@@ -625,6 +684,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t){
 
   int t1StateNum[maxNumOfState+1];
   int t2StateNum[maxNumOfState];
+  int tStateNum[maxNumOfState];
   
   int matches = 0;
 
@@ -637,6 +697,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t){
           t1StateNum[matches] = k;
           for (int l=0; l< t2->stateNum; l++){
             if (t2->tStates[l].output == (t->tStates[i].input[j] & (unsigned short) 0x01)){
+              tStateNum[matches]=i;
               t2StateNum[matches++] = l;
               t1StateNum[matches] = k;
             }
@@ -655,7 +716,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t){
       
       // merge invariants
       s[k].inv = malloc(sizeof(CGuard)); 
-      if (t1->tStates[t1StateNum[k]].inv) {
+      if (t1->tStates[t1StateNum[k]].inv && t2->tStates[t2StateNum[k]].inv && t->tStates[i].inv) {
         s[k].inv->nType = AND;
         s[k].inv->cCstr = (CCstr *)0;
         s[k].inv->lft = malloc(sizeof(CGuard));
@@ -664,6 +725,27 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t){
         s[k].inv->lft->lft = t1->tStates[t1StateNum[k]].inv;
         s[k].inv->lft->rgt = t2->tStates[t2StateNum[k]].inv;
         s[k].inv->rgt = t->tStates[i].inv;
+      }else if (t1->tStates[t1StateNum[k]].inv && t2->tStates[t2StateNum[k]].inv){
+        s[k].inv->nType = AND;
+        s[k].inv->cCstr = (CCstr *)0;
+        s[k].inv->lft = t1->tStates[t1StateNum[k]].inv;
+        s[k].inv->rgt = t2->tStates[t2StateNum[k]].inv;
+      }else if (t1->tStates[t1StateNum[k]].inv && t->tStates[i].inv){
+        s[k].inv->nType = AND;
+        s[k].inv->cCstr = (CCstr *)0;
+        s[k].inv->lft = t1->tStates[t1StateNum[k]].inv;
+        s[k].inv->rgt = t->tStates[i].inv;
+      }else if (t2->tStates[t2StateNum[k]].inv && t->tStates[i].inv){
+        s[k].inv->nType = AND;
+        s[k].inv->cCstr = (CCstr *)0;
+        s[k].inv->lft = t2->tStates[t2StateNum[k]].inv;
+        s[k].inv->rgt = t->tStates[i].inv;
+      }else if (t1->tStates[t1StateNum[k]].inv){
+        s[k].inv= t1->tStates[t1StateNum[k]].inv;
+      }else if (t2->tStates[t2StateNum[k]].inv){
+        s[k].inv= t2->tStates[t2StateNum[k]].inv;
+      }else if (t->tStates[i].inv){
+        s[k].inv= t->tStates[i].inv;
       }
 
       // merge inputs
@@ -679,6 +761,14 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t){
       s[k].output = t->tStates[i].output;      
     }
     numOfState = matches;
+  }
+
+  //merge transitions
+  TTrans *tt = t->tTrans;
+  TTrans *tOut = emalloc_ttrans(1,1);
+  while (tt){
+    // tt->from = 
+    tt=tt->nxt;
   }
 
 
@@ -730,7 +820,7 @@ void mk_timed(Node *p) /* generates an timed automata for p */
 {
   // if(tl_stats) getrusage(RUSAGE_SELF, &tr_debut);
 
-  // t_node_size = t_calculate_node_size(p) + 1; /* number of states in the automaton */
+  t_clock_size = t_calculate_clock_size(p) + 1; /* number of states in the automaton */
   // t_label = (Node **) tl_emalloc(t_node_size * sizeof(Node *));
   // t_transition = (TTrans **) tl_emalloc(t_node_size * sizeof(TTrans *));
   // node_size = node_size / (8 * sizeof(int)) + 1;

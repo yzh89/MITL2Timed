@@ -280,7 +280,7 @@ typedef struct CGuard{
 typedef struct TState { //Timed automata state
   char *tstateId;   // state id
   int *sym;    //all the node predicates involves
-  CGuard *inv;    // invariant conidition on the clock
+  CGuard *inv;    // invariant condition on the clock
   unsigned short *input;    // input array for different bool
   unsigned short inputNum;   //number of input
   unsigned short output;   // output
