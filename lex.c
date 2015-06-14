@@ -142,11 +142,11 @@ tl_lex(void)
 		}
 		if (c != '-')
 		{	tl_UnGetchar();
-			#ifdef TIMED
+			// #ifdef TIMED
 				tl_yyerror("expected '<>' or '<->' or '<>_' for -DTIMED flag");
-			#else
-				tl_yyerror("expected '<>' or '<->' without DTIMED flag");
-			#endif
+			// #else
+			// 	tl_yyerror("expected '<>' or '<->' without DTIMED flag");
+			// #endif
 		}
 		c = tl_Getchar();
 		if (c == '>')

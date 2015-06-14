@@ -58,10 +58,10 @@ int aallocs = 0, afrees = 0, apool = 0;
 int gallocs = 0, gfrees = 0, gpool = 0;
 int ballocs = 0, bfrees = 0, bpool = 0;
 
-#ifdef TIMED
+// #ifdef TIMED
   TTrans *ttrans_list = (TTrans *)0; //Transition list after been freed. 
   int tallocs = 0, tfrees = 0, tpool = 0;
-#endif
+// #endif
 
 union M {
 	long size;
@@ -171,7 +171,7 @@ void free_all_atrans() {
   }
 }
 
-#ifdef TIMED
+// #ifdef TIMED
 // Allocate ttrans , transNum = the num of the transitions, cNum is the maximum
 // clocks on the guards
 TTrans* emalloc_ttrans(int transNum, int cNum) { 
@@ -225,7 +225,7 @@ void free_all_ttrans() {
   }
 }
 
-#endif
+// #endif
 
 GTrans* emalloc_gtrans() {
   GTrans *result;

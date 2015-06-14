@@ -415,7 +415,7 @@ bin_simpler(Node *ptr)
 		}
 		break;
 
-#ifdef TIMED	 
+// #ifdef TIMED	 
 	case U_I: ;
 		float intvl_a[2], intvl_b[2];
 		if (ptr->intvl[0]!=0) {
@@ -459,7 +459,7 @@ bin_simpler(Node *ptr)
 	// 	ptr= rewrite(Not(a));	
 	
 	// 	break;
-#endif
+// #endif
 	}
 	return ptr;
 }
@@ -551,7 +551,7 @@ tl_factor(void)
 		ptr = tl_nn(U_OPER, True, ptr);
 		goto simpl;
 
-#ifdef TIMED
+// #ifdef TIMED
 	case EVENTUALLY_I:
 		ptr = tl_yylval;
 		tl_yychar = tl_yylex();
@@ -575,7 +575,7 @@ tl_factor(void)
 		ptr = Not(ptr);
 		goto simpl;
 
-#endif
+// #endif
 	simpl:
 		if (tl_simp_log) 
 		  ptr = bin_simpler(ptr);

@@ -135,13 +135,13 @@ common1:		sdump(n->lft);
 			goto common1;
 #endif
 
-#ifdef TIMED
+// #ifdef TIMED
     case EVENTUALLY_I:  strcat(dumpbuf, "<>_(");
             char intvlText[20];
             sprintf(intvlText,"[%.3f, %.3f]", n->intvl[0],n->intvl[1]);
             strcat(dumpbuf, intvlText);
             goto common1;
-#endif
+// #endif
 	case NOT:	strcat(dumpbuf, "!");
 			goto common1;
 	case TRUE:	strcat(dumpbuf, "T");

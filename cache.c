@@ -128,7 +128,7 @@ tl_nn(int t, Node *ll, Node *rl)
 	return n;
 }
 
-#ifdef TIMED
+// #ifdef TIMED
 Node *
 tl_nn_t(int t, Node *ll, Node *rl, float *intvl)
 {	Node *n = (Node *) tl_emalloc(sizeof(Node));
@@ -139,7 +139,7 @@ tl_nn_t(int t, Node *ll, Node *rl, float *intvl)
 	n->rgt  = rl;
 	return n;
 } 
-#endif
+// #endif
 
 Node *
 getnode(Node *p)
@@ -249,7 +249,7 @@ sameform(Node *a, Node *b)
 	case AND:
 	case OR:	/* the hard case */
 		return sametrees(a->ntyp, a, b);
-	#ifdef TIMED
+	// #ifdef TIMED
 	case EVENTUALLY_I:
 		if (!sameform(a->lft, b->lft))
 			return 0;
@@ -260,7 +260,7 @@ sameform(Node *a, Node *b)
 		if (a->intvl[1]!=b->intvl[1])
 			return 0; 
 		return 1;
-	#endif
+	// #endif
 		
 
 	default:

@@ -148,12 +148,12 @@ enum {
 	TRUE,		/* 266 */
 	U_OPER,		/* 267 */
 	V_OPER		/* 268 */
-#ifdef TIMED
+// #ifdef TIMED
   , U_I,    /*269*/
   V_I,    // 270
   EVENTUALLY_I, /*271*/
   ALWAYS_I /*272 */
-#endif
+// #endif
 #ifdef NXT
 	, NEXT		/* 273 */
 #endif
@@ -262,7 +262,7 @@ typedef Node	*Nodeptr;
 typedef unsigned char byte;
 
 //MITL functions
-#ifdef TIMED
+// #ifdef TIMED
 
 typedef struct CCstr{  //clock constraint for invariant and transition
   int cIdx; //clock index associated with the constraint
@@ -316,4 +316,4 @@ typedef struct TAutomata{
   void mk_timed(Node *);
   int calculate_sym_size(Node *);
 
-#endif
+// #endif

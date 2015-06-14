@@ -104,7 +104,7 @@ tl_Getchar(void)
 }
 
 //MITL get interval from formula
-#ifdef TIMED
+// #ifdef TIMED
 float *
 tl_GetIntvl(float out[2])
 {
@@ -118,7 +118,7 @@ tl_GetIntvl(float out[2])
 	cnt++;
 	return NULL;
 }
-#endif
+// #endif
 
 void
 put_uform(void)
@@ -262,8 +262,8 @@ main(int argc, char *argv[])
    Return 1 if the difference is negative, otherwise 0.  */
  
 int
-timeval_subtract (result, x, y)
-struct timeval *result, *x, *y;
+timeval_subtract (struct timeval * result, struct timeval *  x, struct timeval *  y)
+// struct timeval *result, *x, *y;
 {
 	if (x->tv_usec < y->tv_usec) {
 		x->tv_usec += 1000000;
@@ -312,14 +312,14 @@ dump(Node *n)
 		fprintf(tl_out, ")");
 		break;
 #endif
-#ifdef TIMED
+// #ifdef TIMED
 	case EVENTUALLY_I:	
 		fprintf(tl_out, "<>_[%.3f, %.3f]",n->intvl[0], n->intvl[1]);
 		fprintf(tl_out, " (");
 		dump(n->lft);
 		fprintf(tl_out, ")");
 		break;
-#endif
+// #endif
 	case NOT:
 		fprintf(tl_out, "!");
 		fprintf(tl_out, " (");
@@ -359,12 +359,12 @@ tl_explain(int n)
 	case NOT:	printf("!"); break;
 	case U_OPER:	printf("U"); break;
 	case V_OPER:	printf("V"); break;
-#ifdef TIMED
+// #ifdef TIMED
 	case ALWAYS_I:	printf("[]_"); break;
 	case EVENTUALLY_I:	printf("<>_"); break;
 	case U_I:	printf("U_"); break;
 	case V_I:	printf("V_"); break;
-#endif
+// #endif
 #ifdef NXT
 	case NEXT:	printf("X"); break;
 #endif
