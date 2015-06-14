@@ -219,7 +219,7 @@ int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
 //   return result;
 // }
 
-TState *create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p){
+void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p){
   s->tstateId = tstateId;
   s->inv = inv;
   
@@ -231,26 +231,18 @@ TState *create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *in
     clear_set(s->sym, 3);
     add_set(s->sym, t_get_sym_id(p->sym->name));
   }
-  return s;
 }
 
-TTrans *create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to){
+void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to){
   t->cguard=cguard;
   t->cIdx = new_set(4);
+  clear_set(t->cIdx, 4);
   for (int i=0; i<clockNum ; i++){
-    
+    add_set(t->cIdx, cIdxs[i]);
   }
-      // tmp->cguard = malloc(sizeof(CGuard)); 
-      // tmp->cguard->nType = PREDICATE;  
-      // tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      // tmp->cguard->cCstr->cIdx = cCount;
-      // tmp->cguard->cCstr->gType = GREATER; 
-      // tmp->cguard->cCstr->bndry = 0;
-      // tmp->cIdx[0] = cCount;
-      // tmp->from = &s[0];
-      // tmp->to = &s[1];
-      // tmp = tmp->nxt;
-  return t;
+  t->cguard = cguard;
+  t->from = from;
+  t->to = to;
 }
 
 
@@ -273,31 +265,25 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
   switch (p->ntyp) {
 
+    char *stateName;
+    unsigned short *input;
+    CGuard *cguard;
+    int *clockId;
+
     case TRUE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
-
-      s[0].tstateId = "true";
-      s[0].inv = (CGuard *) 0;
-      s[0].input = (unsigned short*) 0;
-      s[0].inputNum = 0;
-      s[0].output = 1;  //output true
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(s, "true", (CGuard *) 0, (unsigned short*) 0, 0, 1, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
       tA->tStates = s;
       tA->stateNum = 1;
       break;
-  //     t = emalloc_atrans();
-  //     clear_set(t->to,  0);
-  //     clear_set(t->pos, 1);
-  //     clear_set(t->neg, 1);
     case FALSE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
-      s[0].tstateId = "true";
-      s[0].inv = (CGuard *) 0;
-      s[0].input = (unsigned short*) 0;
-      s[0].inputNum = 0;
-      s[0].output = 1;  //output true
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(s, "false", (CGuard *) 0, (unsigned short*) 0, 0, 0, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
@@ -306,55 +292,52 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       break;
 
     case PREDICATE:
-      t = emalloc_ttrans(2,1); 
+      t = emalloc_ttrans(2,1);  //2 states and 1 clock
       s = (TState *) tl_emalloc(sizeof(TState)*2);
 
-      s[0].tstateId = malloc (sizeof(char)*(strlen(p->sym->name))+7);
-      sprintf(s[0].tstateId, "pred : %s", p->sym->name);
-      s[0].inv = (CGuard *) 0;
-      s[0].input = malloc(sizeof(unsigned short)*1);
-      s[0].input[0] = 1 << t_get_sym_id(p->sym->name);
-      s[0].inputNum = 1;
-      s[0].output = 1;  
-      s[0].sym = new_set(3);
-      clear_set(s[0].sym, 3);
-      add_set(s[0].sym, t_get_sym_id(p->sym->name));
+      stateName= malloc (sizeof(char)*(strlen(p->sym->name))+7);
+      sprintf(stateName, "pred : %s", p->sym->name);
+      input = malloc(sizeof(unsigned short)*1);
+      input[0] = 1 << t_get_sym_id(p->sym->name);
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(s, stateName, (CGuard *) 0, input, 1, 1, p); //output true when p is true
 
-      s[1].tstateId = malloc (sizeof(char)*(strlen(p->sym->name))+10);
-      sprintf(s[1].tstateId, "! pred : %s", p->sym->name);
-      s[1].inv = (CGuard *) 0;
-      s[1].input = malloc(sizeof(unsigned short)*1);
-      s[1].input[0] = 0;
-      s[1].inputNum = 1;
-      s[1].output = 0;  
-      s[1].sym = new_set(3);
-      clear_set(s[0].sym, 3);
-      add_set(s[0].sym, t_get_sym_id(p->sym->name));
+      stateName= malloc (sizeof(char)*(strlen(p->sym->name))+10);
+      sprintf(stateName, "! pred : %s", p->sym->name);
+      input = malloc(sizeof(unsigned short)*1);
+      input[0] = 0;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[1], stateName, (CGuard *) 0, input, 1, 0, p); //output false when p is false
       
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[0];
-      tmp->to = &s[1];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[0],  &s[1]);
+
       tmp = tmp->nxt;
 
       // (1 -> 0) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->to = &s[0];
-      tmp->from = &s[1];
-      tmp = tmp->nxt;
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[1],  &s[0]);
+
       cCount++;
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
@@ -383,130 +366,147 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       //create timed automata with 8 transition and 1 clock;
       t = emalloc_ttrans(8,1); 
       s = (TState *) tl_emalloc(sizeof(TState)*4);
-      s[0].tstateId = "!p";
-      s[0].inv = (CGuard *) 0;
-      s[0].input = malloc(sizeof(unsigned short)*2);
-      s[0].inputNum = 2;
-      s[0].input[0] = 0b01;
-      s[0].input[1] = 0b00;
-      s[0].output = 0;
 
-      s[1].tstateId = "!(p!q)";
-      s[1].inv = (CGuard *) 0;
-      s[1].input = malloc(sizeof(unsigned short)*1);
-      s[1].input[0] = 0b10;
-      s[1].output = 0;
-      s[1].inputNum = 1;
+      input = malloc(sizeof(unsigned short)*2);
+      input[0] = 0b01;
+      input[1] = 0b00;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[0], "!p", (CGuard *) 0, input, 2, 0, NULL); //output 0 in !p state
 
-      s[2].tstateId = "p!q";
-      s[2].inv = (CGuard *) 0;
-      s[2].input = malloc(sizeof(unsigned short)*1);
-      s[2].input[0] = 0b10;
-      s[2].inputNum = 1;
-      s[2].output = 1;
+      input = malloc(sizeof(unsigned short)*1);
+      input[0] = 0b10;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[1], "!(p!q)", (CGuard *) 0, input, 1, 0, NULL); //output 0 in !(p!q) state
 
-      s[3].tstateId = "pq";
-      s[3].inv = (CGuard *) 0;
-      s[3].input = malloc(sizeof(unsigned short)*1);
-      s[3].input[0] = 0b11;
-      s[3].inputNum = 1;
-      s[3].output = 1;
+      input = malloc(sizeof(unsigned short)*1);
+      input[0] = 0b10;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[2], "p!q", (CGuard *) 0, input, 1, 1, NULL); //output 1 in p!q state
+
+
+      input = malloc(sizeof(unsigned short)*1);
+      input[0] = 0b11;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[3], "pq", (CGuard *) 0, input, 1, 1, NULL); //output 1 in pq state
 
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[0];
-      tmp->to = &s[1];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[0],  &s[1]);
+
       tmp = tmp->nxt;
 
       // (1 -> 0) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->to = &s[0];
-      tmp->from = &s[1];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[1],  &s[0]);
+
       tmp = tmp->nxt;
 
       // (0 -> 2) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[0];
-      tmp->to = &s[2];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[0],  &s[2]);
+      
       tmp = tmp->nxt;
 
       // (0 -> 3) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[0];
-      tmp->to = &s[3];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[0],  &s[3]);
+
       tmp = tmp->nxt;
 
       // (3 -> 0) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->to = &s[0];
-      tmp->from = &s[3];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[3],  &s[0]);
+
       tmp = tmp->nxt;
 
       // (2 -> 3) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[2];
-      tmp->to = &s[3];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[2],  &s[3]);
+
       tmp = tmp->nxt;
 
       // (3 -> 2) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->to = &s[2];
-      tmp->from = &s[3];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[3],  &s[2]);
+
       tmp = tmp->nxt;
 
       // (3 -> 1) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[3];
-      tmp->to = &s[1];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[3],  &s[1]);
 
       cCount++;
 
@@ -558,46 +558,48 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       t = emalloc_ttrans(2,1); 
       s = (TState *) tl_emalloc(sizeof(TState)*2);
 
-      s[0].tstateId = "and";
-      s[0].inv = (CGuard *) 0;
-      s[0].input = malloc(sizeof(unsigned short)*1);
-      s[0].input[0] = 0b11;
-      s[0].inputNum = 1;
-      s[0].output = 1;  //output the symoblic id of the alphabat
 
-      s[1].tstateId = "! and";
-      s[1].inv = (CGuard *) 0;
-      s[1].input = malloc(sizeof(unsigned short)*3);
-      s[1].inputNum = 3;
-      s[1].input[0] = 0b10;
-      s[1].input[1] = 0b01;
-      s[1].input[2] = 0b00;
-      s[1].output = 0;  //output the symoblic id of the alphabat    
+      input = malloc(sizeof(unsigned short)*1);
+      input[0] = 0b11;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[0], "and", (CGuard *) 0, input, 1, 1, NULL); //output 1 in pq state
+
+      input = malloc(sizeof(unsigned short)*3);
+      input[0] = 0b10;
+      input[1] = 0b01;
+      input[2] = 0b00;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[1], "! and", (CGuard *) 0, input, 3, 0, NULL); //output 0 in other state
 
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[0];
-      tmp->to = &s[1];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[0],  &s[1]);
+
       tmp = tmp->nxt;
 
       // (1 -> 0) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->to = &s[0];
-      tmp->from = &s[1];
-      tmp = tmp->nxt;
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[1],  &s[0]);
+
       cCount++;
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
@@ -614,46 +616,47 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       t = emalloc_ttrans(2,1); 
       s = (TState *) tl_emalloc(sizeof(TState)*2);
 
-      s[0].tstateId = "! or";
-      s[0].inv = (CGuard *) 0;
-      s[0].input = malloc(sizeof(unsigned short)*1);
-      s[0].inputNum = 1;
-      s[0].input[0] = 0b00;
-      s[0].output = 1;  //output the symoblic id of the alphabat
+      input = malloc(sizeof(unsigned short)*1);
+      input[0] = 0b00;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[0], "or", (CGuard *) 0, input, 1, 0, NULL); //output 0 in !p!q state
 
-      s[1].tstateId = "or";
-      s[1].inv = (CGuard *) 0;
-      s[1].input = malloc(sizeof(unsigned short)*3);
-      s[1].inputNum = 3;
-      s[1].input[0] = 0b10;
-      s[1].input[1] = 0b01;
-      s[1].input[2] = 0b11;
-      s[1].output = 0;  //output the symoblic id of the alphabat    
-
+      input = malloc(sizeof(unsigned short)*3);
+      input[0] = 0b10;
+      input[1] = 0b01;
+      input[2] = 0b11;
+      // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
+      create_tstate(&s[1], "! or", (CGuard *) 0, input, 3, 1, NULL); //output 1 in other state
+ 
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->from = &s[0];
-      tmp->to = &s[1];
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[0],  &s[1]);
+
       tmp = tmp->nxt;
 
       // (1 -> 0) : z > 0 | z := 0
-      tmp->cguard = malloc(sizeof(CGuard)); 
-      tmp->cguard->nType = PREDICATE;  
-      tmp->cguard->cCstr = malloc(sizeof(CCstr));;
-      tmp->cguard->cCstr->cIdx = cCount;
-      tmp->cguard->cCstr->gType = GREATER; 
-      tmp->cguard->cCstr->bndry = 0;
-      tmp->cIdx[0] = cCount;
-      tmp->to = &s[0];
-      tmp->from = &s[1];
-      tmp = tmp->nxt;
+      cguard = malloc(sizeof(CGuard)); 
+      cguard->nType = PREDICATE;  
+      cguard->cCstr = malloc(sizeof(CCstr));;
+      cguard->cCstr->cIdx = cCount;
+      cguard->cCstr->gType = GREATER; 
+      cguard->cCstr->bndry = 0;
+      //reset which clock
+      clockId = malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, cguard, clockId, 1, &s[1],  &s[0]);
+
       cCount++;
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
