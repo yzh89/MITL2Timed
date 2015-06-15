@@ -35,12 +35,12 @@
 CC=gcc
 # CFLAGS= -O3 -g -DNXT -DTIMED
 CFLAGS= -g -DNXT -std=c11
-LTL2BA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o timed.o
+MITL2TA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o timed.o
 
-ltl2ba: $(LTL2BA)
-	$(CC) $(CFLAGS) -o ltl2ba $(LTL2BA)
+mitl2ta: $(MITL2TA)
+	$(CC) $(CFLAGS) -o mitl2ta $(MITL2TA)
 
-$(LTL2BA): ltl2ba.h
+$(MITL2TA): ltl2ba.h
 
 clean:
-	rm -f ltl2ba *.o core
+	rm -f MITL2TA *.o core
