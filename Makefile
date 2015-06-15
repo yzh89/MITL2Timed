@@ -32,9 +32,9 @@
 
 # -ansi is removed and -sd=c11 is added to use comment // and for-loop with initialization
 
-CC=clang-3.6
+CC=gcc
 # CFLAGS= -O3 -g -DNXT -DTIMED
-CFLAGS= -g -DNXT -DTIMED -std=c11
+CFLAGS= -g -DNXT -std=c11
 LTL2BA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o timed.o
 
 ltl2ba: $(LTL2BA)

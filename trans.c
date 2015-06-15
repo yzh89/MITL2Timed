@@ -177,13 +177,13 @@ void trans(Node *p)
   }
   if (tl_terse)
     return;
-  #ifndef TIMED
-    mk_alternating(p);
-    mk_generalized();
-    mk_buchi();
-  #else
-    mk_timed(p);
-  #endif
+  // #ifndef TIMED
+  //   mk_alternating(p);
+  //   mk_generalized();
+  //   mk_buchi();
+  // #else
+  mk_timed(p);
+  // #endif
 
 }
 
