@@ -341,6 +341,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->tStates = s;
       tA->stateNum = 2;
       break;
+      //TODO: add NOT and merge_timed
   //   case NOT:
   //     t = emalloc_atrans();
   //     clear_set(t->to,  0);
@@ -530,7 +531,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
   //     }
   //     add_set(final_set, node_id);
   //     break;
-
+  // TOOD: add V_OPER
   //   case V_OPER:    /* p V q <-> (p && q) || (p && X (p V q)) */
   //     for(t1 = build_alternating(p->rgt); t1; t1 = t1->nxt) {
   //       ATrans *tmp;
@@ -902,7 +903,7 @@ void merge_timed(){
 /********************************************************************\
 |*                Display of the Timed Automata                     *|
 \********************************************************************/
-
+//TODO: display timed automata created
 void print_timed() /* dumps the alternating automaton */
 {
  //  int i;

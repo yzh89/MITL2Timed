@@ -32,7 +32,7 @@
 *.dSYM/
 
 # sublime project
-*.sublime*
+*.sublime-workspace
 
 # Ctag
 *.tags*

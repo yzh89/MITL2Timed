@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"settings":
+	{
+		"sublimeclang_options":
+		[
+			"-I${folder:${project_path:}}"
+		],
+		"sublimegdb_commandline": "gdb --interpreter=mi --args ./mitl2ta -f \"a U b\"",
+		"sublimegdb_workingdir": "${folder:${project_path:mitl2ta}}"
+	}
+}
