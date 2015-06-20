@@ -11,7 +11,7 @@
 		[
 			"-I${folder:${project_path:}}"
 		],
-		"sublimegdb_commandline": "gdb --interpreter=mi --args ./mitl2ta -f \"a U b\"",
+		"sublimegdb_commandline": "gdb --interpreter=mi --args ./mitl2ta -f \"<>_[2.3, 4.21] b\"",
 		"sublimegdb_workingdir": "${folder:${project_path:mitl2ta}}"
 	}
 }

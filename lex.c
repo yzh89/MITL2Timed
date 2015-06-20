@@ -126,19 +126,19 @@ tl_lex(void)
 	{	c = tl_Getchar();
 		if (c == '>')
 		{	
-			#ifndef TIMED
-				Token(EVENTUALLY);
-			#else
+			// #ifndef TIMED
+			// 	Token(EVENTUALLY);
+			// #else
 			c = tl_Getchar();
 			if (c=='_') {
-				float* tmp=malloc(sizeof(float)*2);
+				float* tmp=(float *) malloc(sizeof(float)*2);
 				tmp=tl_GetIntvl(tmp);
 				Token_t(EVENTUALLY_I,tmp);
 			} else {
 				tl_UnGetchar();
 				Token(EVENTUALLY);
 			}
-			#endif			
+			// #endif			
 		}
 		if (c != '-')
 		{	tl_UnGetchar();
@@ -159,19 +159,19 @@ tl_lex(void)
 		{	c = tl_Getchar();
 		if (c == ']')
 		{	
-			#ifndef TIMED
-				Token(ALWAYS);
-			#else
+			// #ifndef TIMED
+			// 	Token(ALWAYS);
+			// #else
 			c = tl_Getchar();
 			if (c=='_') {
-				float* tmp=malloc(sizeof(float)*2);
+				float* tmp=(float *)malloc(sizeof(float)*2);
 				tmp=tl_GetIntvl(tmp);
 				Token_t(ALWAYS_I,tmp);
 			} else {
 				tl_UnGetchar();
 				Token(ALWAYS);
 			}
-			#endif			
+			// #endif			
 		}else {
 			tl_UnGetchar();
 			tl_yyerror("expected '[]' or '[]_'");
