@@ -281,6 +281,7 @@ typedef struct TState { //Timed automata state
   char *tstateId;   // state id
   int *sym;    //all the node predicates involves
   CGuard *inv;    // invariant condition on the clock
+  unsigned short buchi;   //1 or 0 representing if it is buchi state
   unsigned short *input;    // input array for different bool
   unsigned short inputNum;   //number of input
   unsigned short output;   // output

@@ -221,9 +221,11 @@ int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
 //   return result;
 // }
 
-void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p){
+void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p){
   s->tstateId = tstateId;
   s->inv = inv;
+
+  s->buchi = buchi;
   
   s->input = input;
   s->inputNum = inputNum;
@@ -270,7 +272,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
     case TRUE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(s, "true", (CGuard *) 0, (unsigned short*) 0, 0, 1, NULL); //output true
+      create_tstate(s, "true", (CGuard *) 0, (unsigned short*) 0, 0, 1, 1, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
@@ -280,7 +282,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
     case FALSE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(s, "false", (CGuard *) 0, (unsigned short*) 0, 0, 0, NULL); //output true
+      create_tstate(s, "false", (CGuard *) 0, (unsigned short*) 0, 0, 0, 1, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
@@ -297,14 +299,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 1 << t_get_sym_id(p->sym->name);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(s, stateName, (CGuard *) 0, input, 1, 1, p); //output true when p is true
+      create_tstate(s, stateName, (CGuard *) 0, input, 1, 1, 1, p); //output true when p is true
 
       stateName= (char *) malloc (sizeof(char)*(strlen(p->sym->name))+10);
       sprintf(stateName, "! pred : %s", p->sym->name);
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[1], stateName, (CGuard *) 0, input, 1, 0, p); //output false when p is false
+      create_tstate(&s[1], stateName, (CGuard *) 0, input, 1, 0, 1, p); //output false when p is false
       
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -352,12 +354,12 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b1;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(s, "p", (CGuard *) 0, input, 1, 0, NULL); //output false when p is true
+      create_tstate(s, "p", (CGuard *) 0, input, 1, 0, 1, NULL); //output false when p is true
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b0;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[1], "!p", (CGuard *) 0, input, 1, 1, NULL); //output true when p is false
+      create_tstate(&s[1], "!p", (CGuard *) 0, input, 1, 1, 1, NULL); //output true when p is false
       
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -419,23 +421,23 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input[0] = 0b01;
       input[1] = 0b00;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[0], "!p", (CGuard *) 0, input, 2, 0, NULL); //output 0 in !p state
+      create_tstate(&s[0], "!p", (CGuard *) 0, input, 2, 0, 1, NULL); //output 0 in !p state
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b10;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[1], "!(p!q)", (CGuard *) 0, input, 1, 0, NULL); //output 0 in !(p!q) state
+      create_tstate(&s[1], "!(p!q)", (CGuard *) 0, input, 1, 0, 1, NULL); //output 0 in !(p!q) state
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b10;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[2], "p!q", (CGuard *) 0, input, 1, 1, NULL); //output 1 in p!q state
+      create_tstate(&s[2], "p!q", (CGuard *) 0, input, 1, 1, 0, NULL); //output 1 in p!q state
 
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b11;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[3], "pq", (CGuard *) 0, input, 1, 1, NULL); //output 1 in pq state
+      create_tstate(&s[3], "pq", (CGuard *) 0, input, 1, 1, 1, NULL); //output 1 in pq state
 
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -613,14 +615,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b11;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[0], "and", (CGuard *) 0, input, 1, 1, NULL); //output 1 in pq state
+      create_tstate(&s[0], "and", (CGuard *) 0, input, 1, 1, 1, NULL); //output 1 in pq state
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*3);
       input[0] = 0b10;
       input[1] = 0b01;
       input[2] = 0b00;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[1], "! and", (CGuard *) 0, input, 3, 0, NULL); //output 0 in other state
+      create_tstate(&s[1], "! and", (CGuard *) 0, input, 3, 0, 1, NULL); //output 0 in other state
 
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -674,14 +676,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b00;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[0], "or", (CGuard *) 0, input, 1, 0, NULL); //output 0 in !p!q state
+      create_tstate(&s[0], "or", (CGuard *) 0, input, 1, 0, 1, NULL); //output 0 in !p!q state
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*3);
       input[0] = 0b10;
       input[1] = 0b01;
       input[2] = 0b11;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, Node* p)
-      create_tstate(&s[1], "! or", (CGuard *) 0, input, 3, 1, NULL); //output 1 in other state
+      create_tstate(&s[1], "! or", (CGuard *) 0, input, 3, 1, 1, NULL); //output 1 in other state
  
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -1064,7 +1066,7 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 |*                Display of the Timed Automata                     *|
 \********************************************************************/
 //TODO: display timed automata created
-void print_timed() /* dumps the alternating automaton */
+void print_timed(TAutomata *t) /* dumps the alternating automaton */
 {
  //  int i;
  //  ATrans *t;
@@ -1074,7 +1076,17 @@ void print_timed() /* dumps the alternating automaton */
  //    print_set(t->to, 0);
  //    fprintf(tl_out, "\n");
  //  }
-  
+  for (int i=0; i< t->stateNum; i++){
+    fprintf(tl_out, "state %i : %s \n   input: (", i, t->tStates[i].tstateId);
+    for (int j=0; j< t->tStates[i].inputNum; j++){
+      fprintf(tl_out, "%o, ", t->tStates[i].input[j]);
+    }
+    fprintf(tl_out, ") output:( %i) \n", t->tStates[i].output);
+
+
+  }
+
+
  //  for(i = node_id - 1; i > 0; i--) {
  //    if(!label[i])
  //      continue;
