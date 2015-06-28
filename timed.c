@@ -924,8 +924,9 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
 
             if (t1Match || t2Match) { // if both is not NULL
               // merge the transitions t1Match t2Match and tt
-              merge_ttrans(t1Match, t2Match, tt, tmp, &s[i], &s[j]);
               tmp->nxt = (TTrans *) emalloc_ttrans(1,1);
+              merge_ttrans(t1Match, t2Match, tt, tmp->nxt, &s[i], &s[j]);
+              
               tmp = tmp->nxt;
             }else{
               printf("ERROR! Problem in merging transitions! \n");
@@ -940,10 +941,10 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
   }
 
   //create return Automata out
-  out = (TAutomata *) malloc(sizeof(TAutomata));
+  // out = (TAutomata *) malloc(sizeof(TAutomata));
   out->stateNum = numOfState;
   out->tStates = s;
-  out->tTrans = tOut;
+  out->tTrans = tOut->nxt;
 
 }
 
@@ -1056,7 +1057,7 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   }
 
   //create return Automata out
-  out = (TAutomata *) malloc(sizeof(TAutomata));
+  // out = (TAutomata *) malloc(sizeof(TAutomata));
   out->stateNum = numOfState;
   out->tStates = s;
   out->tTrans = tOut;
@@ -1065,7 +1066,12 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 /********************************************************************\
 |*                Display of the Timed Automata                     *|
 \********************************************************************/
-//TODO: display timed automata created
+
+//TODO: print clock guards 
+void printCGuard(CGuard *cg){
+
+}
+
 void print_timed(TAutomata *t) /* dumps the alternating automaton */
 {
  //  int i;
@@ -1076,14 +1082,25 @@ void print_timed(TAutomata *t) /* dumps the alternating automaton */
  //    print_set(t->to, 0);
  //    fprintf(tl_out, "\n");
  //  }
+  TTrans *tmp;
+  tmp = t->tTrans;
+  int j = 0;
+  while (tmp != NULL) {
+    fprintf(tl_out, "Transition %i : %i to %i \n", j, (int) (tmp->from - &t->tStates[0]) + 1, (int) (tmp->to - &t->tStates[0]) + 1);
+    fprintf(tl_out, "Clock reseted: ");
+    print_set(tmp->cIdx, 4);
+    fprintf(tl_out, "\n");
+    printCGuard(tmp->cguard);
+    j++;
+    tmp = tmp->nxt;
+  }
   for (int i=0; i< t->stateNum; i++){
-    fprintf(tl_out, "state %i : %s \n   input: (", i, t->tStates[i].tstateId);
+    fprintf(tl_out, "State %i : %s \n   input: (", i+1, t->tStates[i].tstateId);
     for (int j=0; j< t->tStates[i].inputNum; j++){
-      fprintf(tl_out, "%o, ", t->tStates[i].input[j]);
+      fprintf(tl_out,"%o, ", t->tStates[i].input[j]);
     }
-    fprintf(tl_out, ") output:( %i) \n", t->tStates[i].output);
-
-
+    fprintf(tl_out,") output:( %i) \n", t->tStates[i].output);
+    printCGuard(t->tStates[i].inv);
   }
 
 
@@ -1125,6 +1142,8 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   
 //   final_set = make_set(-1, 0);
   tAutomata = build_timed(p); /* generates the alternating automaton */
+
+  print_timed(tAutomata);
 
 //   if(tl_verbose) {
 //     fprintf(tl_out, "\nAlternating automaton before simplification\n");

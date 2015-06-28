@@ -36,7 +36,7 @@ extern char **sym_table;
 int mod = 8 * sizeof(int);
 
 
-/* type = 2 for scc set, 1 for symbol sets, 0 for nodes sets */
+/* type = 2 for scc set, 1 for symbol sets, 0 for nodes sets, 4 is clock, 3 is timed automata symbols */
 
 #define set_size(t) (t==1?sym_size:(t==2?scc_size:(t==3?t_sym_size:(t==4?t_clock_size:node_size))))
 
@@ -147,7 +147,7 @@ void print_set(int *l, int type) /* prints the content of a set */
     for(j = 0; j < mod; j++)
       if(l[i] & (1 << j)) {
         switch(type) {
-          case 0: case 2:
+          case 0: case 2: case 3: case 4: 
             if(!start) fprintf(tl_out, ",");
             fprintf(tl_out, "%i", mod * i + j);
             break;
