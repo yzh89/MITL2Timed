@@ -38,7 +38,7 @@ CFLAGS= -g -DNXT -std=c11
 MITL2TA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o timed.o
 
 mitl2ta: $(MITL2TA)
-	$(CC) $(CFLAGS) -o mitl2ta $(MITL2TA)
+	$(CC) $(CFLAGS) -o mitl2ta $(MITL2TA) -lm
 
 $(MITL2TA): ltl2ba.h
 

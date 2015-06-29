@@ -35,6 +35,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <unistd.h>
+#include <math.h>
 
 typedef struct Symbol {
 char		*name;
