@@ -1158,6 +1158,8 @@ void merge_ttrans(TTrans *t1, TTrans *t2, TTrans *tt, TTrans *tOut, TState *from
   tOut->to = to;
 }
 
+void merge_event_timed(TAutomata *t1, TAutomata *tA, TAutomata *tB, TAutomata *out){
+}
 // TODO: Add Eventually I and V 
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out){
   int numOfState = 0;
