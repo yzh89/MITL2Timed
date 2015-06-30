@@ -50,6 +50,7 @@ int t_sym_size, t_sym_id = 0, t_node_size, t_clock_size;
 // ATrans *build_alternating(Node *p);
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out);
 void merge_timed(TAutomata *t1,TAutomata *t, TAutomata *out);
+void merge_event_timed(TAutomata *, TAutomata *, TAutomata *, TAutomata *);
 /********************************************************************\
 |*              Generation of the timed automata                    *|
 \********************************************************************/
@@ -256,7 +257,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
   
    TTrans *t = (TTrans *)0, *tmp, *tC = (TTrans *)0, *tG = (TTrans *)0;
    TState *s, *sC, *sG;
-   TAutomata *tA;
+   TAutomata *tA, *tB;
    TAutomata *tOut;
 //   int node = already_done(p);
 //   if(node >= 0) return transition[node];
@@ -734,18 +735,70 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
     case EVENTUALLY_I: {
       t1= build_timed(p->lft);
 
-      //create predictor with 2m transition and 2m clock;
+      //create prediction generator with 2m transition and 2m clock;
       // TODO: how to add the clock reset beyond b
+      // TODO: add initial node for eventually automata
       float d = p->intvl[1] - p->intvl[0];
       short m = ceil(p->intvl[1]/d) + 1;
-      tC = emalloc_ttrans(2*m,2*m); 
-      sC = (TState *) tl_emalloc(sizeof(TState)*2*m);
-
-
-
-
       tG = emalloc_ttrans(2*m,2*m); 
       sG = (TState *) tl_emalloc(sizeof(TState)*2*m);
+
+      for (int i =0; i< m; i++){
+        // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
+        create_tstate(&sG[0+i*2], "Ev_Gen_1", (CGuard *) 0, (unsigned short *) 0, 0, 0, 1, NULL); //output 0 first stage
+
+        // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
+        create_tstate(&sG[1+i*2], "Ev_Gen_2", (CGuard *) 0, (unsigned short *) 0, 0, 1, 1, NULL); //output 1 in second stage
+      }
+      
+      tmp=t;
+      for (int i = 0; i < m; i++){
+        
+        // (2*i -> 2*i+1) :  * | yi (2i+1):= 0
+        cguard = (CGuard*) 0;
+        //reset which clock
+        clockId = (int *) malloc(sizeof(int)*1);
+        clockId[0] = cCount+i*2+1;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &sG[2*i],  &sG[2*i+1]);
+
+        tmp = tmp->nxt;
+
+        // (2*i+1 -> 2*i+2) :  yi>=b-a | x_i+1 (2i+2):= 0 for i!=m-1
+        // (2*m-1 -> 0) :  yi>=b-a | x_0 (0):= 0 for i = m-1
+        cguard = (CGuard*) malloc(sizeof(CGuard)); 
+        cguard->nType = PREDICATE;  
+        cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+        cguard->cCstr->cIdx = cCount+i*2+1;
+        cguard->cCstr->gType = GREATEREQUAL; 
+        cguard->cCstr->bndry = d;
+
+        if (i != m-1){
+          
+          //reset which clock
+          clockId = (int *) malloc(sizeof(int)*1);
+          clockId[0] = cCount+i*2+2;
+          // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+          create_ttrans(tmp, cguard, clockId, 1, &sG[2*i+1],  &sG[2*i+2]);
+
+          tmp = tmp->nxt;
+
+        } else {
+
+          //reset which clock
+          clockId = (int *) malloc(sizeof(int)*1);
+          clockId[0] = cCount;
+          // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+          create_ttrans(tmp, cguard, clockId, 1, &sG[2*i+1],  &sG[0]);
+
+          tmp = tmp->nxt;
+        }
+
+      }
+
+      // prediction checker
+      tC = emalloc_ttrans(2*m,2*m); 
+      sC = (TState *) tl_emalloc(sizeof(TState)*(2+3*m));
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*2);
       input[0] = 0b01;
@@ -891,11 +944,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       cCount++;
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
-      tA->tTrans = t;
-      tA->tStates = s;
-      tA->stateNum = 4;
+      tA->tTrans = tG;
+      tA->tStates = sG;
+      tA->stateNum = 2*m;
+      tB->tTrans = tC;
+      tB->tStates = sC;
+      tB->stateNum = 2+3*m;
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
-      merge_bin_timed(t1,t2,tA,tOut);
+      merge_event_timed(t1,tA,tB,tOut);
       // TODO: free tA, t1, t2
       tA = tOut;
       break;
@@ -1067,6 +1123,7 @@ void merge_inv(CGuard *target, CGuard *lft, CGuard *rgt, CGuard *top){
     target= top;
   }
 }
+
 /********************************************************************\
 |*             Linking the Timed Automata                           *|
 \********************************************************************/
