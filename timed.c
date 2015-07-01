@@ -1141,7 +1141,7 @@ void merge_event_timed(TAutomata *t1, TAutomata *tA, TAutomata *tB, TAutomata *o
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out){
   int numOfState = 0;
   const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum;
-  TState s[maxNumOfState];
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState);
   int t1StateNum[maxNumOfState+1];
   int t2StateNum[maxNumOfState];
   int tStateNum[maxNumOfState];
@@ -1284,7 +1284,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
 void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   int numOfState = 0;
   const int maxNumOfState = t1->stateNum* t->stateNum;
-  TState s[maxNumOfState];
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState);
   int t1StateNum[maxNumOfState+1];
   int tStateNum[maxNumOfState];
 
