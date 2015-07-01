@@ -947,9 +947,12 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->tTrans = tG;
       tA->tStates = sG;
       tA->stateNum = 2*m;
+
+      tB = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tB->tTrans = tC;
       tB->tStates = sC;
       tB->stateNum = 2+3*m;
+      
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       merge_event_timed(t1,tA,tB,tOut);
       // TODO: free tA, t1, t2
