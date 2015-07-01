@@ -80,6 +80,8 @@ int calculate_sym_size(Node *p) /* returns the number of predicates */
   case NEXT:
     return(calculate_sym_size(p->lft));
 #endif
+  case EVENTUALLY_I:
+    return(calculate_sym_size(p->lft));
   case NOT:
   case PREDICATE:
     return 1;
