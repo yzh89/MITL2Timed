@@ -88,10 +88,11 @@ int t_calculate_clock_size(Node *p) /* returns the number of clocks needed */
   case NEXT:
     return(t_calculate_clock_size(p->lft) + 2);
 #endif
-  case EVENTUALLY_I:
+  case EVENTUALLY_I:{
     float d = p->intvl[1] - p->intvl[0];
     short m = ceil(p->intvl[1]/d) + 1;
-    return(t_calculate_clock_size(p->lft) + 2*m + 1)
+    return(t_calculate_clock_size(p->lft) + 2*m + 1);
+  }
   case NOT:
   default:
     return 1;
@@ -820,7 +821,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
         cguard->cCstr->cIdx = cCount+2*i+1;
         cguard->cCstr->gType = LESS; 
-        cguard->cCstr->bndry = b;
+        cguard->cCstr->bndry = p->intvl[1];
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
         create_tstate(&sC[0+3*i], stateName, cguard, input, 1, NULLOUT, 1, NULL); //output * in s1 state
 
@@ -857,7 +858,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
         cguard->cCstr->cIdx = cCount+2*i+1;
         cguard->cCstr->gType = GREATEREQUAL; 
-        cguard->cCstr->bndry = b;
+        cguard->cCstr->bndry = p->intvl[1];
         //reset which clock
         clockId = (int *) 0;
         // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
@@ -872,7 +873,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
           cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
           cguard->cCstr->cIdx = cCount+i*2+2;
           cguard->cCstr->gType = GREATEREQUAL; 
-          cguard->cCstr->bndry = a;
+          cguard->cCstr->bndry = p->intvl[0];
           //reset which clock
           clockId = (int *) 0;
           // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
@@ -886,7 +887,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
           cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
           cguard->cCstr->cIdx = cCount;
           cguard->cCstr->gType = GREATEREQUAL; 
-          cguard->cCstr->bndry = a;
+          cguard->cCstr->bndry = p->intvl[0];
           //reset which clock
           clockId = (int *) 0;
           // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
