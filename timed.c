@@ -51,6 +51,7 @@ int t_sym_size, t_sym_id = 0, t_node_size, t_clock_size;
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out);
 void merge_timed(TAutomata *t1,TAutomata *t, TAutomata *out);
 void merge_event_timed(TAutomata *, TAutomata *, TAutomata *, TAutomata *);
+void print_timed(TAutomata *t);
 /********************************************************************\
 |*              Generation of the timed automata                    *|
 \********************************************************************/
@@ -913,6 +914,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         clockId = (int *) 0;
         // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
         create_ttrans(tmp, cguard, clockId, 0, &sC[3*i+2],  &sC[3*i+1]);
+
+        tmp = tmp->nxt;
       }
 
       cCount += 2*m + 1;
@@ -925,9 +928,10 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tB = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tB->tTrans = tC;
       tB->tStates = sC;
-      tB->stateNum = 2+3*m;
+      tB->stateNum = 3*m;
       
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
+
       merge_event_timed(t1,tA,tB,tOut);
       // TODO: free tA, tB, t1
       tA = tOut;
@@ -1135,9 +1139,46 @@ void merge_ttrans(TTrans *t1, TTrans *t2, TTrans *tt, TTrans *tOut, TState *from
   tOut->to = to;
 }
 
-void merge_event_timed(TAutomata *t1, TAutomata *tA, TAutomata *tB, TAutomata *out){
+void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *out){
+  // TODO: merge the input automata with the checker and generate new output from generator
+  merge_timed(t1, tA, out);
+
+  const int numOfState = out->stateNum + tB->stateNum;
+
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*numOfState);
+
+  // copy state in out->state
+  // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
+  for (int i=0; i < out->stateNum; i++){
+    create_tstate(&s[i], out->tStates[i].tstateId, out->tStates[i].inv, out->tStates[i].input, out->tStates[i].inputNum, out->tStates[i].output, out->tStates[i].buchi, NULL);
+  }
+
+  for (int i=0; i< tB->stateNum; i++){
+    create_tstate(&s[out->stateNum+i], tB->tStates[i].tstateId, tB->tStates[i].inv, tB->tStates[i].input, tB->tStates[i].inputNum, tB->tStates[i].output, tB->tStates[i].buchi, NULL);
+  }
+
+  TTrans *tt = out->tTrans;
+  while (tt->nxt) {
+    tt->to = &s[tt->to-&out->tStates[0]];
+    tt->from = &s[tt->from-&out->tStates[0]];
+    tt = tt->nxt;
+  }
+  tt->to = &s[tt->to-&out->tStates[0]];
+  tt->from = &s[tt->from-&out->tStates[0]];
+  tt->nxt = tB->tTrans;
+  tt = tt->nxt;
+  while (tt->nxt) {
+    tt->to = &s[out->stateNum + tt->to - &tB->tStates[0]];
+    tt->from = &s[out->stateNum + tt->from - &tB->tStates[0]];
+    tt = tt->nxt;
+  }
+  tt->to = &s[out->stateNum + tt->to - &tB->tStates[0]];
+  tt->from = &s[out->stateNum + tt->from - &tB->tStates[0]];
+
+  out->tStates = s;
+  out->stateNum = numOfState;
 }
-// TODO: Add Eventually I and V 
+
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out){
   int numOfState = 0;
   const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum;
@@ -1273,6 +1314,10 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     tt=tt->nxt;
   }
 
+  free_ttrans(t1->tTrans,1);
+  free_ttrans(t2->tTrans,1);
+  free_ttrans(t->tTrans,1);
+
   //create return Automata out
   // out = (TAutomata *) malloc(sizeof(TAutomata));
   out->stateNum = numOfState;
@@ -1374,8 +1419,9 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 
             if (t1Match) { // if both is not NULL
               // merge the transitions t1Match tt
-              merge_ttrans(t1Match, NULL, tt, tmp, &s[i], &s[j]);
               tmp->nxt = (TTrans *) emalloc_ttrans(1,1);
+              merge_ttrans(t1Match, NULL, tt, tmp->nxt, &s[i], &s[j]);
+              
               tmp = tmp->nxt;
             }else{
               printf("ERROR! Problem in merging transitions! \n");
@@ -1393,7 +1439,10 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   // out = (TAutomata *) malloc(sizeof(TAutomata));
   out->stateNum = numOfState;
   out->tStates = s;
-  out->tTrans = tOut;
+  out->tTrans = tOut->nxt;
+
+  free_ttrans(t1->tTrans,1);
+  free_ttrans(t->tTrans,1);
 }
 
 /********************************************************************\
@@ -1477,6 +1526,7 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   tAutomata = build_timed(p); /* generates the alternating automaton */
 
   print_timed(tAutomata);
+  free_all_ttrans();
 
 //   if(tl_verbose) {
 //     fprintf(tl_out, "\nAlternating automaton before simplification\n");
