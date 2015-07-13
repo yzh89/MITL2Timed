@@ -754,8 +754,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         
         stateName= (char *) malloc (sizeof(char)*(strlen("Ev_Gen_S"))+3);
         sprintf(stateName, "Ev_Gen_S%d", 2*i+1);
-        create_tstate(&sG[0+i*2], stateName, (CGuard *) 0, (unsigned short *) 0, 0, 0, 1, NULL); //output 0 first stage
 
+        create_tstate(&sG[0+i*2], stateName, (CGuard *) 0, (unsigned short *) 0, 0, 0, 1, NULL); //output 0 first stage
         stateName= (char *) malloc (sizeof(char)*(strlen("Ev_Gen_S"))+3);
         sprintf(stateName, "Ev_Gen_S%d", 2*i+2);
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
@@ -1140,7 +1140,7 @@ void merge_ttrans(TTrans *t1, TTrans *t2, TTrans *tt, TTrans *tOut, TState *from
 }
 
 void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *out){
-  // TODO: merge the input automata with the checker and generate new output from generator
+  // merge the input automata with the checker and generate new output from generator
   merge_timed(t1, tA, out);
 
   const int numOfState = out->stateNum + tB->stateNum;
@@ -1155,6 +1155,10 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 
   for (int i=0; i< tB->stateNum; i++){
     create_tstate(&s[out->stateNum+i], tB->tStates[i].tstateId, tB->tStates[i].inv, tB->tStates[i].input, tB->tStates[i].inputNum, tB->tStates[i].output, tB->tStates[i].buchi, NULL);
+    if (s[out->stateNum+i].output != NULLOUT){
+      dup_set(t1->tStates[0].sym, 3);
+      s[out->stateNum+i].sym = dup_set(t1->tStates[0].sym, 3);
+    }
   }
 
   TTrans *tt = out->tTrans;
@@ -1177,9 +1181,12 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 
   out->tStates = s;
   out->stateNum = numOfState;
+
 }
 
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out){
+  // TODO: add symbols for merged
+  // TODO: check if the output has NULLOUT and put it back in the result states
   int numOfState = 0;
   const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum;
   TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState);
@@ -1314,10 +1321,6 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     tt=tt->nxt;
   }
 
-  free_ttrans(t1->tTrans,1);
-  free_ttrans(t2->tTrans,1);
-  free_ttrans(t->tTrans,1);
-
   //create return Automata out
   // out = (TAutomata *) malloc(sizeof(TAutomata));
   out->stateNum = numOfState;
@@ -1327,6 +1330,8 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
 }
 
 void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
+  // TODO: add symbols for merged
+  // TODO: check if the output has NULLOUT and put it back in the result states
   int numOfState = 0;
   const int maxNumOfState = t1->stateNum* t->stateNum;
   TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState);
@@ -1440,9 +1445,6 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   out->stateNum = numOfState;
   out->tStates = s;
   out->tTrans = tOut->nxt;
-
-  free_ttrans(t1->tTrans,1);
-  free_ttrans(t->tTrans,1);
 }
 
 /********************************************************************\
@@ -1482,6 +1484,12 @@ void print_timed(TAutomata *t) /* dumps the alternating automaton */
       fprintf(tl_out,"%o, ", t->tStates[i].input[j]);
     }
     fprintf(tl_out,") output:( %i) \n", t->tStates[i].output);
+
+    if (t->tStates[i].sym != NULL){
+      fprintf(tl_out, "   symbols: ");
+      print_set(t->tStates[i].sym,3);
+      fprintf(tl_out, "\n");
+    }
     printCGuard(t->tStates[i].inv);
   }
 
@@ -1526,7 +1534,6 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   tAutomata = build_timed(p); /* generates the alternating automaton */
 
   print_timed(tAutomata);
-  free_all_ttrans();
 
 //   if(tl_verbose) {
 //     fprintf(tl_out, "\nAlternating automaton before simplification\n");
