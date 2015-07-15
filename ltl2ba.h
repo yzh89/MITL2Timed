@@ -309,6 +309,8 @@ typedef struct TAutomata{
   TTrans* tTrans;
   TState* tStates;
   int stateNum;
+  int eventNum;
+  TTrans* tEvents; //start of the tEvents transitions
 } TAutomata;
 
   float *tl_GetIntvl(float *);

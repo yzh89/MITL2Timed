@@ -285,6 +285,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->tTrans = (TTrans *)0;
       tA->tStates = s;
       tA->stateNum = 1;
+      tA->eventNum = 0;
+      tA->tEvents = NULL;
       break;
 
     case FALSE:
@@ -296,6 +298,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->tTrans = (TTrans *)0;
       tA->tStates = s;
       tA->stateNum = 1;
+      tA->eventNum = 0;
+      tA->tEvents = NULL;
       break;
 
     case PREDICATE:
@@ -351,6 +355,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->tTrans = t;
       tA->tStates = s;
       tA->stateNum = 2;
+      tA->eventNum = 0;
+      tA->tEvents = NULL;
       break;
 
     case NOT:
@@ -1147,39 +1153,44 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 
   TState *s = (TState *) tl_emalloc(sizeof(TState)*numOfState);
 
-  // copy state in out->state
-  // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-  for (int i=0; i < out->stateNum; i++){
-    create_tstate(&s[i], out->tStates[i].tstateId, out->tStates[i].inv, out->tStates[i].input, out->tStates[i].inputNum, out->tStates[i].output, out->tStates[i].buchi, NULL);
-  }
-
+  // copy state in tB and tOut->state
   for (int i=0; i< tB->stateNum; i++){
-    create_tstate(&s[out->stateNum+i], tB->tStates[i].tstateId, tB->tStates[i].inv, tB->tStates[i].input, tB->tStates[i].inputNum, tB->tStates[i].output, tB->tStates[i].buchi, NULL);
-    if (s[out->stateNum+i].output != NULLOUT){
+    create_tstate(&s[i], tB->tStates[i].tstateId, tB->tStates[i].inv, tB->tStates[i].input, tB->tStates[i].inputNum, tB->tStates[i].output, tB->tStates[i].buchi, NULL);
+    if (s[i].output != NULLOUT){
       dup_set(t1->tStates[0].sym, 3);
-      s[out->stateNum+i].sym = dup_set(t1->tStates[0].sym, 3);
+      s[i].sym = dup_set(t1->tStates[0].sym, 3);
     }
   }
 
-  TTrans *tt = out->tTrans;
+
+  // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
+  for (int i=0; i < out->stateNum; i++){
+    create_tstate(&s[tB->stateNum+i], out->tStates[i].tstateId, out->tStates[i].inv, out->tStates[i].input, out->tStates[i].inputNum, out->tStates[i].output, out->tStates[i].buchi, NULL);
+  }
+
+  TTrans *tt = tB->tTrans;
   while (tt->nxt) {
-    tt->to = &s[tt->to-&out->tStates[0]];
-    tt->from = &s[tt->from-&out->tStates[0]];
+    tt->to = &s[tt->to - &tB->tStates[0]];
+    tt->from = &s[tt->from - &tB->tStates[0]];
     tt = tt->nxt;
   }
-  tt->to = &s[tt->to-&out->tStates[0]];
-  tt->from = &s[tt->from-&out->tStates[0]];
-  tt->nxt = tB->tTrans;
+  tt->to = &s[tt->to - &tB->tStates[0]];
+  tt->from = &s[tt->from - &tB->tStates[0]];
+
+  tt->nxt = out->tTrans;
+  out->tEvents = tt->nxt;
   tt = tt->nxt;
   while (tt->nxt) {
-    tt->to = &s[out->stateNum + tt->to - &tB->tStates[0]];
-    tt->from = &s[out->stateNum + tt->from - &tB->tStates[0]];
+    tt->to = &s[tB->stateNum + tt->to-&out->tStates[0]];
+    tt->from = &s[tB->stateNum + tt->from-&out->tStates[0]];
     tt = tt->nxt;
   }
-  tt->to = &s[out->stateNum + tt->to - &tB->tStates[0]];
-  tt->from = &s[out->stateNum + tt->from - &tB->tStates[0]];
+  tt->to = &s[tB->stateNum + tt->to-&out->tStates[0]];
+  tt->from = &s[tB->stateNum + tt->from-&out->tStates[0]];
 
+  out->tTrans = tB->tTrans;
   out->tStates = s;
+  out->eventNum = out->stateNum;
   out->stateNum = numOfState;
 
 }
@@ -1189,27 +1200,44 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
   // TODO: check if the output has NULLOUT and put it back in the result states
   int numOfState = 0;
   const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum;
-  TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState);
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState + t1->eventNum + t2->eventNum));
   int t1StateNum[maxNumOfState+1];
   int t2StateNum[maxNumOfState];
   int tStateNum[maxNumOfState];
+  int tEventStateNum[t1->eventNum + t2->eventNum];
 
   int matches = 0;
+  int events = 0;
 
   for (int i=0; i<t->stateNum; i++){  
     
     for (int j=0; j< t->tStates[i].inputNum; j++) {
       for (int k=0; k< t1->stateNum; k++){
-        if (t1->tStates[k].output == t->tStates[i].input[j] >> 1) {
+        if (t1->tStates[k].output == t->tStates[i].input[j] >> 1 && t1->tStates[k].output!= NULLOUT ) {
           //make product state if the input is the same as the output
           t1StateNum[matches] = k;
           for (int l=0; l< t2->stateNum; l++){
-            if (t2->tStates[l].output == (t->tStates[i].input[j] & (unsigned short) 0x01)){
+            if (t2->tStates[l].output == (t->tStates[i].input[j] & (unsigned short) 0x01) && t2->tStates[l].output!= NULLOUT){
               tStateNum[matches]=i;
               t2StateNum[matches++] = l;
               t1StateNum[matches] = k;
             }
           }
+        }else if(t1->tStates[k].output== NULLOUT && events == 0){ // scan only one time for testing NULLOUT of t2
+          for (int l=0; l< t2->stateNum; l++){
+            if (t2->tStates[l].output== NULLOUT){ 
+              tEventStateNum[events++] = l;
+            }
+          }
+          tEventStateNum[events++] = k;
+        }else if (events == 0){
+          for (int l=0; l< t2->stateNum; l++){
+            if (t2->tStates[l].output== NULLOUT){ 
+              tEventStateNum[events++] = l;
+            }
+          }
+        }else if(t1->tStates[k].output== NULLOUT && events < t1->eventNum + t2->eventNum){
+          tEventStateNum[events++] = k;
         }
       }
     }
@@ -1227,7 +1255,6 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
       s[k].inv = (CGuard*) malloc(sizeof(CGuard)); 
       merge_inv(s[k].inv, t1->tStates[t1StateNum[k]].inv,t2->tStates[t2StateNum[k]].inv,t->tStates[i].inv);
 
-
       // merge inputs
       s[k].inputNum=0;
       s[k].input= (unsigned short *) malloc(sizeof(unsigned short)*t1->tStates[t1StateNum[k]].inputNum*t2->tStates[t2StateNum[k]].inputNum);
@@ -1238,9 +1265,27 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
       }
 
       // merge output
-      s[k].output = t->tStates[i].output;      
+      s[k].output = t->tStates[i].output;
     }
     numOfState = matches;
+  }
+
+  for (int i=0; i<events; i++){
+    if (i < t2->eventNum){
+      int inputNum=0;
+      s[numOfState+i].input= (unsigned short *) malloc(sizeof(unsigned short)*t2->tStates[tEventStateNum[i]].inputNum);
+      for (int l=0; l< t2->tStates[tEventStateNum[i]].inputNum; l++){
+        s[numOfState+i].input[inputNum++] = t2->tStates[tEventStateNum[i]].input[l];
+      }
+      create_tstate(&s[numOfState+i], t2->tStates[tEventStateNum[i]].tstateId, t2->tStates[tEventStateNum[i]].inv, s[numOfState+i].input, t2->tStates[tEventStateNum[i]].inputNum, t2->tStates[tEventStateNum[i]].output, t2->tStates[tEventStateNum[i]].buchi, NULL);
+    }else{
+      int inputNum=0;
+      s[numOfState+i].input= (unsigned short *) malloc(sizeof(unsigned short)*t1->tStates[tEventStateNum[i]].inputNum);
+      for (int l=0; l< t1->tStates[tEventStateNum[i]].inputNum; l++){
+        s[numOfState+i].input[inputNum++] = t1->tStates[tEventStateNum[i]].input[l];
+      }
+      create_tstate(&s[numOfState+i], t1->tStates[tEventStateNum[i]].tstateId, t1->tStates[tEventStateNum[i]].inv, s[numOfState+i].input, t1->tStates[tEventStateNum[i]].inputNum, t1->tStates[tEventStateNum[i]].output, t1->tStates[tEventStateNum[i]].buchi, NULL);
+    }
   }
 
   //merge transitions
@@ -1273,7 +1318,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
       if (tStateNum[i] == tStateFrom){
         for (int j=0; j<numOfState; j++){
           if (tStateNum[j] == tStateTo){
-            // i, j are the indices of one transitions
+            // i, j are the indexes of one transitions
 
             //pointer iterate through the linked list to find the transition
             TTrans* t1Match = t1->tTrans;
@@ -1310,7 +1355,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
               
               tmp = tmp->nxt;
             }else{
-              printf("ERROR! Problem in merging transitions! \n");
+              printf("Cannot merge transition of the following: \n t1 %s -> %s \n t2 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t2->tStates[t2StateNum[i]].tstateId, t2->tStates[t2StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
             }
 
           }
@@ -1321,11 +1366,36 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     tt=tt->nxt;
   }
 
+  tt = tOut->nxt;
+  while (tt->nxt) {
+    tt = tt->nxt;
+  }
+
+  if (t2->tEvents != NULL){
+    tt->nxt = t2->tEvents;
+    out->tEvents = tt->nxt;
+    while (tt->nxt) {
+      tt = tt->nxt;
+      tt->to = &s[numOfState + tt->to - &t2->tStates[0] - tEventStateNum[0]];
+      tt->from = &s[numOfState + tt->from - &t2->tStates[0] - tEventStateNum[0]];
+    }
+  }
+
+  if (t1->tEvents != NULL){
+    tt->nxt = t1->tEvents;
+    out->tEvents = tt->nxt;
+    while (tt->nxt) {
+      tt = tt->nxt;
+      tt->to = &s[numOfState + t2->eventNum + tt->to - &t1->tStates[0] - tEventStateNum[t2->eventNum]];
+      tt->from = &s[numOfState + t2->eventNum + tt->from - &t1->tStates[0] - tEventStateNum[t2->eventNum]];
+    }
+  }
   //create return Automata out
   // out = (TAutomata *) malloc(sizeof(TAutomata));
-  out->stateNum = numOfState;
+  out->stateNum = numOfState + events;
   out->tStates = s;
   out->tTrans = tOut->nxt;
+  out->eventNum = events;
 
 }
 

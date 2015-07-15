@@ -11,8 +11,13 @@
 		[
 			"-I${folder:${project_path:}}"
 		],
+		// "cc_include_options":
+		// [
+		// 	"-I${folder:${project_path:}}",
+		// 	"-I/opt/ros/indigo/include/"
+		// ],
 		"sublimegdb_commandline": "gdb --interpreter=mi ./mitl2ta",
-		"sublimegdb_arguments": "-f \"a U b\"",
+		"sublimegdb_arguments": "-f \"(<>_[1.0,3.0] b) && a\"",
 		"sublimegdb_workingdir": "."
 	}
 }
