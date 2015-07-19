@@ -52,6 +52,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
 void merge_timed(TAutomata *t1,TAutomata *t, TAutomata *out);
 void merge_event_timed(TAutomata *, TAutomata *, TAutomata *, TAutomata *);
 void print_timed(TAutomata *t);
+void print_sub_formula(Node *n, char* subform);
 /********************************************************************\
 |*              Generation of the timed automata                    *|
 \********************************************************************/
@@ -101,25 +102,27 @@ int t_calculate_clock_size(Node *p) /* returns the number of clocks needed */
   }
 }
 
-// int calculate_sym_size(Node *p) /* returns the number of predicates */
-// {
-//   switch(p->ntyp) {
-//   case AND:
-//   case OR:
-//   case U_OPER:
-//   case V_OPER:
-//     return(calculate_sym_size(p->lft) + calculate_sym_size(p->rgt));
-// #ifdef NXT
-//   case NEXT:
-//     return(calculate_sym_size(p->lft));
-// #endif
-//   case NOT:
-//   case PREDICATE:
-//     return 1;
-//   default:
-//     return 0;
-//   }
-// }
+int t_calculate_sym_size(Node *p) /* returns the number of predicates */
+{
+  switch(p->ntyp) {
+  case AND:
+  case OR:
+  case U_OPER:
+  case V_OPER:
+    return(calculate_sym_size(p->lft) + calculate_sym_size(p->rgt));
+#ifdef NXT
+  case NEXT:
+    return(calculate_sym_size(p->lft));
+#endif
+  case EVENTUALLY_I:
+    return(calculate_sym_size(p->lft) + 1);
+  case NOT:
+  case PREDICATE:
+    return 1;
+  default:
+    return 0;
+  }
+}
 
 // During the input output merge duplicate a ttrans (1)
 // TTrans *dup_ttrans(TTrans *trans)   
@@ -170,7 +173,8 @@ int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
   for(i=0; i<t_sym_id; i++) 
     if (!strcmp(s, t_sym_table[i])) 
       return i;
-  t_sym_table[t_sym_id] = s;
+  t_sym_table[t_sym_id] = (char *) malloc(sizeof(char)*strlen(s));
+  strcpy(t_sym_table[t_sym_id], s);
   return t_sym_id++;
 }
 
@@ -238,9 +242,22 @@ void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input
   s->inputNum = inputNum;
   s->output = output;  //output true
   if (p){
-    s->sym = new_set(3); //3 is symolic set. sym_set_size is used to determine the allocation size
-    clear_set(s->sym, 3);
-    add_set(s->sym, t_get_sym_id(p->sym->name));
+    if (p->lft){
+      char buff[40];
+      buff[0] = '\0';
+      print_sub_formula(p, buff);
+      s->tstateId = (char *) realloc(s->tstateId, sizeof(char)*(strlen(s->tstateId) +strlen(buff)+3));
+      strcat(s->tstateId, ": ");
+      strcat(s->tstateId, buff);
+      s->sym = new_set(3);
+      clear_set(s->sym, 3);
+      add_set(s->sym, t_get_sym_id(buff));
+      if (output ==1) s->input[0] = 1 << t_get_sym_id(buff);
+    }else{
+      s->sym = new_set(3); //3 is symolic set. sym_set_size is used to determine the allocation size
+      clear_set(s->sym, 3);
+      add_set(s->sym, t_get_sym_id(p->sym->name));
+    }
   }
 }
 
@@ -306,15 +323,15 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       t = emalloc_ttrans(2,1);  //2 states and 1 clock
       s = (TState *) tl_emalloc(sizeof(TState)*2);
 
-      stateName= (char *) malloc (sizeof(char)*(strlen(p->sym->name))+8);
-      sprintf(stateName, "pred : %s", p->sym->name);
+      stateName= (char *) malloc (sizeof(char)*(strlen(p->sym->name))+4);
+      sprintf(stateName, "p(%s)", p->sym->name);
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 1 << t_get_sym_id(p->sym->name);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
       create_tstate(s, stateName, (CGuard *) 0, input, 1, 1, 1, p); //output true when p is true
 
-      stateName= (char *) malloc (sizeof(char)*(strlen(p->sym->name))+10);
-      sprintf(stateName, "! pred : %s", p->sym->name);
+      stateName= (char *) malloc (sizeof(char)*(strlen(p->sym->name))+5);
+      sprintf(stateName, "!p(%s)", p->sym->name);
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
@@ -579,7 +596,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->stateNum = 4;
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       merge_bin_timed(t1,t2,tA,tOut);
-      // TODO: free tA, t1, t2
+      // TODO: free tA, t1, t2 (9)
       tA = tOut;
       break;
 
@@ -740,7 +757,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->stateNum = 4;
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       merge_bin_timed(t1,t2,tA,tOut);
-      // TODO: free tA, t1, t2
+      // TODO: free tA, t1, t2 (9)
       tA = tOut;
       break;
 
@@ -748,8 +765,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       t1= build_timed(p->lft);
 
       //create prediction generator with 2m transition and 2m clock;
-      // TODO: how to add the clock reset beyond b
-      // TODO: add initial node for eventually automata
+      // TODO: how to add the clock reset beyond b (3)
+      // TODO: add initial node for eventually automata (3)
       float d = p->intvl[1] - p->intvl[0];
       short m = ceil(p->intvl[1]/d) + 1;
       tG = emalloc_ttrans(2*m,1); 
@@ -758,14 +775,17 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       for (int i =0; i< m; i++){
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
         
-        stateName= (char *) malloc (sizeof(char)*(strlen("Ev_Gen_S"))+3);
-        sprintf(stateName, "Ev_Gen_S%d", 2*i+1);
+        stateName= (char *) malloc (sizeof(char)*(strlen("Gen_"))+3);
+        sprintf(stateName, "Gen_%d", 2*i+1);
 
-        create_tstate(&sG[0+i*2], stateName, (CGuard *) 0, (unsigned short *) 0, 0, 0, 1, NULL); //output 0 first stage
-        stateName= (char *) malloc (sizeof(char)*(strlen("Ev_Gen_S"))+3);
-        sprintf(stateName, "Ev_Gen_S%d", 2*i+2);
+        input = (unsigned short *) malloc(sizeof(unsigned short)*1);
+        create_tstate(&sG[0+i*2], stateName, (CGuard *) 0, input, 1, 0, 1, p); //output 0 first stage
+
+        stateName= (char *) malloc (sizeof(char)*(strlen("Gen_"))+3);
+        sprintf(stateName, "Gen_%d", 2*i+2);
+        input = (unsigned short *) malloc(sizeof(unsigned short)*1);    
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-        create_tstate(&sG[1+i*2], stateName, (CGuard *) 0, (unsigned short *) 0, 0, 1, 1, NULL); //output 1 in second stage
+        create_tstate(&sG[1+i*2], stateName, (CGuard *) 0, input, 1, 1, 1, p); //output 1 in second stage
       }
       
       tmp=tG;
@@ -819,8 +839,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
       for (int i = 0; i < m; i++){
         // s1 (!p: *) -- y1 < b
-        stateName= (char *) malloc (sizeof(char)*(strlen("Ev_CHK_S"))+3);
-        sprintf(stateName, "Ev_CHK_S%d", 3*i+1);
+        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_"))+3);
+        sprintf(stateName, "CHK_%d", 3*i+1);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 0;
         cguard = (CGuard*) malloc(sizeof(CGuard)); 
@@ -830,19 +850,19 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->cCstr->gType = LESS; 
         cguard->cCstr->bndry = p->intvl[1];
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-        create_tstate(&sC[0+3*i], stateName, cguard, input, 1, NULLOUT, 1, NULL); //output * in s1 state
+        create_tstate(&sC[0+3*i], stateName, cguard, input, 1, NULLOUT, 1, p); //output * in s1 state
 
         //s2 (p: *) -- *
-        stateName= (char *) malloc (sizeof(char)*(strlen("Ev_CHK_S"))+3);
-        sprintf(stateName, "Ev_CHK_S%d", 3*i+2);
+        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_"))+3);
+        sprintf(stateName, "CHK_%d", 3*i+2);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 1;
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-        create_tstate(&sC[1+3*i], stateName, (CGuard *) 0, input, 1, NULLOUT, 1, NULL); //output 0 in s2 state
+        create_tstate(&sC[1+3*i], stateName, (CGuard *) 0, input, 1, NULLOUT, 1, p); //output 0 in s2 state
 
         //s3 (!p: *) -- z < d
-        stateName= (char *) malloc (sizeof(char)*(strlen("Ev_CHK_S"))+3);
-        sprintf(stateName, "Ev_CHK_S%d", 3*i+3);
+        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_"))+3);
+        sprintf(stateName, "CHK_%d", 3*i+3);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 0;
         cguard = (CGuard*) malloc(sizeof(CGuard)); 
@@ -852,7 +872,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->cCstr->gType = LESS; 
         cguard->cCstr->bndry = d;
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-        create_tstate(&sC[2+3*i], stateName, cguard, input, 1, NULLOUT, 1, NULL); //output * in s3 state
+        create_tstate(&sC[2+3*i], stateName, cguard, input, 1, NULLOUT, 1, p); //output * in s3 state
       }
 
       tmp=tC;
@@ -939,7 +959,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
 
       merge_event_timed(t1,tA,tB,tOut);
-      // TODO: free tA, tB, t1
+      // TODO: free tA, tB, t1 (9)
       tA = tOut;
       break;
     }
@@ -1002,7 +1022,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       merge_bin_timed(t1,t2,tA,tOut);
-      // TODO: free tA, t1, t2
+      // TODO: free tA, t1, t2 (9)
       tA = tOut;
       break;
 
@@ -1076,7 +1096,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
   return(tA);
 }
 
-// TODO: simplify invariants if they are looking at same clock
+// TODO: simplify invariants if they are looking at same clock (4)
 void merge_inv(CGuard *target, CGuard *lft, CGuard *rgt, CGuard *top){
   if (lft && rgt && top) {
     target->nType = AND;
@@ -1145,7 +1165,84 @@ void merge_ttrans(TTrans *t1, TTrans *t2, TTrans *tt, TTrans *tOut, TState *from
   tOut->to = to;
 }
 
+void print_sub_formula(Node *n, char* subform) {
+  if (!n) return;
+  char buff[40];
+  buff[0] = '\0';
+
+  switch(n->ntyp) {
+  case OR:  
+    strcat(subform, "("); 
+    print_sub_formula(n->lft, subform);
+    strcat(subform, " || "); 
+    print_sub_formula(n->rgt, subform);
+    strcat(subform, ")");
+    break;
+  case AND:
+    strcat(subform, "(");
+    print_sub_formula(n->lft, subform);
+    strcat(subform, " && ");
+    print_sub_formula(n->rgt, subform);
+    strcat(subform, ")");
+    break;
+  case U_OPER:
+    strcat(subform, "(");
+    print_sub_formula(n->lft, subform);
+    strcat(subform, " U ");
+    print_sub_formula(n->rgt, subform);
+    strcat(subform, ")");
+    break;
+  case V_OPER:
+    strcat(subform, "(");
+    print_sub_formula(n->lft, subform);
+    strcat(subform, " V ");
+    print_sub_formula(n->rgt, subform);
+    strcat(subform, ")");
+    break;
+#ifdef NXT
+  case NEXT:
+    strcat(subform, "X");
+    strcat(subform, " (");
+    print_sub_formula(n->lft, subform);
+    strcat(subform, ")");
+    break;
+#endif
+// #ifdef TIMED
+  case EVENTUALLY_I:
+    strcat(subform, "<>_I");
+    strcat(subform, " (");
+    print_sub_formula(n->lft, subform);
+    strcat(subform, ")");
+    break;
+// #endif
+  case NOT:
+    strcat(subform, "!");
+    strcat(subform, " (");
+    print_sub_formula(n->lft, subform);
+    strcat(subform, ")");
+    break;
+  case FALSE:
+    strcat(subform, "false");
+    break;
+  case TRUE:
+    strcat(subform, "true");
+    break;
+  case PREDICATE:
+    sprintf(buff, "%s", n->sym->name);
+    strcat(subform, buff);
+    break;
+  case -1:
+    strcat(subform, " D ");
+    break;
+  default:
+    printf("Unknown token: ");
+    tl_explain(n->ntyp);
+    break;
+  }
+}
+
 void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *out){
+  // tB is the generator and tA is the checker. t1 is the subformula automata
   // merge the input automata with the checker and generate new output from generator
   merge_timed(t1, tA, out);
 
@@ -1153,12 +1250,11 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 
   TState *s = (TState *) tl_emalloc(sizeof(TState)*numOfState);
 
-  // copy state in tB and tOut->state
+  // copy state in tB to tOut->state
   for (int i=0; i< tB->stateNum; i++){
     create_tstate(&s[i], tB->tStates[i].tstateId, tB->tStates[i].inv, tB->tStates[i].input, tB->tStates[i].inputNum, tB->tStates[i].output, tB->tStates[i].buchi, NULL);
     if (s[i].output != NULLOUT){
-      dup_set(t1->tStates[0].sym, 3);
-      s[i].sym = dup_set(t1->tStates[0].sym, 3);
+      s[i].sym = dup_set(tB->tStates[0].sym, 3);
     }
   }
 
@@ -1166,6 +1262,14 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
   // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
   for (int i=0; i < out->stateNum; i++){
     create_tstate(&s[tB->stateNum+i], out->tStates[i].tstateId, out->tStates[i].inv, out->tStates[i].input, out->tStates[i].inputNum, out->tStates[i].output, out->tStates[i].buchi, NULL);
+    if (s[tB->stateNum+i].output == NULLOUT && out->tStates[i].sym == NULL){
+      s[tB->stateNum+i].sym = dup_set(t1->tStates[0].sym, 3);
+      // s[tB->stateNum+i].sym = new_set(3);
+      // clear_set(s[tB->stateNum+i].sym , 3);
+      // do_merge_sets(s[tB->stateNum+i].sym , tA->tStates[0].sym, t1->tStates[0].sym, 3);
+    }else if (s[tB->stateNum+i].output == NULLOUT){
+       s[tB->stateNum+i].sym = dup_set(out->tStates[i].sym, 3); 
+    }
   }
 
   TTrans *tt = tB->tTrans;
@@ -1196,8 +1300,6 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 }
 
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out){
-  // TODO: add symbols for merged
-  // TODO: check if the output has NULLOUT and put it back in the result states
   int numOfState = 0;
   const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum;
   TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState + t1->eventNum + t2->eventNum));
@@ -1270,6 +1372,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     numOfState = matches;
   }
 
+  //add previous ended state back to the merged states
   for (int i=0; i<events; i++){
     if (i < t2->eventNum){
       int inputNum=0;
@@ -1278,6 +1381,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
         s[numOfState+i].input[inputNum++] = t2->tStates[tEventStateNum[i]].input[l];
       }
       create_tstate(&s[numOfState+i], t2->tStates[tEventStateNum[i]].tstateId, t2->tStates[tEventStateNum[i]].inv, s[numOfState+i].input, t2->tStates[tEventStateNum[i]].inputNum, t2->tStates[tEventStateNum[i]].output, t2->tStates[tEventStateNum[i]].buchi, NULL);
+      s[numOfState+i].sym = dup_set(t2->tStates[tEventStateNum[i]].sym ,3);
     }else{
       int inputNum=0;
       s[numOfState+i].input= (unsigned short *) malloc(sizeof(unsigned short)*t1->tStates[tEventStateNum[i]].inputNum);
@@ -1285,6 +1389,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
         s[numOfState+i].input[inputNum++] = t1->tStates[tEventStateNum[i]].input[l];
       }
       create_tstate(&s[numOfState+i], t1->tStates[tEventStateNum[i]].tstateId, t1->tStates[tEventStateNum[i]].inv, s[numOfState+i].input, t1->tStates[tEventStateNum[i]].inputNum, t1->tStates[tEventStateNum[i]].output, t1->tStates[tEventStateNum[i]].buchi, NULL);
+      s[numOfState+i].sym = dup_set(t1->tStates[tEventStateNum[i]].sym ,3);
     }
   }
 
@@ -1366,11 +1471,11 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     tt=tt->nxt;
   }
 
+  //add previous ended transition back to the merged automata
   tt = tOut->nxt;
   while (tt->nxt) {
     tt = tt->nxt;
   }
-
   if (t2->tEvents != NULL){
     tt->nxt = t2->tEvents;
     out->tEvents = tt->nxt;
@@ -1400,24 +1505,26 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
 }
 
 void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
-  // TODO: add symbols for merged
-  // TODO: check if the output has NULLOUT and put it back in the result states
   int numOfState = 0;
   const int maxNumOfState = t1->stateNum* t->stateNum;
-  TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState);
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState+t1->eventNum);
   int t1StateNum[maxNumOfState+1];
   int tStateNum[maxNumOfState];
+  int tEventStateNum[t1->eventNum];
 
   int matches = 0;
+  int events = 0;
 
   for (int i=0; i<t->stateNum; i++){  
     
     for (int j=0; j< t->tStates[i].inputNum; j++) {
       for (int k=0; k< t1->stateNum; k++){
-        if (t1->tStates[k].output == t->tStates[i].input[j]) {
+        if (t1->tStates[k].output == t->tStates[i].input[j] && t1->tStates[k].output!= NULLOUT ) {
           //make product state if the input is the same as the output
           t1StateNum[matches] = k;
           tStateNum[matches++]=i;
+        }else if(t1->tStates[k].output== NULLOUT && events < t1->eventNum){
+          tEventStateNum[events++] = k;
         }
       }
     }
@@ -1445,6 +1552,19 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
     }
     numOfState = matches;
   }
+
+  //add previous ended state back to the merged states
+  for (int i=0; i<events; i++){
+
+    int inputNum=0;
+    s[numOfState+i].input= (unsigned short *) malloc(sizeof(unsigned short)*t1->tStates[tEventStateNum[i]].inputNum);
+    for (int l=0; l< t1->tStates[tEventStateNum[i]].inputNum; l++){
+      s[numOfState+i].input[inputNum++] = t1->tStates[tEventStateNum[i]].input[l];
+    }
+    create_tstate(&s[numOfState+i], t1->tStates[tEventStateNum[i]].tstateId, t1->tStates[tEventStateNum[i]].inv, s[numOfState+i].input, t1->tStates[tEventStateNum[i]].inputNum, t1->tStates[tEventStateNum[i]].output, t1->tStates[tEventStateNum[i]].buchi, NULL);
+    s[numOfState+i].sym = dup_set(t1->tStates[tEventStateNum[i]].sym ,3);
+  }  
+
 
   //merge transitions
   TTrans *tt = t->tTrans;
@@ -1499,7 +1619,7 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
               
               tmp = tmp->nxt;
             }else{
-              printf("ERROR! Problem in merging transitions! \n");
+              printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
             }
 
           }
@@ -1510,18 +1630,33 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
     tt=tt->nxt;
   }
 
+  //add previous ended transition back to the merged automata
+  tt = tOut->nxt;
+  while (tt->nxt) {
+    tt = tt->nxt;
+  }
+  if (t1->tEvents != NULL){
+    tt->nxt = t1->tEvents;
+    out->tEvents = tt->nxt;
+    while (tt->nxt) {
+      tt = tt->nxt;
+      tt->to = &s[numOfState + tt->to - &t1->tStates[0] - tEventStateNum[0]];
+      tt->from = &s[numOfState + tt->from - &t1->tStates[0] - tEventStateNum[0]];
+    }
+  }
   //create return Automata out
   // out = (TAutomata *) malloc(sizeof(TAutomata));
-  out->stateNum = numOfState;
+  out->stateNum = numOfState + events;
   out->tStates = s;
   out->tTrans = tOut->nxt;
+  out->eventNum = events;
 }
 
 /********************************************************************\
 |*                Display of the Timed Automata                     *|
 \********************************************************************/
 
-//TODO: print clock guards 
+//TODO: print clock guards (10)
 void printCGuard(CGuard *cg){
 
 }
@@ -1553,7 +1688,7 @@ void print_timed(TAutomata *t) /* dumps the alternating automaton */
     for (int j=0; j< t->tStates[i].inputNum; j++){
       fprintf(tl_out,"%o, ", t->tStates[i].input[j]);
     }
-    fprintf(tl_out,") output:( %i) \n", t->tStates[i].output);
+    fprintf(tl_out,") output: (%i) \n", t->tStates[i].output);
 
     if (t->tStates[i].sym != NULL){
       fprintf(tl_out, "   symbols: ");
@@ -1596,7 +1731,7 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   // t_transition = (TTrans **) tl_emalloc(t_node_size * sizeof(TTrans *));
   // node_size = node_size / (8 * sizeof(int)) + 1;
 
-  t_sym_size = calculate_sym_size(p); /* number of predicates */
+  t_sym_size = t_calculate_sym_size(p); /* number of predicates */
   if(t_sym_size) t_sym_table = (char **) tl_emalloc(t_sym_size * sizeof(char *));
   t_sym_size = t_sym_size / (8 * sizeof(int)) + 1;
   

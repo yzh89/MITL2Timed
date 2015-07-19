@@ -32,6 +32,7 @@
 extern FILE *tl_out;
 extern int node_size, sym_size, scc_size, t_sym_size, t_clock_size;
 extern char **sym_table;
+extern char **t_sym_table;
 
 int mod = 8 * sizeof(int);
 
@@ -147,9 +148,13 @@ void print_set(int *l, int type) /* prints the content of a set */
     for(j = 0; j < mod; j++)
       if(l[i] & (1 << j)) {
         switch(type) {
-          case 0: case 2: case 3: case 4: 
+          case 0: case 2: case 4: 
             if(!start) fprintf(tl_out, ",");
             fprintf(tl_out, "%i", mod * i + j);
+            break;
+          case 3:
+            if(!start) fprintf(tl_out, " & ");
+            fprintf(tl_out, "%s", t_sym_table[mod * i + j]);
             break;
           case 1:
             if(!start) fprintf(tl_out, " & ");
