@@ -16,8 +16,8 @@
 		// 	"-I${folder:${project_path:}}",
 		// 	"-I/opt/ros/indigo/include/"
 		// ],
+		"sublimegdb_workingdir": "${folder:${project_path:mitl2ta}}",
 		"sublimegdb_commandline": "gdb --interpreter=mi ./mitl2ta",
-		"sublimegdb_arguments": "-f \"(<>_[1.0,3.0] b) && a\"",
-		"sublimegdb_workingdir": "."
+		"sublimegdb_arguments": "-f \"(<>_[0.0, 2.0] b) && a\""
 	}
 }
