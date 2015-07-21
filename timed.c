@@ -173,7 +173,7 @@ int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
   for(i=0; i<t_sym_id; i++) 
     if (!strcmp(s, t_sym_table[i])) 
       return i;
-  t_sym_table[t_sym_id] = (char *) malloc(sizeof(char)*strlen(s));
+  t_sym_table[t_sym_id] = (char *) malloc(sizeof(char)*(strlen(s)+1));
   strcpy(t_sym_table[t_sym_id], s);
   return t_sym_id++;
 }
@@ -296,7 +296,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
     case TRUE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(s, "true", (CGuard *) 0, (unsigned short*) 0, 0, 1, 1, NULL); //output true
+      create_tstate(s, "T", (CGuard *) 0, (unsigned short*) 0, 0, 1, 1, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
@@ -309,7 +309,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
     case FALSE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(s, "false", (CGuard *) 0, (unsigned short*) 0, 0, 0, 1, NULL); //output true
+      create_tstate(s, "F", (CGuard *) 0, (unsigned short*) 0, 0, 0, 1, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
@@ -839,7 +839,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
       for (int i = 0; i < m; i++){
         // s1 (!p: *) -- y1 < b
-        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_"))+3);
+        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
         sprintf(stateName, "CHK_%d", 3*i+1);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 0;
@@ -853,7 +853,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         create_tstate(&sC[0+3*i], stateName, cguard, input, 1, NULLOUT, 1, p); //output * in s1 state
 
         //s2 (p: *) -- *
-        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_"))+3);
+        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
         sprintf(stateName, "CHK_%d", 3*i+2);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 1;
@@ -861,7 +861,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         create_tstate(&sC[1+3*i], stateName, (CGuard *) 0, input, 1, NULLOUT, 1, p); //output 0 in s2 state
 
         //s3 (!p: *) -- z < d
-        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_"))+3);
+        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
         sprintf(stateName, "CHK_%d", 3*i+3);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 0;
@@ -1301,7 +1301,12 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out){
   int numOfState = 0;
-  const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum;
+  int maxInput = 1;
+  for (int i= 0; i < t->stateNum; i++){
+    maxInput = maxInput < t->tStates[i].inputNum ? t->tStates[i].inputNum : maxInput;
+  }
+  const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum * maxInput;
+  // printf("%ld \n", sizeof(TState)*(maxNumOfState + t1->eventNum + t2->eventNum));
   TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState + t1->eventNum + t2->eventNum));
   int t1StateNum[maxNumOfState+1];
   int t2StateNum[maxNumOfState];
@@ -1347,10 +1352,15 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     for (int k=numOfState; k< matches; k++){
       // merge their stateId name
       s[k].tstateId = (char *) malloc(sizeof(char)*(strlen(t1->tStates[t1StateNum[k]].tstateId)+strlen(t2->tStates[t2StateNum[k]].tstateId)+strlen(t->tStates[i].tstateId) +9));
-      sprintf(s[k].tstateId,"(%s , %s) x %s", t1->tStates[t1StateNum[k]].tstateId, t2->tStates[t2StateNum[k]].tstateId, t->tStates[i].tstateId);
+      sprintf(s[k].tstateId,"(%s , %s)x %s", t1->tStates[t1StateNum[k]].tstateId, t2->tStates[t2StateNum[k]].tstateId, t->tStates[i].tstateId);
       // merge set of symbols
       s[k].sym = new_set(3);
-      do_merge_sets(s[k].sym, t1->tStates[t1StateNum[k]].sym, t2->tStates[t2StateNum[k]].sym,3);
+      if (t1->tStates[t1StateNum[k]].sym!=NULL && t2->tStates[t2StateNum[k]].sym!=NULL)
+        do_merge_sets(s[k].sym, t1->tStates[t1StateNum[k]].sym, t2->tStates[t2StateNum[k]].sym,3);
+      else if (t1->tStates[t1StateNum[k]].sym!=NULL)
+        s[k].sym = dup_set(t1->tStates[t1StateNum[k]].sym, 3);
+      else if (t2->tStates[t2StateNum[k]].sym!=NULL)
+        s[k].sym = dup_set(t2->tStates[t2StateNum[k]].sym, 3);
       
       // merge invariants 
 
@@ -1359,10 +1369,20 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
 
       // merge inputs
       s[k].inputNum=0;
-      s[k].input= (unsigned short *) malloc(sizeof(unsigned short)*t1->tStates[t1StateNum[k]].inputNum*t2->tStates[t2StateNum[k]].inputNum);
-      for (int l=0; l< t1->tStates[t1StateNum[k]].inputNum; l++){
+      if (t1->tStates[t1StateNum[k]].inputNum>0 && t2->tStates[t2StateNum[k]].inputNum>0) {
+        s[k].input= (unsigned short *) malloc(sizeof(unsigned short)*t1->tStates[t1StateNum[k]].inputNum*t2->tStates[t2StateNum[k]].inputNum);
+      }else{
+        s[k].input= (unsigned short *) malloc(sizeof(unsigned short)*(t1->tStates[t1StateNum[k]].inputNum + t2->tStates[t2StateNum[k]].inputNum));
+      }
+      if (t1->tStates[t1StateNum[k]].inputNum>0) {
+        for (int l=0; l< t1->tStates[t1StateNum[k]].inputNum; l++){
+          for (int n=0; n< t2->tStates[t2StateNum[k]].inputNum; n++){
+            s[k].input[s[k].inputNum++] = t1->tStates[t1StateNum[k]].input[l] | t2->tStates[t2StateNum[k]].input[n];
+          }
+        }
+      }else if (t2->tStates[t2StateNum[k]].inputNum>0 ){
         for (int n=0; n< t2->tStates[t2StateNum[k]].inputNum; n++){
-          s[k].input[s[k].inputNum++] = t1->tStates[t1StateNum[k]].input[l] | t2->tStates[t2StateNum[k]].input[n];
+          s[k].input[s[k].inputNum++] = t2->tStates[t2StateNum[k]].input[n];
         }
       }
 
@@ -1460,7 +1480,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
               
               tmp = tmp->nxt;
             }else{
-              printf("Cannot merge transition of the following: \n t1 %s -> %s \n t2 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t2->tStates[t2StateNum[i]].tstateId, t2->tStates[t2StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
+              // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t2 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t2->tStates[t2StateNum[i]].tstateId, t2->tStates[t2StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
             }
 
           }
@@ -1506,8 +1526,13 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
 
 void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   int numOfState = 0;
-  const int maxNumOfState = t1->stateNum* t->stateNum;
-  TState *s = (TState *) tl_emalloc(sizeof(TState)*maxNumOfState+t1->eventNum);
+  int maxInput = 1;
+  for (int i= 0; i < t->stateNum; i++){
+    maxInput = maxInput < t->tStates[i].inputNum ? t->tStates[i].inputNum : maxInput;
+  }
+  const int maxNumOfState = t1->stateNum* t->stateNum * maxInput;
+  // printf("%d \n", maxNumOfState+t1->eventNum);
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState+t1->eventNum));
   int t1StateNum[maxNumOfState+1];
   int tStateNum[maxNumOfState];
   int tEventStateNum[t1->eventNum];
@@ -1619,7 +1644,7 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
               
               tmp = tmp->nxt;
             }else{
-              printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
+              // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
             }
 
           }
