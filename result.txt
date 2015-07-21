@@ -7,585 +7,853 @@ tl_spin: memalloc 517 bytes
 tl_spin: memalloc 505 bytes
 Transition 0 : 1 to 23 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 1 : 1 to 24 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 2 : 1 to 28 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 3 : 1 to 32 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 4 : 2 to 23 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 5 : 2 to 24 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 6 : 2 to 27 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 7 : 2 to 31 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 8 : 3 to 17 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 9 : 3 to 19 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 10 : 3 to 21 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 11 : 3 to 23 
 Clock reseted: {4,7,8,12,16,17,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 12 : 3 to 24 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 13 : 3 to 25 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 14 : 3 to 29 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 15 : 3 to 33 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 16 : 3 to 35 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 17 : 4 to 18 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 18 : 4 to 20 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 19 : 4 to 22 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 20 : 4 to 23 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 21 : 4 to 24 
 Clock reseted: {4,7,8,14,16,17,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 22 : 4 to 26 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 23 : 4 to 30 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 24 : 4 to 34 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 25 : 4 to 36 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 26 : 5 to 21 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 27 : 5 to 22 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 28 : 5 to 28 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 29 : 5 to 32 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 30 : 6 to 21 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 31 : 6 to 22 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 32 : 6 to 27 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 33 : 6 to 31 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 34 : 7 to 17 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 35 : 7 to 19 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 36 : 7 to 21 
 Clock reseted: {2,7,8,12,16,17,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 37 : 7 to 22 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 38 : 7 to 23 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 39 : 7 to 25 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 40 : 7 to 29 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 41 : 7 to 33 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 42 : 7 to 35 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 43 : 8 to 18 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 44 : 8 to 20 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 45 : 8 to 21 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 46 : 8 to 22 
 Clock reseted: {2,7,8,14,16,17,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 47 : 8 to 24 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 48 : 8 to 26 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 49 : 8 to 30 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 50 : 8 to 34 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 51 : 8 to 36 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 52 : 9 to 17 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 53 : 9 to 18 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 54 : 9 to 25 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 55 : 9 to 26 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 56 : 9 to 27 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 57 : 9 to 28 
 Clock reseted: {3,7,8,13,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 58 : 9 to 32 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 59 : 9 to 33 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 60 : 9 to 34 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 61 : 10 to 17 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 62 : 10 to 18 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 63 : 10 to 25 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 64 : 10 to 26 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 65 : 10 to 27 
 Clock reseted: {3,7,8,11,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 66 : 10 to 28 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 67 : 10 to 31 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 68 : 10 to 33 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 69 : 10 to 34 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 70 : 11 to 17 
 Clock reseted: {3,7,8,12,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 71 : 11 to 18 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 72 : 11 to 19 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 73 : 11 to 21 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 74 : 11 to 23 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 75 : 11 to 25 
 Clock reseted: {3,7,8,12,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 76 : 11 to 26 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 77 : 11 to 27 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 78 : 11 to 28 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 79 : 11 to 29 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 80 : 11 to 33 
 Clock reseted: {3,7,8,12,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 81 : 11 to 34 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 82 : 11 to 35 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 83 : 12 to 17 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 84 : 12 to 18 
 Clock reseted: {3,7,8,14,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 85 : 12 to 20 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 86 : 12 to 22 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 87 : 12 to 24 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 88 : 12 to 25 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 89 : 12 to 26 
 Clock reseted: {3,7,8,14,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 90 : 12 to 27 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 91 : 12 to 28 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 92 : 12 to 30 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 93 : 12 to 33 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 94 : 12 to 34 
 Clock reseted: {3,7,8,14,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 95 : 12 to 36 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 96 : 13 to 19 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 97 : 13 to 20 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 98 : 13 to 28 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 99 : 13 to 29 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 100 : 13 to 30 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 101 : 13 to 31 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 102 : 13 to 32 
 Clock reseted: {5,7,8,13,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 103 : 13 to 35 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 104 : 13 to 36 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 105 : 14 to 19 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 106 : 14 to 20 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 107 : 14 to 27 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 108 : 14 to 29 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 109 : 14 to 30 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 110 : 14 to 31 
 Clock reseted: {5,7,8,11,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 111 : 14 to 32 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 112 : 14 to 35 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 113 : 14 to 36 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 114 : 15 to 17 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 115 : 15 to 19 
 Clock reseted: {5,7,8,12,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 116 : 15 to 20 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 117 : 15 to 21 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 118 : 15 to 23 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 119 : 15 to 25 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 120 : 15 to 29 
 Clock reseted: {5,7,8,12,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 121 : 15 to 30 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 122 : 15 to 31 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 123 : 15 to 32 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 124 : 15 to 33 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 125 : 15 to 35 
 Clock reseted: {5,7,8,12,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 126 : 15 to 36 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 127 : 16 to 18 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 128 : 16 to 19 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 129 : 16 to 20 
 Clock reseted: {5,7,8,14,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 130 : 16 to 22 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 131 : 16 to 24 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 132 : 16 to 26 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 133 : 16 to 29 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 134 : 16 to 30 
 Clock reseted: {5,7,8,14,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 135 : 16 to 31 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 136 : 16 to 32 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 137 : 16 to 34 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 138 : 16 to 35 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 139 : 16 to 36 
 Clock reseted: {5,7,8,14,16,17,18}
+Guards Condition: z7 > 0 && z8 > 0 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 140 : 17 to 13 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 141 : 17 to 14 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 142 : 17 to 15 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 143 : 17 to 16 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 144 : 18 to 13 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 145 : 18 to 14 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 146 : 18 to 15 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 147 : 18 to 16 
 Clock reseted: {4,7,8,18}
+Guards Condition: z3 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 148 : 19 to 9 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 149 : 19 to 10 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 150 : 19 to 11 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 151 : 19 to 12 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 152 : 20 to 9 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 153 : 20 to 10 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 154 : 20 to 11 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 155 : 20 to 12 
 Clock reseted: {2,7,8,18}
+Guards Condition: z5 >= 2 && z7 > 0 && z8 > 0 && z18 > 0 
 Transition 156 : 21 to 1 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 157 : 21 to 2 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 158 : 21 to 3 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 159 : 21 to 4 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 160 : 22 to 1 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 161 : 22 to 2 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 162 : 22 to 3 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 163 : 22 to 4 
 Clock reseted: {3,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 164 : 23 to 5 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 165 : 23 to 6 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 166 : 23 to 7 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 167 : 23 to 8 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 168 : 24 to 5 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 169 : 24 to 6 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 170 : 24 to 7 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 171 : 24 to 8 
 Clock reseted: {5,7,8,18}
+Guards Condition: z7 > 0 && z8 > 0 && z18 > 0 
 Transition 172 : 25 to 4 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 173 : 25 to 8 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 174 : 25 to 12 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 175 : 25 to 16 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 176 : 26 to 3 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 177 : 26 to 7 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 178 : 26 to 11 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 179 : 26 to 15 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 180 : 27 to 1 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 181 : 27 to 5 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 182 : 27 to 9 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 183 : 27 to 13 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 184 : 28 to 2 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 185 : 28 to 6 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 186 : 28 to 10 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 187 : 28 to 14 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 188 : 29 to 4 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 189 : 29 to 8 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 190 : 29 to 12 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 191 : 29 to 16 
 Clock reseted: {13,16,17,18}
+Guards Condition: z12 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 192 : 30 to 3 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 193 : 30 to 7 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 194 : 30 to 11 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 195 : 30 to 15 
 Clock reseted: {11,16,17,18}
+Guards Condition: z14 >= 2 && z16 > 0 && z17 > 0 && z18 > 0 
 Transition 196 : 31 to 1 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 197 : 31 to 5 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 198 : 31 to 9 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 199 : 31 to 13 
 Clock reseted: {12,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 200 : 32 to 2 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 201 : 32 to 6 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 202 : 32 to 10 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 203 : 32 to 14 
 Clock reseted: {14,16,17,18}
+Guards Condition: z16 > 0 && z17 > 0 && z18 > 0 
 Transition 204 : 37 to 38 
 Clock reseted: {9,10}
+Guards Condition: z9 > 0 && z10 > 0 && z12 >= 2 
 Transition 205 : 38 to 40 
 Clock reseted: {9,10}
+Guards Condition: z9 > 0 && z10 > 0 && z13 >= 0 
 Transition 206 : 38 to 39 
 Clock reseted: {9,10,15}
+Guards Condition: z9 > 0 && z10 > 0 
 Transition 207 : 39 to 38 
 Clock reseted: {9,10}
+Guards Condition: z9 > 0 && z10 > 0 
 Transition 208 : 40 to 41 
 Clock reseted: {9,10}
+Guards Condition: z9 > 0 && z10 > 0 && z14 >= 2 
 Transition 209 : 41 to 37 
 Clock reseted: {9,10}
+Guards Condition: z9 > 0 && z10 > 0 && z11 >= 0 
 Transition 210 : 41 to 42 
 Clock reseted: {9,10,15}
+Guards Condition: z9 > 0 && z10 > 0 
 Transition 211 : 42 to 41 
 Clock reseted: {9,10}
+Guards Condition: z9 > 0 && z10 > 0 
 Transition 212 : 43 to 44 
 Clock reseted: {0,1}
+Guards Condition: z0 > 0 && z1 > 0 && z3 >= 2 
 Transition 213 : 44 to 46 
 Clock reseted: {0,1}
+Guards Condition: z0 > 0 && z1 > 0 && z4 >= 0 
 Transition 214 : 44 to 45 
 Clock reseted: {0,1,6}
+Guards Condition: z0 > 0 && z1 > 0 
 Transition 215 : 45 to 44 
 Clock reseted: {0,1}
+Guards Condition: z0 > 0 && z1 > 0 
 Transition 216 : 46 to 47 
 Clock reseted: {0,1}
+Guards Condition: z0 > 0 && z1 > 0 && z5 >= 2 
 Transition 217 : 47 to 43 
 Clock reseted: {0,1}
+Guards Condition: z0 > 0 && z1 > 0 && z2 >= 0 
 Transition 218 : 47 to 48 
 Clock reseted: {0,1,6}
+Guards Condition: z0 > 0 && z1 > 0 
 Transition 219 : 48 to 47 
 Clock reseted: {0,1}
-State 1 : ((T , Gen_2: <>_I (! (b)) x p)x p!q , (T , Gen_2: <>_I (! (a)) x p)x p!q)x and 
+Guards Condition: z0 > 0 && z1 > 0 
+State 1 : ((T , Gen_2: <>_I (! (b)) x p) x p!q , (T , Gen_2: <>_I (! (a)) x p) x p!q) x and 
    input: (12, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 2 : ((T , Gen_2: <>_I (! (b)) x p)x p!q , (T , Gen_4: <>_I (! (a)) x p)x p!q)x and 
+   invariants: * 
+State 2 : ((T , Gen_2: <>_I (! (b)) x p) x p!q , (T , Gen_4: <>_I (! (a)) x p) x p!q) x and 
    input: (12, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 3 : ((T , Gen_2: <>_I (! (b)) x p)x p!q , (T , Gen_1: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 3 : ((T , Gen_2: <>_I (! (b)) x p) x p!q , (T , Gen_1: <>_I (! (a)) x !p) x pq) x and 
    input: (2, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 4 : ((T , Gen_2: <>_I (! (b)) x p)x p!q , (T , Gen_3: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 4 : ((T , Gen_2: <>_I (! (b)) x p) x p!q , (T , Gen_3: <>_I (! (a)) x !p) x pq) x and 
    input: (2, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 5 : ((T , Gen_4: <>_I (! (b)) x p)x p!q , (T , Gen_2: <>_I (! (a)) x p)x p!q)x and 
+   invariants: * 
+State 5 : ((T , Gen_4: <>_I (! (b)) x p) x p!q , (T , Gen_2: <>_I (! (a)) x p) x p!q) x and 
    input: (12, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 6 : ((T , Gen_4: <>_I (! (b)) x p)x p!q , (T , Gen_4: <>_I (! (a)) x p)x p!q)x and 
+   invariants: * 
+State 6 : ((T , Gen_4: <>_I (! (b)) x p) x p!q , (T , Gen_4: <>_I (! (a)) x p) x p!q) x and 
    input: (12, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 7 : ((T , Gen_4: <>_I (! (b)) x p)x p!q , (T , Gen_1: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 7 : ((T , Gen_4: <>_I (! (b)) x p) x p!q , (T , Gen_1: <>_I (! (a)) x !p) x pq) x and 
    input: (2, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 8 : ((T , Gen_4: <>_I (! (b)) x p)x p!q , (T , Gen_3: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 8 : ((T , Gen_4: <>_I (! (b)) x p) x p!q , (T , Gen_3: <>_I (! (a)) x !p) x pq) x and 
    input: (2, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 9 : ((T , Gen_1: <>_I (! (b)) x !p)x pq , (T , Gen_2: <>_I (! (a)) x p)x p!q)x and 
+   invariants: * 
+State 9 : ((T , Gen_1: <>_I (! (b)) x !p) x pq , (T , Gen_2: <>_I (! (a)) x p) x p!q) x and 
    input: (10, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 10 : ((T , Gen_1: <>_I (! (b)) x !p)x pq , (T , Gen_4: <>_I (! (a)) x p)x p!q)x and 
+   invariants: * 
+State 10 : ((T , Gen_1: <>_I (! (b)) x !p) x pq , (T , Gen_4: <>_I (! (a)) x p) x p!q) x and 
    input: (10, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 11 : ((T , Gen_1: <>_I (! (b)) x !p)x pq , (T , Gen_1: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 11 : ((T , Gen_1: <>_I (! (b)) x !p) x pq , (T , Gen_1: <>_I (! (a)) x !p) x pq) x and 
    input: (0, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 12 : ((T , Gen_1: <>_I (! (b)) x !p)x pq , (T , Gen_3: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 12 : ((T , Gen_1: <>_I (! (b)) x !p) x pq , (T , Gen_3: <>_I (! (a)) x !p) x pq) x and 
    input: (0, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 13 : ((T , Gen_3: <>_I (! (b)) x !p)x pq , (T , Gen_2: <>_I (! (a)) x p)x p!q)x and 
+   invariants: * 
+State 13 : ((T , Gen_3: <>_I (! (b)) x !p) x pq , (T , Gen_2: <>_I (! (a)) x p) x p!q) x and 
    input: (10, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 14 : ((T , Gen_3: <>_I (! (b)) x !p)x pq , (T , Gen_4: <>_I (! (a)) x p)x p!q)x and 
+   invariants: * 
+State 14 : ((T , Gen_3: <>_I (! (b)) x !p) x pq , (T , Gen_4: <>_I (! (a)) x p) x p!q) x and 
    input: (10, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 15 : ((T , Gen_3: <>_I (! (b)) x !p)x pq , (T , Gen_1: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 15 : ((T , Gen_3: <>_I (! (b)) x !p) x pq , (T , Gen_1: <>_I (! (a)) x !p) x pq) x and 
    input: (0, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 16 : ((T , Gen_3: <>_I (! (b)) x !p)x pq , (T , Gen_3: <>_I (! (a)) x !p)x pq)x and 
+   invariants: * 
+State 16 : ((T , Gen_3: <>_I (! (b)) x !p) x pq , (T , Gen_3: <>_I (! (a)) x !p) x pq) x and 
    input: (0, ) output: (1) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 17 : ((T , Gen_2: <>_I (! (b)) x p)x p!q , (T , Gen_2: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 17 : ((T , Gen_2: <>_I (! (b)) x p) x p!q , (T , Gen_2: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 18 : ((T , Gen_2: <>_I (! (b)) x p)x p!q , (T , Gen_4: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 18 : ((T , Gen_2: <>_I (! (b)) x p) x p!q , (T , Gen_4: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 19 : ((T , Gen_4: <>_I (! (b)) x p)x p!q , (T , Gen_2: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 19 : ((T , Gen_4: <>_I (! (b)) x p) x p!q , (T , Gen_2: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 20 : ((T , Gen_4: <>_I (! (b)) x p)x p!q , (T , Gen_4: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 20 : ((T , Gen_4: <>_I (! (b)) x p) x p!q , (T , Gen_4: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 21 : ((T , Gen_1: <>_I (! (b)) x !p)x pq , (T , Gen_2: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 21 : ((T , Gen_1: <>_I (! (b)) x !p) x pq , (T , Gen_2: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (10, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 22 : ((T , Gen_1: <>_I (! (b)) x !p)x pq , (T , Gen_4: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 22 : ((T , Gen_1: <>_I (! (b)) x !p) x pq , (T , Gen_4: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (10, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 23 : ((T , Gen_3: <>_I (! (b)) x !p)x pq , (T , Gen_2: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 23 : ((T , Gen_3: <>_I (! (b)) x !p) x pq , (T , Gen_2: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (10, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 24 : ((T , Gen_3: <>_I (! (b)) x !p)x pq , (T , Gen_4: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 24 : ((T , Gen_3: <>_I (! (b)) x !p) x pq , (T , Gen_4: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (10, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 25 : ((T , Gen_2: <>_I (! (b)) x p)x !(p!q) , (T , Gen_2: <>_I (! (a)) x p)x p!q)x ! and 
+   invariants: * 
+State 25 : ((T , Gen_2: <>_I (! (b)) x p) x !(p!q) , (T , Gen_2: <>_I (! (a)) x p) x p!q) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 26 : ((T , Gen_2: <>_I (! (b)) x p)x !(p!q) , (T , Gen_4: <>_I (! (a)) x p)x p!q)x ! and 
+   invariants: * 
+State 26 : ((T , Gen_2: <>_I (! (b)) x p) x !(p!q) , (T , Gen_4: <>_I (! (a)) x p) x p!q) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 27 : ((T , Gen_2: <>_I (! (b)) x p)x !(p!q) , (T , Gen_1: <>_I (! (a)) x !p)x pq)x ! and 
+   invariants: * 
+State 27 : ((T , Gen_2: <>_I (! (b)) x p) x !(p!q) , (T , Gen_1: <>_I (! (a)) x !p) x pq) x ! and 
    input: (2, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 28 : ((T , Gen_2: <>_I (! (b)) x p)x !(p!q) , (T , Gen_3: <>_I (! (a)) x !p)x pq)x ! and 
+   invariants: * 
+State 28 : ((T , Gen_2: <>_I (! (b)) x p) x !(p!q) , (T , Gen_3: <>_I (! (a)) x !p) x pq) x ! and 
    input: (2, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 29 : ((T , Gen_4: <>_I (! (b)) x p)x !(p!q) , (T , Gen_2: <>_I (! (a)) x p)x p!q)x ! and 
+   invariants: * 
+State 29 : ((T , Gen_4: <>_I (! (b)) x p) x !(p!q) , (T , Gen_2: <>_I (! (a)) x p) x p!q) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 30 : ((T , Gen_4: <>_I (! (b)) x p)x !(p!q) , (T , Gen_4: <>_I (! (a)) x p)x p!q)x ! and 
+   invariants: * 
+State 30 : ((T , Gen_4: <>_I (! (b)) x p) x !(p!q) , (T , Gen_4: <>_I (! (a)) x p) x p!q) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 31 : ((T , Gen_4: <>_I (! (b)) x p)x !(p!q) , (T , Gen_1: <>_I (! (a)) x !p)x pq)x ! and 
+   invariants: * 
+State 31 : ((T , Gen_4: <>_I (! (b)) x p) x !(p!q) , (T , Gen_1: <>_I (! (a)) x !p) x pq) x ! and 
    input: (2, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 32 : ((T , Gen_4: <>_I (! (b)) x p)x !(p!q) , (T , Gen_3: <>_I (! (a)) x !p)x pq)x ! and 
+   invariants: * 
+State 32 : ((T , Gen_4: <>_I (! (b)) x p) x !(p!q) , (T , Gen_3: <>_I (! (a)) x !p) x pq) x ! and 
    input: (2, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 33 : ((T , Gen_2: <>_I (! (b)) x p)x !(p!q) , (T , Gen_2: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 33 : ((T , Gen_2: <>_I (! (b)) x p) x !(p!q) , (T , Gen_2: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 34 : ((T , Gen_2: <>_I (! (b)) x p)x !(p!q) , (T , Gen_4: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 34 : ((T , Gen_2: <>_I (! (b)) x p) x !(p!q) , (T , Gen_4: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 35 : ((T , Gen_4: <>_I (! (b)) x p)x !(p!q) , (T , Gen_2: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 35 : ((T , Gen_4: <>_I (! (b)) x p) x !(p!q) , (T , Gen_2: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
-State 36 : ((T , Gen_4: <>_I (! (b)) x p)x !(p!q) , (T , Gen_4: <>_I (! (a)) x p)x !(p!q))x ! and 
+   invariants: * 
+State 36 : ((T , Gen_4: <>_I (! (b)) x p) x !(p!q) , (T , Gen_4: <>_I (! (a)) x p) x !(p!q)) x ! and 
    input: (12, ) output: (0) 
    symbols: {<>_I (! (b)) & <>_I (! (a))}
+   invariants: * 
 State 37 : p(a) x p x CHK_1: <>_I (! (a)) 
    input: (4, ) output: (65535) 
    symbols: {a}
+   invariants: z12 < 2 
 State 38 : !p(a) x !p x CHK_2: <>_I (! (a)) 
    input: (0, ) output: (65535) 
    symbols: {a}
+   invariants: * 
 State 39 : p(a) x p x CHK_3: <>_I (! (a)) 
    input: (4, ) output: (65535) 
    symbols: {a}
+   invariants: z15 < 2 
 State 40 : p(a) x p x CHK_4: <>_I (! (a)) 
    input: (4, ) output: (65535) 
    symbols: {a}
+   invariants: z14 < 2 
 State 41 : !p(a) x !p x CHK_5: <>_I (! (a)) 
    input: (0, ) output: (65535) 
    symbols: {a}
+   invariants: * 
 State 42 : p(a) x p x CHK_6: <>_I (! (a)) 
    input: (4, ) output: (65535) 
    symbols: {a}
+   invariants: z15 < 2 
 State 43 : p(b) x p x CHK_1: <>_I (! (b)) 
    input: (1, ) output: (65535) 
    symbols: {b}
+   invariants: z3 < 2 
 State 44 : !p(b) x !p x CHK_2: <>_I (! (b)) 
    input: (0, ) output: (65535) 
    symbols: {b}
+   invariants: * 
 State 45 : p(b) x p x CHK_3: <>_I (! (b)) 
    input: (1, ) output: (65535) 
    symbols: {b}
+   invariants: z6 < 2 
 State 46 : p(b) x p x CHK_4: <>_I (! (b)) 
    input: (1, ) output: (65535) 
    symbols: {b}
+   invariants: z5 < 2 
 State 47 : !p(b) x !p x CHK_5: <>_I (! (b)) 
    input: (0, ) output: (65535) 
    symbols: {b}
+   invariants: * 
 State 48 : p(b) x p x CHK_6: <>_I (! (b)) 
    input: (1, ) output: (65535) 
    symbols: {b}
+   invariants: z6 < 2 

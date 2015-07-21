@@ -843,9 +843,9 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         sprintf(stateName, "CHK_%d", 3*i+1);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 0;
-        cguard = (CGuard*) malloc(sizeof(CGuard)); 
+        cguard = (CGuard *) malloc(sizeof(CGuard)); 
         cguard->nType = PREDICATE;  
-        cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+        cguard->cCstr = (CCstr *) malloc(sizeof(CCstr));
         cguard->cCstr->cIdx = cCount+2*i+1;
         cguard->cCstr->gType = LESS; 
         cguard->cCstr->bndry = p->intvl[1];
@@ -865,9 +865,9 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         sprintf(stateName, "CHK_%d", 3*i+3);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 0;
-        cguard = (CGuard*) malloc(sizeof(CGuard)); 
+        cguard = (CGuard *) malloc(sizeof(CGuard)); 
         cguard->nType = PREDICATE;  
-        cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+        cguard->cCstr = (CCstr *) malloc(sizeof(CCstr));
         cguard->cCstr->cIdx = cCount+2*m; // z clock is 2*m
         cguard->cCstr->gType = LESS; 
         cguard->cCstr->bndry = d;
@@ -1123,11 +1123,20 @@ void merge_inv(CGuard *target, CGuard *lft, CGuard *rgt, CGuard *top){
     target->lft = rgt;
     target->rgt = top;
   }else if (lft){
-    target= lft;
+    target->nType = lft->nType;
+    target->cCstr = lft->cCstr;
+    target->lft = lft->lft;
+    target->rgt = lft->rgt;
   }else if (rgt){
-    target= rgt;
+    target->nType = rgt->nType;
+    target->cCstr = rgt->cCstr;
+    target->lft = rgt->lft;
+    target->rgt = rgt->rgt;
   }else if (top){
-    target= top;
+    target->nType = top->nType;
+    target->cCstr = top->cCstr;
+    target->lft = top->lft;
+    target->rgt = top->rgt;
   }
 }
 
@@ -1141,23 +1150,35 @@ void merge_ttrans(TTrans *t1, TTrans *t2, TTrans *tt, TTrans *tOut, TState *from
     clear_set(tOut->cIdx, 4);
     do_merge_sets(tOut->cIdx, t1->cIdx,t2->cIdx,4);
     merge_sets(tOut->cIdx, tt->cIdx,4);
-    tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
-    merge_inv(tOut->cguard, t1->cguard, t2->cguard, tt->cguard);
+    
+    if (!t1->cguard && !t2->cguard && !tt->cguard){
+      tOut->cguard = (CGuard *) 0;
+    }else{
+      tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
+      merge_inv(tOut->cguard, t1->cguard, t2->cguard, tt->cguard);
+    }
   }else if (t1) {
     tOut->cIdx = new_set(4);
     clear_set(tOut->cIdx, 4);
     do_merge_sets(tOut->cIdx, t1->cIdx,tt->cIdx,4);
 
-    tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
-    merge_inv(tOut->cguard, t1->cguard, (CGuard *) 0, tt->cguard);
+    if (!t1->cguard && !tt->cguard){
+      tOut->cguard = (CGuard *) 0;
+    }else{
+      tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
+      merge_inv(tOut->cguard, t1->cguard, NULL, tt->cguard);
+    }
   }else if (t2) {
-
     tOut->cIdx = new_set(4);
     clear_set(tOut->cIdx, 4);
     do_merge_sets(tOut->cIdx, t2->cIdx,tt->cIdx,4);
 
-    tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
-    merge_inv(tOut->cguard, t2->cguard, (CGuard *) 0, tt->cguard);
+    if (!t2->cguard && !tt->cguard){
+      tOut->cguard = (CGuard *) 0;
+    }else{
+      tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
+      merge_inv(tOut->cguard, t2->cguard, NULL, tt->cguard);
+    }
   }else {
     printf("ERROR! in merge_ttrans!");
   }
@@ -1352,7 +1373,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     for (int k=numOfState; k< matches; k++){
       // merge their stateId name
       s[k].tstateId = (char *) malloc(sizeof(char)*(strlen(t1->tStates[t1StateNum[k]].tstateId)+strlen(t2->tStates[t2StateNum[k]].tstateId)+strlen(t->tStates[i].tstateId) +9));
-      sprintf(s[k].tstateId,"(%s , %s)x %s", t1->tStates[t1StateNum[k]].tstateId, t2->tStates[t2StateNum[k]].tstateId, t->tStates[i].tstateId);
+      sprintf(s[k].tstateId,"(%s , %s) x %s", t1->tStates[t1StateNum[k]].tstateId, t2->tStates[t2StateNum[k]].tstateId, t->tStates[i].tstateId);
       // merge set of symbols
       s[k].sym = new_set(3);
       if (t1->tStates[t1StateNum[k]].sym!=NULL && t2->tStates[t2StateNum[k]].sym!=NULL)
@@ -1363,9 +1384,12 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
         s[k].sym = dup_set(t2->tStates[t2StateNum[k]].sym, 3);
       
       // merge invariants 
-
-      s[k].inv = (CGuard*) malloc(sizeof(CGuard)); 
-      merge_inv(s[k].inv, t1->tStates[t1StateNum[k]].inv,t2->tStates[t2StateNum[k]].inv,t->tStates[i].inv);
+      if (!t1->tStates[t1StateNum[k]].inv && !t2->tStates[t2StateNum[k]].inv && !t->tStates[i].inv){
+        s[k].inv = (CGuard*) 0;
+      }else{
+        s[k].inv = (CGuard*) malloc(sizeof(CGuard)); 
+        merge_inv(s[k].inv, t1->tStates[t1StateNum[k]].inv,t2->tStates[t2StateNum[k]].inv,t->tStates[i].inv);
+      }
 
       // merge inputs
       s[k].inputNum=0;
@@ -1562,8 +1586,12 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
       s[k].sym = dup_set(t1->tStates[t1StateNum[k]].sym,3);
       
       // merge invariants 
-      s[k].inv = (CGuard*) malloc(sizeof(CGuard)); 
-      merge_inv(s[k].inv, t1->tStates[t1StateNum[k]].inv,NULL,t->tStates[i].inv);
+      if (!t1->tStates[t1StateNum[k]].inv && !t->tStates[i].inv){
+        s[k].inv = (CGuard*) 0;
+      }else{
+        s[k].inv = (CGuard*) malloc(sizeof(CGuard)); 
+        merge_inv(s[k].inv, t1->tStates[t1StateNum[k]].inv, NULL ,t->tStates[i].inv);
+      }
 
       // merge inputs
       s[k].inputNum=0;
@@ -1682,8 +1710,34 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 \********************************************************************/
 
 //TODO: print clock guards (10)
-void printCGuard(CGuard *cg){
+void print_CGuard(CGuard *cg){
+  if (!cg){
+    fprintf(tl_out, "* ");
+    return;
+  }else{
+    switch (cg->nType){
+      case AND:
+        print_CGuard(cg->lft);
+        fprintf(tl_out, "&& ");
+        print_CGuard(cg->rgt);
+        break;
 
+      case OR:
+        print_CGuard(cg->lft);
+        fprintf(tl_out, "|| ");
+        print_CGuard(cg->rgt);
+        break;
+
+      case PREDICATE:
+        fprintf(tl_out, "z%d ", cg->cCstr->cIdx);
+        if(cg->cCstr->gType == GREATER)    fprintf(tl_out, "> ");
+        else if(cg->cCstr->gType == GREATEREQUAL)    fprintf(tl_out, ">= ");
+        else if(cg->cCstr->gType == LESS)    fprintf(tl_out, "< ");
+        else if(cg->cCstr->gType == LESSEQUAL)    fprintf(tl_out, "<= ");
+        fprintf(tl_out, "%d ", cg->cCstr->bndry);
+        break;
+    }
+  }
 }
 
 void print_timed(TAutomata *t) /* dumps the alternating automaton */
@@ -1703,8 +1757,9 @@ void print_timed(TAutomata *t) /* dumps the alternating automaton */
     fprintf(tl_out, "Transition %i : %i to %i \n", j, (int) (tmp->from - &t->tStates[0]) + 1, (int) (tmp->to - &t->tStates[0]) + 1);
     fprintf(tl_out, "Clock reseted: ");
     print_set(tmp->cIdx, 4);
+    fprintf(tl_out, "\nGuards Condition: ");
+    print_CGuard(tmp->cguard);
     fprintf(tl_out, "\n");
-    printCGuard(tmp->cguard);
     j++;
     tmp = tmp->nxt;
   }
@@ -1720,7 +1775,9 @@ void print_timed(TAutomata *t) /* dumps the alternating automaton */
       print_set(t->tStates[i].sym,3);
       fprintf(tl_out, "\n");
     }
-    printCGuard(t->tStates[i].inv);
+    fprintf(tl_out, "   invariants: ");
+    print_CGuard(t->tStates[i].inv);
+    fprintf(tl_out, "\n");
   }
 
 
