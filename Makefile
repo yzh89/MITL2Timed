@@ -33,14 +33,24 @@
 # -ansi is removed and -sd=c11 is added to use comment // and for-loop with initialization
 
 CC=gcc
+IDIR = include
 # CFLAGS= -O3 -g -DNXT -DTIMED
-CFLAGS= -g -DNXT -std=c11
-MITL2TA= parse.o lex.o main.o trans.o buchi.o set.o mem.o rewrt.o cache.o alternating.o generalized.o timed.o
+CFLAGS= -g -DNXT -std=c11 -I$(IDIR)
+
+LDIR = lib
+SDIR = src
+
+DEPS = $(IDIR)/%.h
+
+LIBS = -lm
+
+%.o: $(SDIR)/%.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+MITL2TA= src/parse.o src/lex.o src/main.o src/trans.o src/buchi.o src/set.o src/mem.o src/rewrt.o src/cache.o src/alternating.o src/generalized.o src/timed.o
 
 mitl2ta: $(MITL2TA)
-	$(CC) $(CFLAGS) -o mitl2ta $(MITL2TA) -lm
-
-$(MITL2TA): ltl2ba.h
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
 	rm -f MITL2TA *.o core

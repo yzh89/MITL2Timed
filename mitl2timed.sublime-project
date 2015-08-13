@@ -9,7 +9,10 @@
 	{
 		"sublimeclang_options":
 		[
-			"-I${folder:${project_path:}}"
+			"-I${folder:${project_path:mitl2timed.sublime-project}}/include",
+			"-I${folder:${project_path:mitl2timed.sublime-project}}/src",
+			"-Wno-deprecated-writable-strings",
+			"-Wno-format-security"
 		],
 		// "cc_include_options":
 		// [
