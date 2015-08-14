@@ -1,0 +1,3 @@
+[submodule "lib/pyuppaal"]
+	path = lib/pyuppaal
+	url = https://github.com/yzh89/pyuppaal.git
