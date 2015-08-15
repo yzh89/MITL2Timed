@@ -21,6 +21,7 @@
 		// ],
 		"sublimegdb_workingdir": "${folder:${project_path:mitl2ta}}",
 		"sublimegdb_commandline": "gdb --interpreter=mi ./mitl2ta",
-		"sublimegdb_arguments": "-f \"(<>_[0.0, 2.0] b) && a\""
+		"sublimegdb_arguments": "-f \"(<>_[0.0, 2.0] b) && a\"",
+		"python_package_paths": ["/home/yzh89/MITL2Timed/lib/pyuppaal"]
 	}
 }
