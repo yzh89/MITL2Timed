@@ -166,6 +166,24 @@ void print_set(int *l, int type) /* prints the content of a set */
   if(type != 1) fprintf(tl_out, "}");
 }
 
+void set_to_xml(int *l, char* res) /* prints the content of a set */
+{
+  int i, j, start = 1;
+
+  for(i = 0; i < set_size(4); i++) {
+    for(j = 0; j < mod; j++){
+      if(l[i] & (1 << j)) {
+        if(!start) strcat(res, ",");
+        char tmp[3];
+        sprintf(tmp, "z%i=0", mod * i + j);
+        strcat(res,tmp);
+
+        start = 0;
+      }
+    }
+  }
+}
+
 int empty_set(int *l, int type) /* tests if a set is the empty set */
 {
   int i, test = 0;

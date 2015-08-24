@@ -225,6 +225,7 @@ void add_set(int *, int);
 void rem_set(int *, int);
 void spin_print_set(int *, int*);
 void print_set(int *, int);
+void set_to_xml(int *, char *);
 int  empty_set(int *, int);
 int  empty_intersect_sets(int *, int *, int);
 int  same_sets(int *, int *, int);

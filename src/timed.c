@@ -1985,6 +1985,59 @@ void print_timed(TAutomata *t) /* dumps the alternating automaton */
  //  }
 }
 
+
+void timed_to_xml(TAutomata *t, FILE *xml) /* dumps the alternating automaton */
+{
+ //  int i;
+ //  ATrans *t;
+
+ //  fprintf(tl_out, "init :\n");
+ //  for(t = transition[0]; t; t = t->nxt) {
+ //    print_set(t->to, 0);
+ //    fprintf(tl_out, "\n");
+ //  }
+  fprintf(xml, "#!/usr/bin/python\ndef main():\n\tlocid = 0\n\tlocations = []\n\ttransitions = []");
+
+  int j = 0;
+  char buffer[50];
+  char setBuffer[20];
+  for (int i=0; i< t->stateNum; i++){
+    CGuard_to_xml(t->tStates[i].inv, buffer);
+    fprintf(xml,"\tlocations.append( Location(invariant='%s', urgent=False, committed=False, name='loc %i', id = 'id'+str(locid)) )\n", buffer, i);
+
+    fprintf(xml, "\tlocid +=1\n");
+  }
+
+  TTrans *tmp;
+  tmp = t->tTrans;
+
+  while (tmp != NULL) {
+    CGuard_to_xml(tmp->cguard, buffer);
+    set_to_xml(tmp->cIdx, setBuffer);
+    fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s') )\n", (int) (tmp->from - &t->tStates[0]) + 1, (int) (tmp->to - &t->tStates[0]) + 1, buffer, setBuffer);
+    j++;
+    tmp = tmp->nxt;
+  }
+
+
+ //  for(i = node_id - 1; i > 0; i--) {
+ //    if(!label[i])
+ //      continue;
+ //    fprintf(tl_out, "state %i : ", i);
+ //    dump(label[i]);
+ //    fprintf(tl_out, "\n");
+ //    for(t = transition[i]; t; t = t->nxt) {
+ //      if (empty_set(t->pos, 1) && empty_set(t->neg, 1))
+  // fprintf(tl_out, "1");
+ //      print_set(t->pos, 1);
+ //      if (!empty_set(t->pos,1) && !empty_set(t->neg,1)) fprintf(tl_out, " & ");
+ //      print_set(t->neg, 2);
+ //      fprintf(tl_out, " -> ");
+ //      print_set(t->to, 0);
+ //      fprintf(tl_out, "\n");
+ //    }
+ //  }
+}
 /********************************************************************\
 |*                       Main method                                *|
 \********************************************************************/
