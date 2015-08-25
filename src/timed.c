@@ -1925,6 +1925,43 @@ void print_CGuard(CGuard *cg){
   }
 }
 
+void CGuard_to_xml(CGuard *cg, char* res){
+  if (!cg){
+    res = NULL;
+    return;
+  }else{
+    switch (cg->nType){
+      case AND:
+        strcat(str, "(");
+        CGuard_to_xml(cg->lft, res);
+        strcat(str, " && ");
+        CGuard_to_xml(cg->rgt, res);
+        strcat(str, ")");
+        break;
+
+      case OR:
+        strcat(str, "(");
+        CGuard_to_xml(cg->lft, res);
+        strcat(str, " || ");
+        CGuard_to_xml(cg->lft, res);
+        strcat(str, ")");
+        break;
+
+      case PREDICATE:
+        char buffer[10];
+        sprintf(buffer, "z%d", cg->cCstr->cIdx);
+        strcat(str, buffer)
+        if(cg->cCstr->gType == GREATER)    strcat(str, ">");
+        else if(cg->cCstr->gType == GREATEREQUAL)    strcat(str, ">=");
+        else if(cg->cCstr->gType == LESS)    strcat(str, "<");
+        else if(cg->cCstr->gType == LESSEQUAL)    strcat(str, "<=");
+        sprintf(buffer, "%d", cg->cCstr->bndry);
+        strcat(str, buffer)
+        break;
+    }
+  }
+}
+
 void print_timed(TAutomata *t) /* dumps the alternating automaton */
 {
  //  int i;
