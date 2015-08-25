@@ -83,21 +83,24 @@ int t_calculate_clock_size(Node *p) /* returns the number of clocks needed */
   case AND:
   case OR:
     return(t_calculate_clock_size(p->lft) + t_calculate_clock_size(p->rgt)+ 1);
+  case NOT:
+    return(t_calculate_clock_size(p->lft) + 1);
+  case PREDICATE:
+    return 1;
   case U_OPER:
   case V_OPER:
-    return(t_calculate_clock_size(p->lft) + t_calculate_clock_size(p->rgt) + 4);
+    return(t_calculate_clock_size(p->lft) + t_calculate_clock_size(p->rgt) + 1);
 #ifdef NXT
   case NEXT:
-    return(t_calculate_clock_size(p->lft) + 2);
+    return(t_calculate_clock_size(p->lft) + 1);
 #endif
   case EVENTUALLY_I:{
     float d = p->intvl[1] - p->intvl[0];
     short m = ceil(p->intvl[1]/d) + 1;
     return(t_calculate_clock_size(p->lft) + 2*m + 1);
   }
-  case NOT:
   default:
-    return 1;
+    return 0;
     break;
   }
 }
@@ -1840,7 +1843,7 @@ TAutomata *create_map(int nodeNum){
   cguard->nType = PREDICATE;
   cguard->cCstr = (CCstr *)(CCstr * )  malloc(sizeof(CCstr));
   cguard->cCstr->cIdx = cCount;
-  cguard->cCstr->gType = LESS;
+  cguard->cCstr->gType = LESSEQUAL;
   cguard->cCstr->bndry = 1;
   // void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p){
   for (int i=0; i<nodeNum; i++){
@@ -1930,33 +1933,33 @@ void CGuard_to_xml(CGuard *cg, char* res){
     res = NULL;
     return;
   }else{
+    char buffer[15];
     switch (cg->nType){
       case AND:
-        strcat(str, "(");
+        strcat(res, "(");
         CGuard_to_xml(cg->lft, res);
-        strcat(str, " && ");
+        strcat(res, " && ");
         CGuard_to_xml(cg->rgt, res);
-        strcat(str, ")");
+        strcat(res, ")");
         break;
 
       case OR:
-        strcat(str, "(");
+        strcat(res, "(");
         CGuard_to_xml(cg->lft, res);
-        strcat(str, " || ");
+        strcat(res, " || ");
         CGuard_to_xml(cg->lft, res);
-        strcat(str, ")");
+        strcat(res, ")");
         break;
 
       case PREDICATE:
-        char buffer[10];
-        sprintf(buffer, "z%d", cg->cCstr->cIdx);
-        strcat(str, buffer)
-        if(cg->cCstr->gType == GREATER)    strcat(str, ">");
-        else if(cg->cCstr->gType == GREATEREQUAL)    strcat(str, ">=");
-        else if(cg->cCstr->gType == LESS)    strcat(str, "<");
-        else if(cg->cCstr->gType == LESSEQUAL)    strcat(str, "<=");
+        sprintf(buffer, "z[%d]", cg->cCstr->cIdx);
+        strcat(res, buffer);
+        if(cg->cCstr->gType == GREATER)    strcat(res, ">");
+        else if(cg->cCstr->gType == GREATEREQUAL)    strcat(res, ">=");
+        else if(cg->cCstr->gType == LESS)    strcat(res, "<");
+        else if(cg->cCstr->gType == LESSEQUAL)    strcat(res, "<=");
         sprintf(buffer, "%d", cg->cCstr->bndry);
-        strcat(str, buffer)
+        strcat(res, buffer);
         break;
     }
   }
@@ -2023,7 +2026,7 @@ void print_timed(TAutomata *t) /* dumps the alternating automaton */
 }
 
 
-void timed_to_xml(TAutomata *t, FILE *xml) /* dumps the alternating automaton */
+void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternating automaton */
 {
  //  int i;
  //  ATrans *t;
@@ -2033,14 +2036,19 @@ void timed_to_xml(TAutomata *t, FILE *xml) /* dumps the alternating automaton */
  //    print_set(t->to, 0);
  //    fprintf(tl_out, "\n");
  //  }
-  fprintf(xml, "#!/usr/bin/python\ndef main():\n\tlocid = 0\n\tlocations = []\n\ttransitions = []");
+  fprintf(xml, "#!/usr/bin/python\nfrom pyuppaal import *\ndef main():\n\tlocid = 0\n\tlocations = []\n\ttransitions = []\n");
 
   int j = 0;
-  char buffer[50];
-  char setBuffer[20];
+  char buffer[80];
+  char setBuffer[50];
   for (int i=0; i< t->stateNum; i++){
+    buffer[0] = '\0';
     CGuard_to_xml(t->tStates[i].inv, buffer);
-    fprintf(xml,"\tlocations.append( Location(invariant='%s', urgent=False, committed=False, name='loc %i', id = 'id'+str(locid)) )\n", buffer, i);
+    if(t->tStates[i].buchi== 1){
+      fprintf(xml,"\tlocations.append( Location(invariant='%s', urgent=False, committed=False, name='loc%i_b', id = 'id'+str(locid)) )\n", buffer, i);
+    }else{
+      fprintf(xml,"\tlocations.append( Location(invariant='%s', urgent=False, committed=False, name='loc%i', id = 'id'+str(locid)) )\n", buffer, i);
+    }
 
     fprintf(xml, "\tlocid +=1\n");
   }
@@ -2049,12 +2057,18 @@ void timed_to_xml(TAutomata *t, FILE *xml) /* dumps the alternating automaton */
   tmp = t->tTrans;
 
   while (tmp != NULL) {
+    buffer[0] = '\0';
     CGuard_to_xml(tmp->cguard, buffer);
+    setBuffer[0] = '\0';
     set_to_xml(tmp->cIdx, setBuffer);
-    fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s') )\n", (int) (tmp->from - &t->tStates[0]) + 1, (int) (tmp->to - &t->tStates[0]) + 1, buffer, setBuffer);
+    fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
     j++;
     tmp = tmp->nxt;
   }
+
+  fprintf(xml, "\ttemplate = Template('sys', locations=locations, transitions=transitions, declaration='clock z[%i];', initlocation=locations[0])\n", clockSize);
+
+  fprintf(xml, "\ttemplate.layout(auto_nails = True);\n\tnta = NTA(system = 'system sys;', templates=[template])\n\tprint nta.to_xml()\nif __name__ == '__main__':\n\tmain()\n");
 
 
  //  for(i = node_id - 1; i > 0; i--) {
@@ -2096,6 +2110,8 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   cCount = 0;
   tAutomata = build_timed(p); /* generates the alternating automaton */
 
+  fprintf(tl_out, "%i\n",cCount);
+
   print_timed(tAutomata);
 
   TAutomata* mapAutomata = create_map(4);
@@ -2106,6 +2122,16 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   merge_timed(mapAutomata, tAutomata, tResult);
 
   print_timed(tResult);
+
+  FILE *xml;
+  char outputFileName[20] = "scripts/uppaal.py";
+  xml = fopen(outputFileName, "w");
+
+  if (xml == NULL) {
+    fprintf(stderr, "Can't open output file %s!\n", outputFileName);
+    exit(1);
+  }
+  timed_to_xml(tResult, t_clock_size, xml);
 
 //   if(tl_verbose) {
 //     fprintf(tl_out, "\nAlternating automaton before simplification\n");
