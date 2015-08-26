@@ -1403,6 +1403,8 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
         s[k].sym = dup_set(t1->tStates[t1StateNum[k]].sym, 3);
       else if (t2->tStates[t2StateNum[k]].sym!=NULL)
         s[k].sym = dup_set(t2->tStates[t2StateNum[k]].sym, 3);
+
+      s[k].buchi = t1->tStates[t1StateNum[k]].buchi & t2->tStates[t2StateNum[k]].buchi & t->tStates[i].buchi;
       
       // merge invariants 
       if (!t1->tStates[t1StateNum[k]].inv && !t2->tStates[t2StateNum[k]].inv && !t->tStates[i].inv){
@@ -1681,6 +1683,9 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 
       // merge output
       s[k].output = t->tStates[i].output;      
+
+      // merge buchi
+      s[k].buchi = t1->tStates[t1StateNum[k]].buchi & t->tStates[i].buchi;
     }
     numOfState = matches;
   }
@@ -2070,6 +2075,7 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
 
   fprintf(xml, "\ttemplate.layout(auto_nails = True);\n\tnta = NTA(system = 'system sys;', templates=[template])\n\tprint nta.to_xml()\nif __name__ == '__main__':\n\tmain()\n");
 
+  fclose(xml);
 
  //  for(i = node_id - 1; i > 0; i--) {
  //    if(!label[i])
