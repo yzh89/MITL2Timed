@@ -53,4 +53,4 @@ mitl2ta: $(MITL2TA)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
-	rm -f MITL2TA *.o core
+	rm -f MITL2TA src/*.o core
