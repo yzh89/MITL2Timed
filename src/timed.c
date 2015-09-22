@@ -1844,15 +1844,15 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 
   for (int i =0; i< t->stateNum; i++){
     refGen[i] = -1;
-    if (strstr(t->tStates[i].tstateId, "Gen")){
+    if (strstr(t->tStates[i].tstateId, "Gen")!=NULL){
       refGen[i] = genStateNum;
       int inputNum=0;
       out->tStates[numOfState+genStateNum].input= (unsigned short *) malloc(sizeof(unsigned short)*t->tStates[i].inputNum);
       for (int l=0; l< t->tStates[i].inputNum; l++){
         out->tStates[numOfState+genStateNum].input[inputNum++] = t->tStates[i].input[l];
       }
-      create_tstate(&out->tStates[numOfState+genStateNum], t->tStates[i].tstateId, t->tStates[i].inv, out->tStates[numOfState+i].input, t->tStates[i].inputNum, t->tStates[i].output, t->tStates[i].buchi, NULL);
-      out->tStates[numOfState+i].sym = dup_set(t->tStates[i].sym ,3);
+      create_tstate(&out->tStates[numOfState+genStateNum], t->tStates[i].tstateId, t->tStates[i].inv, out->tStates[numOfState+genStateNum].input, t->tStates[i].inputNum, t->tStates[i].output, t->tStates[i].buchi, NULL);
+      out->tStates[numOfState+genStateNum].sym = dup_set(t->tStates[i].sym ,3);
       genStateNum++;
     }
   }
@@ -1865,14 +1865,21 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   }
 
   TTrans* tGen = t->tTrans;
-  while(t){
-    if (refGen[t->to - &t->tStates[0]]!=-1 && refGen[t->from - &t->tStates[0]]!=-1){
-      tt->next = t;
-      tt->from = &out->tStates[numOfState + refGen[t->from - &t->tStates[0]]];
-      tt->to = &out->tStates[numOfState + refGen[t->to - &t->tStates[0]]];
+  while(tGen){
+    if (refGen[tGen->to - &t->tStates[0]]!=-1 && refGen[tGen->from - &t->tStates[0]]!=-1){
+      tt->nxt = tGen;
+      tt = tt->nxt;
+      printf("%s-> %s   ", out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].tstateId);
+      tt->from = &out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]];
+      tt->to = &out->tStates[numOfState + refGen[tGen->to - &t->tStates[0]]];
+      printf("%s-> %s   ", tt->from->tstateId, tt->to->tstateId);
+      
     }
-    t = t->nxt;
+    tGen = tGen->nxt;
   }
+  tt->nxt = NULL;
+
+  out->stateNum = numOfState+genStateNum;
   
   // appoint initial state accordingly
 
