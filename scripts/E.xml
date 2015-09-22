@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC "-//Uppaal Team//DTD Flat System 1.1//EN" "http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd">
+<nta>
+  <declaration></declaration>
+    <template>
+    <name x="5" y="5">sys</name>
+    
+    <declaration>clock z[3];</declaration>
+    
+    <location id="id0" x="-1729" y="-487">
+      <name x="-1729" y="-472">loc0_b</name>
+      <label kind="invariant" x="-1729" y="-457">z[2]&lt;=1</label>
+      
+      
+      
+    </location>
+
+    <location id="id1" x="-1906" y="-247">
+      <name x="-1906" y="-232">loc1_b</name>
+      <label kind="invariant" x="-1906" y="-217">z[2]&lt;=1</label>
+      
+      
+      
+    </location>
+
+    <location id="id2" x="-1802" y="-27">
+      <name x="-1802" y="-12">loc2_b</name>
+      <label kind="invariant" x="-1802" y="3">z[2]&lt;=1</label>
+      
+      
+      
+    </location>
+
+    <location id="id3" x="-343" y="-487">
+      <name x="-343" y="-472">loc3</name>
+      <label kind="invariant" x="-343" y="-457">z[2]&lt;=1</label>
+      
+      
+      
+    </location>
+
+    <location id="id4" x="-544" y="-247">
+      <name x="-544" y="-232">loc4</name>
+      <label kind="invariant" x="-544" y="-217">z[2]&lt;=1</label>
+      
+      
+      
+    </location>
+
+    <location id="id5" x="-544" y="-27">
+      <name x="-544" y="-12">loc5</name>
+      <label kind="invariant" x="-544" y="3">z[2]&lt;=1</label>
+      
+      
+      
+    </location>
+
+    <location id="id6" x="-1274" y="-708">
+      <name x="-1274" y="-693">loc6_b</name>
+      <label kind="invariant" x="-1274" y="-678">z[2]&lt;=1</label>
+      
+      
+      
+    </location>
+    
+    <init ref="id0" />
+    
+    <transition>
+      <source ref="id3" />
+      <target ref="id6" />
+      
+      <label kind="guard" x="-492" y="-592">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-492" y="-562">z[0]=0</label>
+      
+    <nail x="-374" y="-685" />
+    </transition>
+
+    <transition>
+      <source ref="id4" />
+      <target ref="id6" />
+      
+      <label kind="guard" x="-1105" y="-472">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-1105" y="-442">z[0]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id5" />
+      <target ref="id6" />
+      
+      <label kind="guard" x="-1477" y="-352">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-1477" y="-322">z[0]=0</label>
+      
+    <nail x="-1359" y="-455" />
+    </transition>
+
+    <transition>
+      <source ref="id6" />
+      <target ref="id3" />
+      
+      <label kind="guard" x="-168" y="-592">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-168" y="-562">z[0]=0</label>
+      
+    <nail x="8" y="-624" />
+    </transition>
+
+    <transition>
+      <source ref="id6" />
+      <target ref="id4" />
+      
+      <label kind="guard" x="-735" y="-472">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-735" y="-442">z[0]=0</label>
+      
+    <nail x="-557" y="-497" />
+    </transition>
+
+    <transition>
+      <source ref="id6" />
+      <target ref="id5" />
+      
+      <label kind="guard" x="-1144" y="-352">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-1144" y="-322">z[0]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id6" />
+      <target ref="id0" />
+      
+      <label kind="guard" x="-1717" y="-592">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-1717" y="-562">z[0]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id6" />
+      <target ref="id1" />
+      
+      <label kind="guard" x="-2125" y="-472">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-2125" y="-442">z[0]=0</label>
+      
+    <nail x="-1991" y="-559" />
+    </transition>
+
+    <transition>
+      <source ref="id6" />
+      <target ref="id2" />
+      
+      <label kind="guard" x="-2478" y="-352">(z[2]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;0))</label>
+      
+      <label kind="assignment" x="-2478" y="-322">z[0]=0</label>
+      
+    <nail x="-2418" y="-338" />
+    </transition>
+
+    <transition>
+      <source ref="id0" />
+      <target ref="id1" />
+      
+      <label kind="guard" x="-1814" y="-352">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-1814" y="-322">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id0" />
+      <target ref="id2" />
+      
+      <label kind="guard" x="-1682" y="-232">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-1682" y="-202">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id1" />
+      <target ref="id0" />
+      
+      <label kind="guard" x="-1916" y="-352">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-1916" y="-322">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id1" />
+      <target ref="id2" />
+      
+      <label kind="guard" x="-1937" y="-112">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-1937" y="-82">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id2" />
+      <target ref="id0" />
+      
+      <label kind="guard" x="-1789" y="-232">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-1789" y="-202">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id2" />
+      <target ref="id1" />
+      
+      <label kind="guard" x="-1832" y="-112">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-1832" y="-82">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id3" />
+      <target ref="id4" />
+      
+      <label kind="guard" x="-428" y="-352">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-428" y="-322">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id3" />
+      <target ref="id5" />
+      
+      <label kind="guard" x="-275" y="-232">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-275" y="-202">z[2]=0</label>
+      
+    <nail x="-370" y="-47" />
+    </transition>
+
+    <transition>
+      <source ref="id4" />
+      <target ref="id3" />
+      
+      <label kind="guard" x="-532" y="-352">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-532" y="-322">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id4" />
+      <target ref="id5" />
+      
+      <label kind="guard" x="-604" y="-112">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-604" y="-82">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id5" />
+      <target ref="id3" />
+      
+      <label kind="guard" x="-436" y="-232">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-436" y="-202">z[2]=0</label>
+      
+    </transition>
+
+    <transition>
+      <source ref="id5" />
+      <target ref="id4" />
+      
+      <label kind="guard" x="-523" y="-112">z[2]&gt;=1</label>
+      
+      <label kind="assignment" x="-523" y="-82">z[2]=0</label>
+      
+    </transition>
+  </template>
+
+  <system>system sys;</system>
+</nta>
