@@ -1838,9 +1838,42 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   merge_timed(t1,t,out);
   // copy back the states with Gen in t
   // copy t->tStates[i] if it is gen to out->tStates end and increase the stateNum
+  int numOfState = out->stateNum;
+  int genStateNum = 0;
+  int refGen[t->stateNum];
 
-  // adjust transitions accordingly
+  for (int i =0; i< t->stateNum; i++){
+    refGen[i] = -1;
+    if (strstr(t->tStates[i].tstateId, "Gen")){
+      refGen[i] = genStateNum;
+      int inputNum=0;
+      out->tStates[numOfState+genStateNum].input= (unsigned short *) malloc(sizeof(unsigned short)*t->tStates[i].inputNum);
+      for (int l=0; l< t->tStates[i].inputNum; l++){
+        out->tStates[numOfState+genStateNum].input[inputNum++] = t->tStates[i].input[l];
+      }
+      create_tstate(&out->tStates[numOfState+genStateNum], t->tStates[i].tstateId, t->tStates[i].inv, out->tStates[numOfState+i].input, t->tStates[i].inputNum, t->tStates[i].output, t->tStates[i].buchi, NULL);
+      out->tStates[numOfState+i].sym = dup_set(t->tStates[i].sym ,3);
+      genStateNum++;
+    }
+  }
 
+  //add previous ended transition back to the merged automata
+  //adjust transitions accordingly
+  TTrans* tt = out->tTrans;
+  while(tt->nxt){
+    tt = tt->nxt;
+  }
+
+  TTrans* tGen = t->tTrans;
+  while(t){
+    if (refGen[t->to - &t->tStates[0]]!=-1 && refGen[t->from - &t->tStates[0]]!=-1){
+      tt->next = t;
+      tt->from = &out->tStates[numOfState + refGen[t->from - &t->tStates[0]]];
+      tt->to = &out->tStates[numOfState + refGen[t->to - &t->tStates[0]]];
+    }
+    t = t->nxt;
+  }
+  
   // appoint initial state accordingly
 
   // make it easy to divide automata
