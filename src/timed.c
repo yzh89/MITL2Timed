@@ -851,7 +851,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->nType = PREDICATE;  
         cguard->cCstr = (CCstr *) malloc(sizeof(CCstr));
         cguard->cCstr->cIdx = cCount+2*i+1;
-        cguard->cCstr->gType = LESS; 
+        cguard->cCstr->gType = LESSEQUAL; 
         cguard->cCstr->bndry = p->intvl[1];
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
         create_tstate(&sC[0+3*i], stateName, cguard, input, 1, NULLOUT, 0, p); //output * in s1 state
@@ -873,7 +873,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->nType = PREDICATE;  
         cguard->cCstr = (CCstr *) malloc(sizeof(CCstr));
         cguard->cCstr->cIdx = cCount+2*m; // z clock is 2*m
-        cguard->cCstr->gType = LESS; 
+        cguard->cCstr->gType = LESSEQUAL; 
         cguard->cCstr->bndry = d;
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
         create_tstate(&sC[2+3*i], stateName, cguard, input, 1, NULLOUT, 0, p); //output * in s3 state
