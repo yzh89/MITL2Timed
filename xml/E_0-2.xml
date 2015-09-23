@@ -159,7 +159,7 @@
       
       <label kind="guard" x="-1374" y="-1837">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=2))</label>
       
-      <label kind="assignment" x="-1374" y="-1807">z[0]=0</label>
+      <label kind="assignment" x="-1374" y="-1807">z[0]=0,z[6]=0</label>
       
     </transition>
 
@@ -169,7 +169,7 @@
       
       <label kind="guard" x="-1032" y="-1717">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=2))</label>
       
-      <label kind="assignment" x="-1032" y="-1687">z[0]=0</label>
+      <label kind="assignment" x="-1032" y="-1687">z[0]=0,z[6]=0</label>
       
     </transition>
 
@@ -179,7 +179,7 @@
       
       <label kind="guard" x="-603" y="-1033">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=2))</label>
       
-      <label kind="assignment" x="-603" y="-1003">z[0]=0</label>
+      <label kind="assignment" x="-603" y="-1003">z[0]=0,z[6]=0</label>
       
     <nail x="-516" y="-1194" />
 
@@ -196,7 +196,7 @@
       
       <label kind="guard" x="-1082" y="-1515">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[3]&gt;=0))</label>
       
-      <label kind="assignment" x="-1082" y="-1485">z[0]=0</label>
+      <label kind="assignment" x="-1082" y="-1485">z[0]=0,z[6]=0</label>
       
     <nail x="-899" y="-1546" />
     </transition>
@@ -207,7 +207,7 @@
       
       <label kind="guard" x="-1431" y="-1393">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[3]&gt;=0))</label>
       
-      <label kind="assignment" x="-1431" y="-1363">z[0]=0</label>
+      <label kind="assignment" x="-1431" y="-1363">z[0]=0,z[6]=0</label>
       
     <nail x="-1259" y="-1399" />
 
@@ -222,7 +222,7 @@
       
       <label kind="guard" x="-1692" y="-1273">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[3]&gt;=0))</label>
       
-      <label kind="assignment" x="-1692" y="-1243">z[0]=0</label>
+      <label kind="assignment" x="-1692" y="-1243">z[0]=0,z[6]=0</label>
       
     <nail x="-1571" y="-1342" />
 
@@ -239,7 +239,7 @@
       
       <label kind="guard" x="-2088" y="-1515">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-2088" y="-1485">z[0]=0</label>
+      <label kind="assignment" x="-2088" y="-1485">z[0]=0,z[5]=0,z[6]=0</label>
       
     <nail x="-1975" y="-1549" />
 
@@ -252,7 +252,7 @@
       
       <label kind="guard" x="-2501" y="-1273">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-2501" y="-1243">z[0]=0</label>
+      <label kind="assignment" x="-2501" y="-1243">z[0]=0,z[5]=0,z[6]=0</label>
       
     <nail x="-2477" y="-1503" />
     </transition>
@@ -263,7 +263,7 @@
       
       <label kind="guard" x="-2004" y="-1393">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-2004" y="-1363">z[0]=0</label>
+      <label kind="assignment" x="-2004" y="-1363">z[0]=0,z[5]=0,z[6]=0</label>
       
     </transition>
 
@@ -273,7 +273,7 @@
       
       <label kind="guard" x="-2315" y="-1515">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-2315" y="-1485">z[0]=0</label>
+      <label kind="assignment" x="-2315" y="-1485">z[0]=0,z[6]=0</label>
       
     </transition>
 
@@ -283,7 +283,7 @@
       
       <label kind="guard" x="-2712" y="-1273">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-2712" y="-1243">z[0]=0</label>
+      <label kind="assignment" x="-2712" y="-1243">z[0]=0,z[6]=0</label>
       
     <nail x="-2664" y="-1392" />
     </transition>
@@ -294,7 +294,7 @@
       
       <label kind="guard" x="-1766" y="-1393">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-1766" y="-1363">z[0]=0</label>
+      <label kind="assignment" x="-1766" y="-1363">z[0]=0,z[6]=0</label>
       
     <nail x="-1783" y="-1375" />
 
@@ -307,7 +307,7 @@
       
       <label kind="guard" x="-930" y="-1033">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[4]&gt;=2))</label>
       
-      <label kind="assignment" x="-930" y="-1003">z[0]=0</label>
+      <label kind="assignment" x="-930" y="-1003">z[0]=0,z[6]=0</label>
       
     <nail x="-708" y="-1158" />
     </transition>
@@ -318,7 +318,7 @@
       
       <label kind="guard" x="-1610" y="-913">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[4]&gt;=2))</label>
       
-      <label kind="assignment" x="-1610" y="-883">z[0]=0</label>
+      <label kind="assignment" x="-1610" y="-883">z[0]=0,z[6]=0</label>
       
     <nail x="-1373" y="-725" />
     </transition>
@@ -329,7 +329,7 @@
       
       <label kind="guard" x="-1250" y="-793">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[4]&gt;=2))</label>
       
-      <label kind="assignment" x="-1250" y="-763">z[0]=0</label>
+      <label kind="assignment" x="-1250" y="-763">z[0]=0,z[6]=0</label>
       
     </transition>
 
@@ -339,7 +339,7 @@
       
       <label kind="guard" x="-3002" y="-1393">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;=0))</label>
       
-      <label kind="assignment" x="-3002" y="-1363">z[0]=0</label>
+      <label kind="assignment" x="-3002" y="-1363">z[0]=0,z[6]=0</label>
       
     <nail x="-2848" y="-752" />
 
@@ -352,7 +352,7 @@
       
       <label kind="guard" x="-515" y="-1273">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;=0))</label>
       
-      <label kind="assignment" x="-515" y="-1243">z[0]=0</label>
+      <label kind="assignment" x="-515" y="-1243">z[0]=0,z[6]=0</label>
       
     </transition>
 
@@ -362,7 +362,7 @@
       
       <label kind="guard" x="-644" y="-592">(z[6]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;=0))</label>
       
-      <label kind="assignment" x="-644" y="-562">z[0]=0</label>
+      <label kind="assignment" x="-644" y="-562">z[0]=0,z[6]=0</label>
       
     <nail x="-455" y="-627" />
 
@@ -375,7 +375,7 @@
       
       <label kind="guard" x="-1121" y="-352">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-1121" y="-322">z[0]=0</label>
+      <label kind="assignment" x="-1121" y="-322">z[0]=0,z[5]=0,z[6]=0</label>
       
     </transition>
 
@@ -385,7 +385,7 @@
       
       <label kind="guard" x="-1215" y="-472">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-1215" y="-442">z[0]=0</label>
+      <label kind="assignment" x="-1215" y="-442">z[0]=0,z[5]=0,z[6]=0</label>
       
     <nail x="-1152" y="-407" />
 
@@ -402,7 +402,7 @@
       
       <label kind="guard" x="-1538" y="-592">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-1538" y="-562">z[0]=0</label>
+      <label kind="assignment" x="-1538" y="-562">z[0]=0,z[5]=0,z[6]=0</label>
       
     <nail x="-1409" y="-626" />
 
@@ -415,7 +415,7 @@
       
       <label kind="guard" x="-912" y="-352">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-912" y="-322">z[0]=0</label>
+      <label kind="assignment" x="-912" y="-322">z[0]=0,z[6]=0</label>
       
     <nail x="-745" y="-472" />
     </transition>
@@ -426,7 +426,7 @@
       
       <label kind="guard" x="-1443" y="-472">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-1443" y="-442">z[0]=0</label>
+      <label kind="assignment" x="-1443" y="-442">z[0]=0,z[6]=0</label>
       
     </transition>
 
@@ -436,7 +436,7 @@
       
       <label kind="guard" x="-1767" y="-592">(z[6]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
       
-      <label kind="assignment" x="-1767" y="-562">z[0]=0</label>
+      <label kind="assignment" x="-1767" y="-562">z[0]=0,z[6]=0</label>
       
     </transition>
 
