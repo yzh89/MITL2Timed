@@ -304,6 +304,8 @@ enum {
   LESS,    /* 6 */
   GREATER,    /* 7 */
   GREATEREQUAL, /* 8 */
+  STOP,
+  START,
 };
 
 typedef struct TAutomata{

@@ -773,24 +773,59 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       // TODO: add initial node for eventually automata (3)
       float d = p->intvl[1] - p->intvl[0];
       short m = ceil(p->intvl[1]/d) + 1;
-      tG = emalloc_ttrans(2*m,1); 
-      sG = (TState *) tl_emalloc(sizeof(TState)*2*m);
+      tG = emalloc_ttrans(2*m+1,1); 
+      sG = (TState *) tl_emalloc(sizeof(TState)*2*m + 1);
 
       for (int i =0; i< m; i++){
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-        
         stateName= (char *) malloc (sizeof(char)*(strlen("Gen_"))+3);
         sprintf(stateName, "Gen_%d", 2*i+1);
-
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
-        create_tstate(&sG[0+i*2], stateName, (CGuard *) 0, input, 1, 0, 0, p); //output 0 first stage
+
+        cguard = (CGuard*) malloc(sizeof(CGuard));
+        cguard->nType = START;
+        cguard->lft = (CGuard*) malloc(sizeof(CGuard));
+        cguard->lft->nType = PREDICATE;
+        cguard->lft->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+        cguard->lft->cCstr->gType = STOP;
+        cguard->lft->cCstr->bndry = cCount+2*i;
+
+        create_tstate(&sG[0+i*2], stateName, cguard, input, 1, 0, 0, p); //output 0 first stage
 
         stateName= (char *) malloc (sizeof(char)*(strlen("Gen_"))+3);
         sprintf(stateName, "Gen_%d", 2*i+2);
-        input = (unsigned short *) malloc(sizeof(unsigned short)*1);    
+        input = (unsigned short *) malloc(sizeof(unsigned short)*1);
+
+        cguard = (CGuard*) malloc(sizeof(CGuard));
+        cguard->nType = START;
+        cguard->lft = (CGuard*) malloc(sizeof(CGuard));
+        cguard->lft->nType = PREDICATE;
+        cguard->lft->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+        cguard->lft->cCstr->gType = STOP;
+        cguard->lft->cCstr->bndry = cCount+2*i + 1;
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-        create_tstate(&sG[1+i*2], stateName, (CGuard *) 0, input, 1, 1, 0, p); //output 1 in second stage
+        create_tstate(&sG[1+i*2], stateName, cguard, input, 1, 1, 0, p); //output 1 in second stage
       }
+
+      // add a state to disable all clocks first
+      stateName = "Gen0";
+      input = (unsigned short *) malloc(sizeof(unsigned short)*1);
+      cguard = (CGuard*) malloc(sizeof(CGuard));
+
+      cguard->nType = STOP;
+      cguard->lft = (CGuard*) malloc(sizeof(CGuard));
+      cguard->lft->nType = PREDICATE;
+      cguard->lft->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+      cguard->lft->cCstr->gType = STOP;
+      cguard->lft->cCstr->bndry = cCount;
+      cguard->rgt = (CGuard*) malloc(sizeof(CGuard));
+      cguard->rgt->nType = PREDICATE;
+      cguard->rgt->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+      cguard->rgt->cCstr->gType = STOP;
+      cguard->rgt->cCstr->bndry = cCount+2*m;
+
+      create_tstate(&sG[2*m], stateName, cguard, input, 1, 0, 0, p); //output 0 
+      
       
       tmp=tG;
       for (int i = 0; i < m; i++){
@@ -836,6 +871,15 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         }
 
       }
+
+      // add the initial transition to generator state 0
+      //reset which clock
+      clockId = (int *) malloc(sizeof(int)*1);
+      clockId[0] = cCount;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, (CGuard *) 0, clockId, 1, &sG[2*m],  &sG[0]);
+      tmp = tmp->nxt;
+
 
       // prediction checker
       tC = emalloc_ttrans(4*m,1); 
