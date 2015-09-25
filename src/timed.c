@@ -774,7 +774,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       float d = p->intvl[1] - p->intvl[0];
       short m = ceil(p->intvl[1]/d) + 1;
       tG = emalloc_ttrans(2*m+1,1); 
-      sG = (TState *) tl_emalloc(sizeof(TState)*2*m + 1);
+      sG = (TState *) tl_emalloc(sizeof(TState)*(2*m + 1));
 
       for (int i =0; i< m; i++){
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
@@ -787,8 +787,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->lft = (CGuard*) malloc(sizeof(CGuard));
         cguard->lft->nType = PREDICATE;
         cguard->lft->cCstr = (CCstr * ) malloc(sizeof(CCstr));
-        cguard->lft->cCstr->gType = STOP;
-        cguard->lft->cCstr->bndry = cCount+2*i;
+        cguard->lft->cCstr->gType = START;
+        cguard->lft->cCstr->cIdx = cCount+2*i;
 
         create_tstate(&sG[0+i*2], stateName, cguard, input, 1, 0, 0, p); //output 0 first stage
 
@@ -801,8 +801,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         cguard->lft = (CGuard*) malloc(sizeof(CGuard));
         cguard->lft->nType = PREDICATE;
         cguard->lft->cCstr = (CCstr * ) malloc(sizeof(CCstr));
-        cguard->lft->cCstr->gType = STOP;
-        cguard->lft->cCstr->bndry = cCount+2*i + 1;
+        cguard->lft->cCstr->gType = START;
+        cguard->lft->cCstr->cIdx = cCount+2*i + 1;
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
         create_tstate(&sG[1+i*2], stateName, cguard, input, 1, 1, 0, p); //output 1 in second stage
       }
@@ -817,15 +817,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       cguard->lft->nType = PREDICATE;
       cguard->lft->cCstr = (CCstr * ) malloc(sizeof(CCstr));
       cguard->lft->cCstr->gType = STOP;
-      cguard->lft->cCstr->bndry = cCount;
+      cguard->lft->cCstr->cIdx = cCount;
       cguard->rgt = (CGuard*) malloc(sizeof(CGuard));
       cguard->rgt->nType = PREDICATE;
       cguard->rgt->cCstr = (CCstr * ) malloc(sizeof(CCstr));
       cguard->rgt->cCstr->gType = STOP;
-      cguard->rgt->cCstr->bndry = cCount+2*m;
+      cguard->rgt->cCstr->cIdx = cCount+2*m-1;
 
-      create_tstate(&sG[2*m], stateName, cguard, input, 1, 0, 0, p); //output 0 
-      
+      create_tstate(&sG[2*m], stateName, cguard, input, 1, 0, 0, NULL); //output 0 
       
       tmp=tG;
       for (int i = 0; i < m; i++){
@@ -997,7 +996,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = tG;
       tA->tStates = sG;
-      tA->stateNum = 2*m;
+      tA->stateNum = 2*m+1;
 
       tB = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tB->tTrans = tC;
@@ -2016,6 +2015,25 @@ void print_CGuard(CGuard *cg){
         fprintf(tl_out, "|| ");
         print_CGuard(cg->rgt);
         break;
+
+      case START:
+        fprintf(tl_out, "z%d'==1", cg->lft->cCstr->cIdx);
+        break;
+
+      case STOP:
+      {
+        int start = cg->lft->cCstr->cIdx;
+        int end = cg->rgt->cCstr->cIdx;
+        int first = 1;
+        for (int i =start; i<=end; i++){
+          if (first){
+            fprintf(tl_out, "z%d'==0", i);
+            first = 0;
+          }
+          if (!first) fprintf(tl_out, ", z%d'==0", i);
+        }
+        break;
+      }
 
       case PREDICATE:
         fprintf(tl_out, "z%d ", cg->cCstr->cIdx);
