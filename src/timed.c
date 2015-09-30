@@ -300,7 +300,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
     case TRUE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(s, "T", (CGuard *) 0, (unsigned short*) 0, 0, 1, 1, NULL); //output true
+      create_tstate(s, "T", (CGuard *) 0, (unsigned short*) 0, 0, 1, 0, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
@@ -313,7 +313,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
     case FALSE:
       s = (TState *) tl_emalloc(sizeof(TState)*1);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(s, "F", (CGuard *) 0, (unsigned short*) 0, 0, 0, 1, NULL); //output true
+      create_tstate(s, "F", (CGuard *) 0, (unsigned short*) 0, 0, 0, 0, NULL); //output true
 
       tA = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tA->tTrans = (TTrans *)0;
@@ -332,14 +332,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 1 << t_get_sym_id(p->sym->name);
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(s, stateName, (CGuard *) 0, input, 1, 1, 1, p); //output true when p is true
+      create_tstate(s, stateName, (CGuard *) 0, input, 1, 1, 0, p); //output true when p is true
 
       stateName= (char *) malloc (sizeof(char)*(strlen(p->sym->name))+5);
       sprintf(stateName, "!p(%s)", p->sym->name);
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(&s[1], stateName, (CGuard *) 0, input, 1, 0, 1, p); //output false when p is false
+      create_tstate(&s[1], stateName, (CGuard *) 0, input, 1, 0, 0, p); //output false when p is false
       
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -389,12 +389,12 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b1;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(s, "p", (CGuard *) 0, input, 1, 0, 1, NULL); //output false when p is true
+      create_tstate(s, "p", (CGuard *) 0, input, 1, 0, 0, NULL); //output false when p is true
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b0;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(&s[1], "!p", (CGuard *) 0, input, 1, 1, 1, NULL); //output true when p is false
+      create_tstate(&s[1], "!p", (CGuard *) 0, input, 1, 1, 0, NULL); //output true when p is false
       
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -810,6 +810,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       // add a state to disable all clocks first
       stateName = "Gen0";
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
+      input[0] = NULLOUT;
       cguard = (CGuard*) malloc(sizeof(CGuard));
 
       cguard->nType = STOP;
@@ -1022,14 +1023,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b11;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(&s[0], "and", (CGuard *) 0, input, 1, 1, 1, NULL); //output 1 in pq state
+      create_tstate(&s[0], "and", (CGuard *) 0, input, 1, 1, 0, NULL); //output 1 in pq state
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*3);
       input[0] = 0b10;
       input[1] = 0b01;
       input[2] = 0b00;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(&s[1], "! and", (CGuard *) 0, input, 3, 0, 1, NULL); //output 0 in other state
+      create_tstate(&s[1], "! and", (CGuard *) 0, input, 3, 0, 0, NULL); //output 0 in other state
 
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -1083,14 +1084,14 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       input[0] = 0b00;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(&s[0], "or", (CGuard *) 0, input, 1, 0, 1, NULL); //output 0 in !p!q state
+      create_tstate(&s[0], "or", (CGuard *) 0, input, 1, 0, 0, NULL); //output 0 in !p!q state
 
       input = (unsigned short *) malloc(sizeof(unsigned short)*3);
       input[0] = 0b10;
       input[1] = 0b01;
       input[2] = 0b11;
       // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-      create_tstate(&s[1], "! or", (CGuard *) 0, input, 3, 1, 1, NULL); //output 1 in other state
+      create_tstate(&s[1], "! or", (CGuard *) 0, input, 3, 1, 0, NULL); //output 1 in other state
  
       tmp=t;
       // (0 -> 1) : z > 0 | z := 0
@@ -1448,7 +1449,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
       else if (t2->tStates[t2StateNum[k]].sym!=NULL)
         s[k].sym = dup_set(t2->tStates[t2StateNum[k]].sym, 3);
 
-      s[k].buchi = t1->tStates[t1StateNum[k]].buchi & t2->tStates[t2StateNum[k]].buchi & t->tStates[i].buchi;
+      s[k].buchi = t1->tStates[t1StateNum[k]].buchi | t2->tStates[t2StateNum[k]].buchi | t->tStates[i].buchi;
       
       // merge invariants 
       if (!t1->tStates[t1StateNum[k]].inv && !t2->tStates[t2StateNum[k]].inv && !t->tStates[i].inv){
@@ -1729,7 +1730,7 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
       s[k].output = t->tStates[i].output;      
 
       // merge buchi
-      s[k].buchi = t1->tStates[t1StateNum[k]].buchi & t->tStates[i].buchi;
+      s[k].buchi = t1->tStates[t1StateNum[k]].buchi | t->tStates[i].buchi;
     }
     numOfState = matches;
   }
@@ -1950,7 +1951,7 @@ TAutomata *create_map(int nodeNum){
     s[i].tstateId = (char *)malloc(sizeof(char)*6);
     sprintf(s[i].tstateId, "loc%i",i);
 
-    create_tstate(&s[i], s[i].tstateId, cguard, (unsigned short *) 0, 0, 0, 1, NULL);
+    create_tstate(&s[i], s[i].tstateId, cguard, (unsigned short *) 0, 0, 0, 0, NULL);
     s[i].sym = new_set(3);
     clear_set(s[i].sym,3);
     add_set(s[i].sym, t_get_sym_id("a"));
@@ -2029,8 +2030,7 @@ void print_CGuard(CGuard *cg){
           if (first){
             fprintf(tl_out, "z%d'==0", i);
             first = 0;
-          }
-          if (!first) fprintf(tl_out, ", z%d'==0", i);
+          } else if (!first) fprintf(tl_out, ", z%d'==0", i);
         }
         break;
       }
@@ -2069,6 +2069,29 @@ void CGuard_to_xml(CGuard *cg, char* res){
         CGuard_to_xml(cg->lft, res);
         strcat(res, ")");
         break;
+      
+      case START:
+        sprintf(buffer, "z[%d]'==1", cg->lft->cCstr->cIdx);
+        strcat(res, buffer);
+        break;
+
+      case STOP:
+      {
+        int start = cg->lft->cCstr->cIdx;
+        int end = cg->rgt->cCstr->cIdx;
+        int first = 1;
+        for (int i =start; i<=end; i++){
+          if (first){
+            sprintf(buffer, "z[%d]'==0", i);
+            first = 0;
+            strcat(res, buffer);
+          } else if (!first){
+            sprintf(buffer, "&& z[%d]'==0", i);
+            strcat(res, buffer);
+          }
+        }
+        break;
+      }
 
       case PREDICATE:
         sprintf(buffer, "z[%d]", cg->cCstr->cIdx);
@@ -2164,9 +2187,9 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
     buffer[0] = '\0';
     CGuard_to_xml(t->tStates[i].inv, buffer);
     if(t->tStates[i].buchi== 1){
-      fprintf(xml,"\tlocations.append( Location(invariant='%s', urgent=False, committed=False, name='loc%i_b', id = 'id'+str(locid)) )\n", buffer, i);
+      fprintf(xml,"\tlocations.append( Location(invariant=\"%s\", urgent=False, committed=False, name='loc%i_b', id = 'id'+str(locid)) )\n", buffer, i);
     }else{
-      fprintf(xml,"\tlocations.append( Location(invariant='%s', urgent=False, committed=False, name='loc%i', id = 'id'+str(locid)) )\n", buffer, i);
+      fprintf(xml,"\tlocations.append( Location(invariant=\"%s\", urgent=False, committed=False, name='loc%i', id = 'id'+str(locid)) )\n", buffer, i);
     }
 
     fprintf(xml, "\tlocid +=1\n");
