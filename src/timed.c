@@ -2181,6 +2181,21 @@ void CGuard_to_xml(CGuard *cg, char* res){
     }
   }
 }
+void print_buchi(TAutomata *t){
+  TTrans *tmp;
+  tmp = t->tTrans;
+  int j = 0;
+  while (tmp != NULL) {
+    fprintf(tl_out, "Transition %i : %i to %i \n", j, (int) (tmp->from - &t->tStates[0]) + 1, (int) (tmp->to - &t->tStates[0]) + 1);
+    fprintf(tl_out, "Clock reseted: ");
+    print_set(tmp->cIdx, 4);
+    fprintf(tl_out, "\nGuards Condition: ");
+    print_CGuard(tmp->cguard);
+    fprintf(tl_out, "\n");
+    j++;
+    tmp = tmp->nxt;
+  }
+}
 
 void print_timed(TAutomata *t) /* dumps the alternating automaton */
 {
@@ -2273,19 +2288,28 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
   TTrans *tmp;
   tmp = t->tTrans;
 
+  fprintf(xml, "\tbuchiSync=[]\n");
   while (tmp != NULL) {
     buffer[0] = '\0';
     CGuard_to_xml(tmp->cguard, buffer);
     setBuffer[0] = '\0';
     set_to_xml(tmp->cIdx, setBuffer);
-    fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
+    if (tmp->to->buchi == 0)
+      fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
+    else{
+      fprintf(xml, "\tif %i not in buchiSync:\n\t\tbuchiSync.append(%i)\n", (int) (tmp->to - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]));
+      fprintf(xml, "\t\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s', synchronisation = 'ch['+str(len(buchiSync)-1)+']!') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
+      
+      fprintf(xml, "\telse:\n");
+      fprintf(xml, "\t\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s', synchronisation = 'ch['+str(buchiSync.index(%i))+']!') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer, (int) (tmp->to - &t->tStates[0]));
+    }
     j++;
     tmp = tmp->nxt;
   }
 
-  fprintf(xml, "\ttemplate = Template('sys', locations=locations, transitions=transitions, declaration='clock z[%i];', initlocation=locations[0])\n", clockSize);
+  fprintf(xml, "\ttemplate = Template('sys', locations=locations, transitions=transitions, initlocation=locations[0])\n");
 
-  fprintf(xml, "\ttemplate.layout(auto_nails = True);\n\tnta = NTA(system = 'system sys;', templates=[template])\n\tf = open('test.xml', 'w')\n\tf.write(nta.to_xml())\nif __name__ == '__main__':\n\tmain()\n");
+  fprintf(xml, "\ttemplate.layout(auto_nails = True);\n\tnta = NTA(system = 'system sys;', templates=[template], declaration='clock z[%i]; chan ch['+str(len(buchiSync))+'];')\n\tf = open('test.xml', 'w')\n\tf.write(nta.to_xml())\nif __name__ == '__main__':\n\tmain()\n", clockSize);
 
   fclose(xml);
 
