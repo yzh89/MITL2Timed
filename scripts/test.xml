@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>clock z[5]; broadcast chan ch[4];</declaration>
+	<template>
+		<name x="5" y="5">sys</name>
+		<location id="id0" x="-1029" y="-630">
+			<name x="-1029" y="-615">loc0_b</name>
+			<label kind="invariant" x="-1029" y="-600">z[4]&lt;=1</label>
+		</location>
+		<location id="id1" x="-462" y="-27">
+			<name x="-462" y="-12">loc1_b</name>
+			<label kind="invariant" x="-462" y="3">z[4]&lt;=1</label>
+		</location>
+		<location id="id2" x="-2264" y="-27">
+			<name x="-2264" y="-12">loc2_b</name>
+			<label kind="invariant" x="-2264" y="3">z[4]&lt;=1</label>
+		</location>
+		<location id="id3" x="-1350" y="-429">
+			<name x="-1350" y="-414">loc3</name>
+			<label kind="invariant" x="-1350" y="-399">z[4]&lt;=1</label>
+		</location>
+		<location id="id4" x="-1286" y="-27">
+			<name x="-1286" y="-12">loc4</name>
+			<label kind="invariant" x="-1286" y="3">z[4]&lt;=1</label>
+		</location>
+		<location id="id5" x="-1482" y="-228">
+			<name x="-1482" y="-213">loc5_b</name>
+			<label kind="invariant" x="-1482" y="-198">z[4]&lt;=1</label>
+		</location>
+		<init ref="id4"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-224" y="-313">(z[4]&gt;=1 &amp;&amp; ((z[0]&gt;0 &amp;&amp; z[1]&gt;0) &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-224" y="-298">ch[0]!</label>
+			<label kind="assignment" x="-224" y="-283">z[0]=0,z[1]=0,z[3]=0,z[4]=0</label>
+			<nail x="-204" y="-263"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-2372" y="-313">(z[4]&gt;=1 &amp;&amp; ((z[0]&gt;0 &amp;&amp; z[1]&gt;0) &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-2372" y="-298">ch[1]!</label>
+			<label kind="assignment" x="-2372" y="-283">z[0]=0,z[1]=0,z[3]=0,z[4]=0</label>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-667" y="-313">(z[4]&gt;=1 &amp;&amp; ((z[0]&gt;0 &amp;&amp; z[1]&gt;0) &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-667" y="-298">ch[2]!</label>
+			<label kind="assignment" x="-667" y="-283">z[0]=0,z[1]=0,z[3]=0,z[4]=0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-2810" y="-313">(z[4]&gt;=1 &amp;&amp; ((z[0]&gt;0 &amp;&amp; z[1]&gt;0) &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-2810" y="-298">ch[2]!</label>
+			<label kind="assignment" x="-2810" y="-283">z[0]=0,z[1]=0,z[3]=0,z[4]=0</label>
+			<nail x="-2687" y="-240"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-1469" y="-514">(z[4]&gt;=1 &amp;&amp; ((z[0]&gt;0 &amp;&amp; z[1]&gt;0) &amp;&amp; z[3]&gt;0))</label>
+			<label kind="assignment" x="-1469" y="-484">z[0]=0,z[1]=0,z[3]=0,z[4]=0</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-1102" y="-313">(z[4]&gt;=1 &amp;&amp; ((z[0]&gt;0 &amp;&amp; z[1]&gt;0) &amp;&amp; z[3]&gt;0))</label>
+			<label kind="assignment" x="-1102" y="-283">z[0]=0,z[1]=0,z[3]=0,z[4]=0</label>
+			<nail x="-788" y="-236"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-1499" y="-313">(z[4]&gt;=1 &amp;&amp; (z[2]&gt;0 &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-1499" y="-298">ch[3]!</label>
+			<label kind="assignment" x="-1499" y="-283">z[2]=0,z[3]=0,z[4]=0</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-1435" y="-112">(z[4]&gt;=1 &amp;&amp; (z[2]&gt;0 &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-1435" y="-97">ch[3]!</label>
+			<label kind="assignment" x="-1435" y="-82">z[2]=0,z[3]=0,z[4]=0</label>
+			<nail x="-1304" y="-195"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-1813" y="-313">(z[4]&gt;=1 &amp;&amp; (z[2]&gt;0 &amp;&amp; z[3]&gt;0))</label>
+			<label kind="assignment" x="-1813" y="-283">z[2]=0,z[3]=0,z[4]=0</label>
+			<nail x="-1674" y="-343"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-1748" y="-112">(z[4]&gt;=1 &amp;&amp; (z[2]&gt;0 &amp;&amp; z[3]&gt;0))</label>
+			<label kind="assignment" x="-1748" y="-82">z[2]=0,z[3]=0,z[4]=0</label>
+			<nail x="-1609" y="-112"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-1117" y="-112">(z[4]&gt;=1 &amp;&amp; (z[2]&gt;0 &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-1117" y="-97">ch[0]!</label>
+			<label kind="assignment" x="-1117" y="-82">z[2]=0,z[3]=0,z[4]=0</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-2095" y="-112">(z[4]&gt;=1 &amp;&amp; (z[2]&gt;0 &amp;&amp; z[3]&gt;0))</label>
+			<label kind="synchronisation" x="-2095" y="-97">ch[1]!</label>
+			<label kind="assignment" x="-2095" y="-82">z[2]=0,z[3]=0,z[4]=0</label>
+			<nail x="-1939" y="-147"/>
+			<nail x="-1910" y="-108"/>
+		</transition>
+	</template>
+	<template>
+		<name>counter</name>
+		<location id="id6" x="501" y="-51">
+			<name x="491" y="-85">final</name>
+		</location>
+		<location id="id7" x="331" y="229">
+		</location>
+		<location id="id8" x="323" y="34">
+		</location>
+		<location id="id9" x="314" y="-144">
+		</location>
+		<location id="id10" x="314" y="-280">
+		</location>
+		<location id="id11" x="127" y="331">
+		</location>
+		<location id="id12" x="127" y="374">
+		</location>
+		<location id="id13" x="127" y="297">
+		</location>
+		<location id="id14" x="136" y="272">
+		</location>
+		<location id="id15" x="153" y="246">
+		</location>
+		<location id="id16" x="153" y="221">
+		</location>
+		<location id="id17" x="170" y="195">
+		</location>
+		<location id="id18" x="170" y="153">
+		</location>
+		<location id="id19" x="170" y="119">
+		</location>
+		<location id="id20" x="178" y="85">
+		</location>
+		<location id="id21" x="170" y="51">
+		</location>
+		<location id="id22" x="170" y="17">
+		</location>
+		<location id="id23" x="170" y="-34">
+		</location>
+		<location id="id24" x="170" y="-8">
+		</location>
+		<location id="id25" x="161" y="-67">
+		</location>
+		<location id="id26" x="170" y="-93">
+		</location>
+		<location id="id27" x="170" y="-118">
+		</location>
+		<location id="id28" x="161" y="-152">
+		</location>
+		<location id="id29" x="161" y="-178">
+		</location>
+		<location id="id30" x="170" y="-212">
+		</location>
+		<location id="id31" x="161" y="-246">
+		</location>
+		<location id="id32" x="170" y="-288">
+		</location>
+		<location id="id33" x="170" y="-382">
+		</location>
+		<location id="id34" x="161" y="-331">
+		</location>
+		<location id="id35" x="-17" y="297">
+		</location>
+		<location id="id36" x="-8" y="246">
+		</location>
+		<location id="id37" x="-8" y="195">
+		</location>
+		<location id="id38" x="8" y="85">
+		</location>
+		<location id="id39" x="17" y="42">
+		</location>
+		<location id="id40" x="17" y="0">
+		</location>
+		<location id="id41" x="17" y="-34">
+		</location>
+		<location id="id42" x="17" y="-76">
+		</location>
+		<location id="id43" x="17" y="-119">
+		</location>
+		<location id="id44" x="25" y="-170">
+		</location>
+		<location id="id45" x="17" y="-229">
+		</location>
+		<location id="id46" x="17" y="-289">
+		</location>
+		<location id="id47" x="-110" y="238">
+		</location>
+		<location id="id48" x="-110" y="17">
+		</location>
+		<location id="id49" x="-102" y="-93">
+		</location>
+		<location id="id50" x="-93" y="-221">
+		</location>
+		<location id="id51" x="-221" y="-42">
+		</location>
+		<init ref="id51"/>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="349" y="72">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="341" y="-25">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="332" y="-114">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="332" y="-182">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="145" y="284">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="145" y="263">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="145" y="246">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="154" y="233">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="171" y="220">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="171" y="208">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="188" y="97">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="188" y="76">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="188" y="59">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="196" y="42">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="188" y="25">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="188" y="8">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="188" y="-93">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="188" y="-106">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="179" y="-122">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="188" y="-135">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="188" y="-148">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="179" y="-165">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="188" y="-348">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="179" y="-322">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="188" y="-301">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="187" y="-272">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="188" y="-263">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="179" y="-246">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="1" y="297">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id12"/>
+			<label kind="synchronisation" x="1" y="318">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="10" y="254">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="10" y="242">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id37"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="10" y="203">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id37"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="10" y="191">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="26" y="123">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="26" y="102">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id39"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="35" y="63">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id39"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="35" y="46">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id40"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="35" y="8">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id40"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="35" y="-9">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id41"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="35" y="-51">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id41"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="35" y="-38">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id42"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="35" y="-88">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id42"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="35" y="-101">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id43"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="35" y="-135">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id43"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="35" y="-152">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id44"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="43" y="-191">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id44"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="43" y="-208">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id45"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="35" y="-254">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id45"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="35" y="-275">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id46"/>
+			<target ref="id33"/>
+			<label kind="synchronisation" x="35" y="-352">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id46"/>
+			<target ref="id34"/>
+			<label kind="synchronisation" x="35" y="-327">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id47"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="-92" y="246">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id47"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="-92" y="225">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id47"/>
+			<target ref="id37"/>
+			<label kind="synchronisation" x="-92" y="212">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id48"/>
+			<target ref="id38"/>
+			<label kind="synchronisation" x="-92" y="34">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id48"/>
+			<target ref="id39"/>
+			<label kind="synchronisation" x="-92" y="12">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id48"/>
+			<target ref="id40"/>
+			<label kind="synchronisation" x="-92" y="-9">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id49"/>
+			<target ref="id41"/>
+			<label kind="synchronisation" x="-76" y="-68">ch[0]?</label>
+		</transition>
+		<transition>
+			<source ref="id49"/>
+			<target ref="id42"/>
+			<label kind="synchronisation" x="-84" y="-101">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id49"/>
+			<target ref="id43"/>
+			<label kind="synchronisation" x="-84" y="-123">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id50"/>
+			<target ref="id44"/>
+			<label kind="synchronisation" x="-75" y="-212">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id50"/>
+			<target ref="id45"/>
+			<label kind="synchronisation" x="-75" y="-242">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id50"/>
+			<target ref="id46"/>
+			<label kind="synchronisation" x="-75" y="-272">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id51"/>
+			<target ref="id47"/>
+			<label kind="synchronisation" x="-195" y="51">ch[3]?</label>
+		</transition>
+		<transition>
+			<source ref="id51"/>
+			<target ref="id48"/>
+			<label kind="synchronisation" x="-178" y="0">ch[2]?</label>
+		</transition>
+		<transition>
+			<source ref="id51"/>
+			<target ref="id49"/>
+			<label kind="synchronisation" x="-178" y="-76">ch[1]?</label>
+		</transition>
+		<transition>
+			<source ref="id51"/>
+			<target ref="id50"/>
+			<label kind="synchronisation" x="-178" y="-144">ch[0]?</label>
+		</transition>
+	</template>
+	<system>system sys, counter;</system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; counter.final
+			</formula>
+			<comment>
+			</comment>
+		</query>
+	</queries>
+</nta>
