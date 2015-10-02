@@ -880,6 +880,11 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       create_ttrans(tmp, (CGuard *) 0, clockId, 1, &sG[2*m],  &sG[0]);
       tmp = tmp->nxt;
 
+      clockId = (int *) malloc(sizeof(int)*1);
+      clockId[0] = cCount+1;
+      // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+      create_ttrans(tmp, (CGuard *) 0, clockId, 1, &sG[2*m],  &sG[1]);
+      tmp = tmp->nxt;
 
       // prediction checker
       tC = emalloc_ttrans(4*m,1); 
@@ -1913,10 +1918,10 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
     if (refGen[tGen->to - &t->tStates[0]]!=-1 && refGen[tGen->from - &t->tStates[0]]!=-1){
       tt->nxt = tGen;
       tt = tt->nxt;
-      printf("%s-> %s   ", out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].tstateId);
+      // printf("%s-> %s   ", out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].tstateId);
       tt->from = &out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]];
       tt->to = &out->tStates[numOfState + refGen[tGen->to - &t->tStates[0]]];
-      printf("%s-> %s   ", tt->from->tstateId, tt->to->tstateId);
+      // printf("%s-> %s   ", tt->from->tstateId, tt->to->tstateId);
       
     }
     tGen = tGen->nxt;
