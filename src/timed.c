@@ -2186,21 +2186,7 @@ void CGuard_to_xml(CGuard *cg, char* res){
     }
   }
 }
-void print_buchi(TAutomata *t){
-  TTrans *tmp;
-  tmp = t->tTrans;
-  int j = 0;
-  while (tmp != NULL) {
-    fprintf(tl_out, "Transition %i : %i to %i \n", j, (int) (tmp->from - &t->tStates[0]) + 1, (int) (tmp->to - &t->tStates[0]) + 1);
-    fprintf(tl_out, "Clock reseted: ");
-    print_set(tmp->cIdx, 4);
-    fprintf(tl_out, "\nGuards Condition: ");
-    print_CGuard(tmp->cguard);
-    fprintf(tl_out, "\n");
-    j++;
-    tmp = tmp->nxt;
-  }
-}
+
 
 void print_timed(TAutomata *t) /* dumps the alternating automaton */
 {
