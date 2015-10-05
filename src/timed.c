@@ -1569,6 +1569,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
       for (int k=0; k< t1->stateNum; k++){
         if (t1->tStates[k].output == t->tStates[i].input[j] >> 1 && t1->tStates[k].output!= NULLOUT ) {
           //make product state if the input is the same as the output
+          // further need to have input equal if they have intersection on sets.
           t1StateNum[matches] = k;
           for (int l=0; l< t2->stateNum; l++){
             if (t2->tStates[l].output == (t->tStates[i].input[j] & (unsigned short) 0x01) && t2->tStates[l].output!= NULLOUT){

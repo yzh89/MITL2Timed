@@ -192,6 +192,18 @@ int empty_set(int *l, int type) /* tests if a set is the empty set */
   return !test;
 }
 
+int get_set(int *l,int type){ // return one element and remove that elements return -1 if no more to get
+  for (int i=0; i< set_size(type); i++){
+    for(int j = 0; j < mod; j++){
+      if(l[i] & (1 << j)) {
+        rem_set(l, mod*i +j);
+        return mod * i + j;
+      }
+    }
+  }
+  return -1;
+}
+
 int same_sets(int *l1, int *l2, int type) /* tests if two sets are identical */
 {
   int i, test = 1;
