@@ -265,7 +265,7 @@ typedef unsigned char byte;
 
 //MITL functions
 // #ifdef TIMED
-// NULLOUT is the output of prediction checker of the timed automata of <>_I
+// NULLOUT is the output of prediction checker of the timed automata of <>_I and Gen Input if it is zero
 #define NULLOUT 0xffff
 typedef struct CCstr{  //clock constraint for invariant and transition
   int cIdx; //clock index associated with the constraint
