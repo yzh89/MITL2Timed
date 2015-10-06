@@ -1642,7 +1642,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
       else if (t2->tStates[t2StateNum[k]].sym!=NULL)
         s[k].sym = dup_set(t2->tStates[t2StateNum[k]].sym, 3);
 
-      s[k].buchi = t1->tStates[t1StateNum[k]].buchi | t2->tStates[t2StateNum[k]].buchi | t->tStates[i].buchi;
+      s[k].buchi = (t1->tStates[t1StateNum[k]].buchi & t2->tStates[t2StateNum[k]].buchi) | t->tStates[i].buchi;
       
       // merge invariants 
       if (!t1->tStates[t1StateNum[k]].inv && !t2->tStates[t2StateNum[k]].inv && !t->tStates[i].inv){
@@ -2641,7 +2641,7 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
  //    print_set(t->to, 0);
  //    fprintf(tl_out, "\n");
  //  }
-  fprintf(xml, "#!/usr/bin/python\nfrom pyuppaal import *\ndef main():\n\tlocid = 0\n\tlocations = []\n\ttransitions = []\n");
+  fprintf(xml, "#!/usr/bin/python\nfrom pyuppaal import *\ndef main():\n\tbuchiLoc = []\n\tlocid = 0\n\tlocations = []\n\ttransitions = []\n");
 
   int j = 0;
   char buffer[80];
@@ -2651,12 +2651,14 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
     CGuard_to_xml(t->tStates[i].inv, buffer);
     if(t->tStates[i].buchi== 1){
       fprintf(xml,"\tlocations.append( Location(invariant=\"%s\", urgent=False, committed=False, name='loc%i_b', id = 'id'+str(locid)) )\n", buffer, i);
+      fprintf(xml,"\tbuchiLoc.append(locid)\n");
     }else{
       fprintf(xml,"\tlocations.append( Location(invariant=\"%s\", urgent=False, committed=False, name='loc%i', id = 'id'+str(locid)) )\n", buffer, i);
     }
 
     fprintf(xml, "\tlocid +=1\n");
   }
+  fprintf(xml, "\tlocations.append(Location(invariant='', urgent=False, committed=False, name='final', id = 'id'+str(locid)))\n");
 
   TTrans *tmp;
   tmp = t->tTrans;
@@ -2670,6 +2672,8 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
     j++;
     tmp = tmp->nxt;
   }
+
+  fprintf(xml, "\tfor i in buchiLoc:\n\t\ttransitions.append( Transition(locations[i], locations[locid], guard='', assignment=''))\n");
 
   fprintf(xml, "\ttemplate = Template('sys', locations=locations, transitions=transitions, declaration='clock z[%i];', initlocation=locations[0])\n", clockSize);
 
