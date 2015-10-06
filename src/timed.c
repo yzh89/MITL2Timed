@@ -1536,13 +1536,14 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 }
 
 int compare_input (TState *t1, TState *t2){
-  int *syms = new_set(3);
-  if (!empty_intersect_sets(t1->syms, t2->syms))
-    do_merge_sets(syms, t1->syms, t2->syms);
+  int *syms;
+  if (!t1->sym || !t2->sym) return 1;
+  if (!empty_intersect_sets(t1->sym, t2->sym,3))
+    syms = intersect_sets(t1->sym, t2->sym,3);
   else
     return 1;
   int symsId;
-  while (empty_set(syms,3)){
+  while (!empty_set(syms,3)){
     symsId = get_set(syms,3);
     int currTrue = 0;
     // check the input and see if they coincide with at least one.
