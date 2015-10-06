@@ -1535,6 +1535,31 @@ void merge_event_timed(TAutomata *t1, TAutomata *tB, TAutomata *tA, TAutomata *o
 
 }
 
+int compare_input (TState *t1, TState *t2){
+  int *syms = new_set(3);
+  if (!empty_intersect_sets(t1->syms, t2->syms))
+    do_merge_sets(syms, t1->syms, t2->syms);
+  else
+    return 1;
+  int symsId;
+  while (empty_set(syms,3)){
+    symsId = get_set(syms,3);
+    int currTrue = 0;
+    // check the input and see if they coincide with at least one.
+    for (int i = 0; i<t1->inputNum; i++){
+      for (int j = 0; j< t2->inputNum; j++){
+        if ( ((t1->input[i] >> symsId) & 0x01) == ((t2->input[j] >> symsId) & 0x01) ){
+          currTrue = 1;
+          break;
+        }
+      }
+      if (currTrue) break;
+    }
+    if (!currTrue) return 0;
+  }
+  return 1;
+}
+
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out){
   int numOfState = 0;
   int maxInput = 1;
@@ -1544,7 +1569,7 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
   const int maxNumOfState = ((t1->stateNum < t2->stateNum) ? t2->stateNum : t1->stateNum)* t->stateNum * maxInput;
   // printf("%ld \n", sizeof(TState)*(maxNumOfState + t1->eventNum + t2->eventNum));
   TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState + t1->eventNum + t2->eventNum));
-  int t1StateNum[maxNumOfState+1];
+  int t1StateNum[maxNumOfState];
   int t2StateNum[maxNumOfState];
   int tStateNum[maxNumOfState];
   int tEventStateNum[t1->eventNum + t2->eventNum];
@@ -1567,15 +1592,15 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
     
     for (int j=0; j< t->tStates[i].inputNum; j++) {
       for (int k=0; k< t1->stateNum; k++){
-        if (t1->tStates[k].output == t->tStates[i].input[j] >> 1 && t1->tStates[k].output!= NULLOUT ) {
+        if (t1->tStates[k].output == t->tStates[i].input[j] >> 1 && t1->tStates[k].output!= NULLOUT) {
           //make product state if the input is the same as the output
           // further need to have input equal if they have intersection on sets.
-          t1StateNum[matches] = k;
+          
           for (int l=0; l< t2->stateNum; l++){
-            if (t2->tStates[l].output == (t->tStates[i].input[j] & (unsigned short) 0x01) && t2->tStates[l].output!= NULLOUT){
+            if (t2->tStates[l].output == (t->tStates[i].input[j] & (unsigned short) 0x01) && t2->tStates[l].output!= NULLOUT && compare_input(&t2->tStates[l], &t1->tStates[k])){
+              t1StateNum[matches] = k;
               tStateNum[matches]=i;
               t2StateNum[matches++] = l;
-              t1StateNum[matches] = k;
             }
           }
         }else if(t1->tStates[k].output== NULLOUT && events == 0){ // scan only one time for testing NULLOUT of t2
