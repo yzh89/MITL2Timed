@@ -1,0 +1,492 @@
+formula: []<>_[0,2] a
+	/* Normlzd: (false V <>_[0.000, 2.000] ((a))) */
+tl_spin: memalloc 193 bytes
+tl_spin: memalloc 91 bytes
+tl_spin: memalloc 787 bytes
+7
+Transition 0 : 2 to 5 
+Clock reseted: {3,6}
+Guards Condition: z2 >= 2 && z6 > 0 
+Transition 1 : 3 to 4 
+Clock reseted: {1,6}
+Guards Condition: z4 >= 2 && z6 > 0 
+Transition 2 : 4 to 2 
+Clock reseted: {2,6}
+Guards Condition: z6 > 0 
+Transition 3 : 5 to 3 
+Clock reseted: {4,6}
+Guards Condition: z6 > 0 
+Transition 4 : 4 to 0 
+Clock reseted: {2,6}
+Guards Condition: z6 > 0 
+Transition 5 : 5 to 1 
+Clock reseted: {4,6}
+Guards Condition: z6 > 0 
+Transition 6 : 6 to 4 
+Clock reseted: {1}
+Guards Condition: * 
+Transition 7 : 6 to 2 
+Clock reseted: {2}
+Guards Condition: * 
+Transition 8 : 6 to 0 
+Clock reseted: {2}
+Guards Condition: * 
+Transition 9 : 7 to 8 
+Clock reseted: {0}
+Guards Condition: z0 > 0 && z2 >= 2 
+Transition 10 : 8 to 10 
+Clock reseted: {0}
+Guards Condition: z0 > 0 && z3 >= 0 
+Transition 11 : 8 to 9 
+Clock reseted: {0,5}
+Guards Condition: z0 > 0 
+Transition 12 : 9 to 8 
+Clock reseted: {0}
+Guards Condition: z0 > 0 
+Transition 13 : 10 to 11 
+Clock reseted: {0}
+Guards Condition: z0 > 0 && z4 >= 2 
+Transition 14 : 11 to 7 
+Clock reseted: {0}
+Guards Condition: z0 > 0 && z1 >= 0 
+Transition 15 : 11 to 12 
+Clock reseted: {0,5}
+Guards Condition: z0 > 0 
+Transition 16 : 12 to 11 
+Clock reseted: {0}
+Guards Condition: z0 > 0 
+Transition 17 : 13 to 7 
+Clock reseted: {0}
+Guards Condition: z0 > 0 && z1 >= 0 
+Transition 18 : 16 to 8 
+Clock reseted: {0}
+Guards Condition: z0 > 0 && z2 >= 0 
+Transition 19 : 15 to 9 
+Clock reseted: {0}
+Guards Condition: z0 > 0 && z2 >= 0 
+Transition 20 : 13 to 14 
+Clock reseted: {0}
+Guards Condition: z0 > 0 
+Transition 21 : 14 to 13 
+Clock reseted: {0}
+Guards Condition: z0 > 0 
+Transition 22 : 15 to 16 
+Clock reseted: {0}
+Guards Condition: z0 > 0 
+Transition 23 : 16 to 15 
+Clock reseted: {0}
+Guards Condition: z0 > 0 
+State 0 : (F , Gen_2: <>_I (a)) x !(!pq) 
+   input: () output: (0x0001) 
+   symbols: {<>_I (a)}
+   invariants: z2'==1
+State 1 : (F , Gen_4: <>_I (a)) x !(!pq) 
+   input: () output: (0x0001) 
+   symbols: {<>_I (a)}
+   invariants: z4'==1
+State 2 : (F , Gen_2: <>_I (a)) x !pq 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z2'==1
+State 3 : (F , Gen_4: <>_I (a)) x !pq 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z4'==1
+State 4 : (F , Gen_1: <>_I (a)) x !p!q 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z1'==1
+State 5 : (F , Gen_3: <>_I (a)) x !p!q 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z3'==1
+State 6 : Gen0: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {<>_I (a)}
+   invariants: z1'==0&& z2'==0&& z3'==0&& z4'==0
+State 7 : !p(a) x CHK_1: <>_I (a) 
+   input: (000000, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z2 <= 2 
+State 8 : p(a) x CHK_2: <>_I (a) 
+   input: (0x0001, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z3 <= 0 
+State 9 : !p(a) x CHK_3: <>_I (a) 
+   input: (000000, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z3 <= 0 && z5 <= 2 
+State 10 : !p(a) x CHK_4: <>_I (a) 
+   input: (000000, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z4 <= 2 
+State 11 : p(a) x CHK_5: <>_I (a) 
+   input: (0x0001, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z1 <= 0 
+State 12 : !p(a) x CHK_6: <>_I (a) 
+   input: (000000, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z1 <= 0 && z5 <= 2 
+State 13 : p(a) x CHK00: <>_I (a) 
+   input: (0x0001, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z1 <= 0 
+State 14 : !p(a) x CHK00: <>_I (a) 
+   input: (000000, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z1 <= 0 
+State 15 : p(a) x CHK01: <>_I (a) 
+   input: (0x0001, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z2 <= 0 
+State 16 : !p(a) x CHK01: <>_I (a) 
+   input: (000000, ) output: (0xffff) 
+   symbols: {a}
+   invariants: z2 <= 0 
+Transition 0 : 0 to 1 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 1 : 1 to 0 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 2 : 1 to 2 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 3 : 2 to 1 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 4 : 2 to 3 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 5 : 3 to 2 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 6 : 3 to 0 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 7 : 0 to 3 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+State 0 : loc0 
+   input: () output: (000000) 
+   symbols: {a}
+   invariants: z7 <= 1 
+State 1 : loc1 
+   input: () output: (000000) 
+   symbols: {a}
+   invariants: z7 <= 1 
+State 2 : loc2 
+   input: () output: (000000) 
+   symbols: {a}
+   invariants: z7 <= 1 
+State 3 : loc3 
+   input: () output: (0x0001) 
+   symbols: {a}
+   invariants: z7 <= 1 
+tl_spin: memalloc 409 bytes
+Transition 0 : 0 to 3 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z2 >= 2 
+Transition 1 : 2 to 3 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z2 >= 2 
+Transition 2 : 3 to 7 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z3 >= 0 
+Transition 3 : 3 to 9 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z3 >= 0 
+Transition 4 : 3 to 4 
+Clock reseted: {0,5,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 5 : 3 to 6 
+Clock reseted: {0,5,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 6 : 4 to 3 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 7 : 6 to 3 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 8 : 7 to 10 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z4 >= 2 
+Transition 9 : 9 to 10 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z4 >= 2 
+Transition 10 : 10 to 0 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z1 >= 0 
+Transition 11 : 10 to 2 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z1 >= 0 
+Transition 12 : 10 to 11 
+Clock reseted: {0,5,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 13 : 10 to 13 
+Clock reseted: {0,5,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 14 : 11 to 10 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 15 : 13 to 10 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 16 : 14 to 0 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z1 >= 0 
+Transition 17 : 14 to 2 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z1 >= 0 
+Transition 18 : 19 to 3 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z2 >= 0 
+Transition 19 : 21 to 3 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z2 >= 0 
+Transition 20 : 18 to 4 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z2 >= 0 
+Transition 21 : 18 to 6 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 && z2 >= 0 
+Transition 22 : 14 to 15 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 23 : 14 to 17 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 24 : 15 to 14 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 25 : 17 to 14 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 26 : 18 to 19 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 27 : 18 to 21 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 28 : 19 to 18 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 29 : 21 to 18 
+Clock reseted: {0,7}
+Guards Condition: z7 >= 1 && z0 > 0 
+Transition 30 : 0 to 1 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 31 : 1 to 0 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 32 : 1 to 2 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 33 : 2 to 1 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 34 : 4 to 5 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 35 : 5 to 4 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 36 : 5 to 6 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 37 : 6 to 5 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 38 : 7 to 8 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 39 : 8 to 7 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 40 : 8 to 9 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 41 : 9 to 8 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 42 : 11 to 12 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 43 : 12 to 11 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 44 : 12 to 13 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 45 : 13 to 12 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 46 : 15 to 16 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 47 : 16 to 15 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 48 : 16 to 17 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 49 : 17 to 16 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 50 : 19 to 20 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 51 : 20 to 19 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 52 : 20 to 21 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 53 : 21 to 20 
+Clock reseted: {7}
+Guards Condition: z7 >= 1 
+Transition 54 : 24 to 27 
+Clock reseted: {3,6}
+Guards Condition: z2 >= 2 && z6 > 0 
+Transition 55 : 25 to 26 
+Clock reseted: {1,6}
+Guards Condition: z4 >= 2 && z6 > 0 
+Transition 56 : 26 to 24 
+Clock reseted: {2,6}
+Guards Condition: z6 > 0 
+Transition 57 : 27 to 25 
+Clock reseted: {4,6}
+Guards Condition: z6 > 0 
+Transition 58 : 26 to 22 
+Clock reseted: {2,6}
+Guards Condition: z6 > 0 
+Transition 59 : 27 to 23 
+Clock reseted: {4,6}
+Guards Condition: z6 > 0 
+Transition 60 : 28 to 26 
+Clock reseted: {1}
+Guards Condition: * 
+Transition 61 : 28 to 24 
+Clock reseted: {2}
+Guards Condition: * 
+Transition 62 : 28 to 22 
+Clock reseted: {2}
+Guards Condition: * 
+State 0 : loc0 x !p(a) x CHK_1: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z2 <= 2 
+State 1 : loc1 x !p(a) x CHK_1: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z2 <= 2 
+State 2 : loc2 x !p(a) x CHK_1: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z2 <= 2 
+State 3 : loc3 x p(a) x CHK_2: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z3 <= 0 
+State 4 : loc0 x !p(a) x CHK_3: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z3 <= 0 && z5 <= 2 
+State 5 : loc1 x !p(a) x CHK_3: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z3 <= 0 && z5 <= 2 
+State 6 : loc2 x !p(a) x CHK_3: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z3 <= 0 && z5 <= 2 
+State 7 : loc0 x !p(a) x CHK_4: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z4 <= 2 
+State 8 : loc1 x !p(a) x CHK_4: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z4 <= 2 
+State 9 : loc2 x !p(a) x CHK_4: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z4 <= 2 
+State 10 : loc3 x p(a) x CHK_5: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 
+State 11 : loc0 x !p(a) x CHK_6: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 && z5 <= 2 
+State 12 : loc1 x !p(a) x CHK_6: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 && z5 <= 2 
+State 13 : loc2 x !p(a) x CHK_6: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 && z5 <= 2 
+State 14 : loc3 x p(a) x CHK00: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 
+State 15 : loc0 x !p(a) x CHK00: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 
+State 16 : loc1 x !p(a) x CHK00: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 
+State 17 : loc2 x !p(a) x CHK00: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z1 <= 0 
+State 18 : loc3 x p(a) x CHK01: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z2 <= 0 
+State 19 : loc0 x !p(a) x CHK01: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z2 <= 0 
+State 20 : loc1 x !p(a) x CHK01: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z2 <= 0 
+State 21 : loc2 x !p(a) x CHK01: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {a}
+   invariants: z7 <= 1 && z2 <= 0 
+State 22 : (F , Gen_2: <>_I (a)) x !(!pq) 
+   input: () output: (0x0001) 
+   symbols: {<>_I (a)}
+   invariants: z2'==1
+State 23 : (F , Gen_4: <>_I (a)) x !(!pq) 
+   input: () output: (0x0001) 
+   symbols: {<>_I (a)}
+   invariants: z4'==1
+State 24 : (F , Gen_2: <>_I (a)) x !pq 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z2'==1
+State 25 : (F , Gen_4: <>_I (a)) x !pq 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z4'==1
+State 26 : (F , Gen_1: <>_I (a)) x !p!q 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z1'==1
+State 27 : (F , Gen_3: <>_I (a)) x !p!q 
+   input: () output: (000000) 
+   symbols: {<>_I (a)}
+   invariants: z3'==1
+State 28 : Gen0: <>_I (a) 
+   input: () output: (0xffff) 
+   symbols: {<>_I (a)}
+   invariants: z1'==0&& z2'==0&& z3'==0&& z4'==0

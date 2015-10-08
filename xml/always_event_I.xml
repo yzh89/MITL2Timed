@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>clock z[8],g;
+broadcast chan ch;</declaration>
+	<template>
+		<name x="5" y="5">sys</name>
+		<location id="id0" x="-1983" y="-2100">
+			<name x="-1983" y="-2085">loc0</name>
+			<label kind="invariant" x="-1983" y="-2070">(z[7]&lt;=1 &amp;&amp; z[2]&lt;=2)</label>
+		</location>
+		<location id="id1" x="-1998" y="-1875">
+			<name x="-1998" y="-1860">loc1</name>
+			<label kind="invariant" x="-1998" y="-1845">(z[7]&lt;=1 &amp;&amp; z[2]&lt;=2)</label>
+		</location>
+		<location id="id2" x="-1926" y="-1644">
+			<name x="-1926" y="-1629">loc2</name>
+			<label kind="invariant" x="-1926" y="-1614">(z[7]&lt;=1 &amp;&amp; z[2]&lt;=2)</label>
+		</location>
+		<location id="id3" x="-1088" y="-1453">
+			<name x="-1088" y="-1438">loc3</name>
+			<label kind="invariant" x="-1088" y="-1423">(z[7]&lt;=1 &amp;&amp; z[3]&lt;=0)</label>
+		</location>
+		<location id="id4" x="-633" y="-1233">
+			<name x="-633" y="-1218">loc4</name>
+			<label kind="invariant" x="-633" y="-1203">(z[7]&lt;=1 &amp;&amp; (z[3]&lt;=0 &amp;&amp; z[5]&lt;=2))</label>
+		</location>
+		<location id="id5" x="-633" y="-1032">
+			<name x="-633" y="-1017">loc5</name>
+			<label kind="invariant" x="-633" y="-1002">(z[7]&lt;=1 &amp;&amp; (z[3]&lt;=0 &amp;&amp; z[5]&lt;=2))</label>
+		</location>
+		<location id="id6" x="-529" y="-831">
+			<name x="-529" y="-816">loc6</name>
+			<label kind="invariant" x="-529" y="-801">(z[7]&lt;=1 &amp;&amp; (z[3]&lt;=0 &amp;&amp; z[5]&lt;=2))</label>
+		</location>
+		<location id="id7" x="-1140" y="-1233">
+			<name x="-1140" y="-1218">loc7</name>
+			<label kind="invariant" x="-1140" y="-1203">(z[7]&lt;=1 &amp;&amp; z[4]&lt;=2)</label>
+		</location>
+		<location id="id8" x="-1375" y="-1032">
+			<name x="-1375" y="-1017">loc8</name>
+			<label kind="invariant" x="-1375" y="-1002">(z[7]&lt;=1 &amp;&amp; z[4]&lt;=2)</label>
+		</location>
+		<location id="id9" x="-1525" y="-831">
+			<name x="-1525" y="-816">loc9</name>
+			<label kind="invariant" x="-1525" y="-801">(z[7]&lt;=1 &amp;&amp; z[4]&lt;=2)</label>
+		</location>
+		<location id="id10" x="-1777" y="-630">
+			<name x="-1777" y="-615">loc10</name>
+			<label kind="invariant" x="-1777" y="-600">(z[7]&lt;=1 &amp;&amp; z[1]&lt;=0)</label>
+		</location>
+		<location id="id11" x="-1854" y="-27">
+			<name x="-1854" y="-12">loc11</name>
+			<label kind="invariant" x="-1854" y="3">(z[7]&lt;=1 &amp;&amp; (z[1]&lt;=0 &amp;&amp; z[5]&lt;=2))</label>
+		</location>
+		<location id="id12" x="-1855" y="-228">
+			<name x="-1855" y="-213">loc12</name>
+			<label kind="invariant" x="-1855" y="-198">(z[7]&lt;=1 &amp;&amp; (z[1]&lt;=0 &amp;&amp; z[5]&lt;=2))</label>
+		</location>
+		<location id="id13" x="-1855" y="-429">
+			<name x="-1855" y="-414">loc13</name>
+			<label kind="invariant" x="-1855" y="-399">(z[7]&lt;=1 &amp;&amp; (z[1]&lt;=0 &amp;&amp; z[5]&lt;=2))</label>
+		</location>
+		<location id="id14" x="-2548" y="-2301">
+			<name x="-2548" y="-2286">loc14</name>
+			<label kind="invariant" x="-2548" y="-2271">(z[7]&lt;=1 &amp;&amp; z[1]&lt;=0)</label>
+		</location>
+		<location id="id15" x="-2656" y="-2100">
+			<name x="-2656" y="-2085">loc15</name>
+			<label kind="invariant" x="-2656" y="-2070">(z[7]&lt;=1 &amp;&amp; z[1]&lt;=0)</label>
+		</location>
+		<location id="id16" x="-2671" y="-1875">
+			<name x="-2671" y="-1860">loc16</name>
+			<label kind="invariant" x="-2671" y="-1845">(z[7]&lt;=1 &amp;&amp; z[1]&lt;=0)</label>
+		</location>
+		<location id="id17" x="-2815" y="-1644">
+			<name x="-2815" y="-1629">loc17</name>
+			<label kind="invariant" x="-2815" y="-1614">(z[7]&lt;=1 &amp;&amp; z[1]&lt;=0)</label>
+		</location>
+		<location id="id18" x="-625" y="-2301">
+			<name x="-625" y="-2286">loc18</name>
+			<label kind="invariant" x="-625" y="-2271">(z[7]&lt;=1 &amp;&amp; z[2]&lt;=0)</label>
+		</location>
+		<location id="id19" x="-867" y="-2100">
+			<name x="-867" y="-2085">loc19</name>
+			<label kind="invariant" x="-867" y="-2070">(z[7]&lt;=1 &amp;&amp; z[2]&lt;=0)</label>
+		</location>
+		<location id="id20" x="-817" y="-1875">
+			<name x="-817" y="-1860">loc20</name>
+			<label kind="invariant" x="-817" y="-1845">(z[7]&lt;=1 &amp;&amp; z[2]&lt;=0)</label>
+		</location>
+		<location id="id21" x="-714" y="-1644">
+			<name x="-714" y="-1629">loc21</name>
+			<label kind="invariant" x="-714" y="-1614">(z[7]&lt;=1 &amp;&amp; z[2]&lt;=0)</label>
+		</location>
+		<init ref="id19"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-1664" y="-1738">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=2))</label>
+			<label kind="assignment" x="-1664" y="-1708">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-1751" y="-1519">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=2))</label>
+			<label kind="assignment" x="-1751" y="-1489">z[0]=0,z[7]=0</label>
+			<nail x="-1563" y="-1552"/>
+			<nail x="-1598" y="-1514"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-1241" y="-1318">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[3]&gt;=0))</label>
+			<label kind="synchronisation" x="-1114" y="-1360">ch!</label>
+			<label kind="assignment" x="-1241" y="-1288">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id9"/>
+			<label kind="guard" x="-1709" y="-1117">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[3]&gt;=0))</label>
+			<label kind="synchronisation" x="-1570" y="-1205">ch!</label>
+			<label kind="assignment" x="-1709" y="-1087">z[0]=0,z[7]=0</label>
+			<nail x="-1588" y="-923"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-570" y="-1318">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-570" y="-1288">z[0]=0,z[5]=0,z[7]=0</label>
+			<nail x="-452" y="-1349"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-990" y="-1117">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-990" y="-1087">z[0]=0,z[5]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-786" y="-1318">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-786" y="-1288">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-462" y="-1117">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-462" y="-1087">z[0]=0,z[7]=0</label>
+			<nail x="-317" y="-1283"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-1214" y="-916">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[4]&gt;=2))</label>
+			<label kind="assignment" x="-1214" y="-886">z[0]=0,z[7]=0</label>
+			<nail x="-1185" y="-695"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-1751" y="-715">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[4]&gt;=2))</label>
+			<label kind="assignment" x="-1751" y="-685">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-2409" y="-1318">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;=0))</label>
+			<label kind="assignment" x="-2409" y="-1288">z[0]=0,z[7]=0</label>
+			<nail x="-2256" y="-747"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-2079" y="-1117">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;=0))</label>
+			<label kind="assignment" x="-2079" y="-1087">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-1701" y="-313">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-1701" y="-283">z[0]=0,z[5]=0,z[7]=0</label>
+			<nail x="-1654" y="-129"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id13"/>
+			<label kind="guard" x="-1761" y="-514">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-1761" y="-484">z[0]=0,z[5]=0,z[7]=0</label>
+			<nail x="-1646" y="-515"/>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-2208" y="-313">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-2208" y="-283">z[0]=0,z[7]=0</label>
+			<nail x="-2096" y="-538"/>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-1958" y="-514">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-1958" y="-484">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-2138" y="-2185">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;=0))</label>
+			<label kind="assignment" x="-2138" y="-2155">z[0]=0,z[7]=0</label>
+			<nail x="-1954" y="-2214"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-2475" y="-1983">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[1]&gt;=0))</label>
+			<label kind="assignment" x="-2475" y="-1953">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-1172" y="-1738">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=0))</label>
+			<label kind="assignment" x="-1172" y="-1708">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-837" y="-1519">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=0))</label>
+			<label kind="assignment" x="-837" y="-1489">z[0]=0,z[7]=0</label>
+			<nail x="-701" y="-1467"/>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-483" y="-1738">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=0))</label>
+			<label kind="assignment" x="-483" y="-1708">z[0]=0,z[7]=0</label>
+			<nail x="-330" y="-2202"/>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-153" y="-1519">(z[7]&gt;=1 &amp;&amp; (z[0]&gt;0 &amp;&amp; z[2]&gt;=0))</label>
+			<label kind="assignment" x="-153" y="-1489">z[0]=0,z[7]=0</label>
+			<nail x="0" y="-2206"/>
+			<nail x="0" y="-944"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id15"/>
+			<label kind="guard" x="-2532" y="-2185">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-2532" y="-2155">z[0]=0,z[7]=0</label>
+			<nail x="-2416" y="-2186"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id17"/>
+			<label kind="guard" x="-2952" y="-1983">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-2952" y="-1953">z[0]=0,z[7]=0</label>
+			<nail x="-2879" y="-2200"/>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id14"/>
+			<label kind="guard" x="-2744" y="-2185">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-2744" y="-2155">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id14"/>
+			<label kind="guard" x="-3147" y="-1983">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-3147" y="-1953">z[0]=0,z[7]=0</label>
+			<nail x="-2974" y="-2189"/>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-743" y="-2185">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-743" y="-2155">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-1374" y="-1983">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-1374" y="-1953">z[0]=0,z[7]=0</label>
+			<nail x="-1411" y="-1806"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-959" y="-2185">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-959" y="-2155">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-710" y="-1983">(z[7]&gt;=1 &amp;&amp; z[0]&gt;0)</label>
+			<label kind="assignment" x="-710" y="-1953">z[0]=0,z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-1975" y="-1983">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1975" y="-1953">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-2050" y="-1983">z[7]&gt;=1</label>
+			<label kind="assignment" x="-2050" y="-1953">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-2034" y="-1738">z[7]&gt;=1</label>
+			<label kind="assignment" x="-2034" y="-1708">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-1938" y="-1738">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1938" y="-1708">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-726" y="-1117">z[7]&gt;=1</label>
+			<label kind="assignment" x="-726" y="-1087">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-639" y="-1117">z[7]&gt;=1</label>
+			<label kind="assignment" x="-639" y="-1087">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-664" y="-916">z[7]&gt;=1</label>
+			<label kind="assignment" x="-664" y="-886">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-559" y="-916">z[7]&gt;=1</label>
+			<label kind="assignment" x="-559" y="-886">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-1296" y="-1117">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1296" y="-1087">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-1407" y="-1117">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1407" y="-1087">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="guard" x="-1435" y="-916">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1435" y="-886">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-1539" y="-916">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1539" y="-886">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-1914" y="-112">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1914" y="-82">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-1833" y="-112">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1833" y="-82">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id13"/>
+			<label kind="guard" x="-1948" y="-313">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1948" y="-283">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-1861" y="-313">z[7]&gt;=1</label>
+			<label kind="assignment" x="-1861" y="-283">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id16"/>
+			<label kind="guard" x="-2691" y="-1983">z[7]&gt;=1</label>
+			<label kind="assignment" x="-2691" y="-1953">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id15"/>
+			<label kind="guard" x="-2773" y="-1983">z[7]&gt;=1</label>
+			<label kind="assignment" x="-2773" y="-1953">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id17"/>
+			<label kind="guard" x="-2703" y="-1738">z[7]&gt;=1</label>
+			<label kind="assignment" x="-2703" y="-1708">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id16"/>
+			<label kind="guard" x="-2806" y="-1738">z[7]&gt;=1</label>
+			<label kind="assignment" x="-2806" y="-1708">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="guard" x="-853" y="-1983">z[7]&gt;=1</label>
+			<label kind="assignment" x="-853" y="-1953">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-933" y="-1983">z[7]&gt;=1</label>
+			<label kind="assignment" x="-933" y="-1953">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-750" y="-1738">z[7]&gt;=1</label>
+			<label kind="assignment" x="-750" y="-1708">z[7]=0</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id20"/>
+			<label kind="guard" x="-849" y="-1738">z[7]&gt;=1</label>
+			<label kind="assignment" x="-849" y="-1708">z[7]=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>sys0</name>
+		<location id="id22" x="-3382" y="-1644">
+			<name x="-3382" y="-1629">loc22_b</name>
+			<label kind="invariant" x="-3382" y="-1614">z[2]'==1</label>
+		</location>
+		<location id="id23" x="-4155" y="-1998">
+			<name x="-4155" y="-1983">loc23_b</name>
+			<label kind="invariant" x="-4155" y="-1968">z[4]'==1</label>
+		</location>
+		<location id="id24" x="-3711" y="-1644">
+			<name x="-3711" y="-1629">loc24</name>
+			<label kind="invariant" x="-3711" y="-1614">z[2]'==1</label>
+		</location>
+		<location id="id25" x="-3763" y="-2100">
+			<name x="-3763" y="-2085">loc25</name>
+			<label kind="invariant" x="-3763" y="-2070">z[4]'==1</label>
+		</location>
+		<location id="id26" x="-3522" y="-1875">
+			<name x="-3522" y="-1860">loc26_b</name>
+			<label kind="invariant" x="-3522" y="-1845">z[1]'==1</label>
+		</location>
+		<location id="id27" x="-3966" y="-2301">
+			<name x="-3966" y="-2286">loc27_b</name>
+			<label kind="invariant" x="-3966" y="-2271">z[3]'==1</label>
+		</location>
+		<location id="id28" x="-3397" y="-2100">
+			<name x="-3397" y="-2085">loc28</name>
+			<label kind="invariant" x="-3397" y="-2070">z[1]'==0&amp;&amp; z[2]'==0&amp;&amp; z[3]'==0&amp;&amp; z[4]'==0</label>
+		</location>
+		<location id="id29" x="-3789" y="-1434">
+			<name x="-3789" y="-1419">final</name>
+		</location>
+		<init ref="id28"/>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-3987" y="-1983">(z[2]&gt;=2 &amp;&amp; z[6]&gt;0)</label>
+			<label kind="assignment" x="-3987" y="-1953">z[3]=0,z[6]=0</label>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id26"/>
+			<label kind="guard" x="-3779" y="-1983">(z[4]&gt;=2 &amp;&amp; z[6]&gt;0)</label>
+			<label kind="assignment" x="-3779" y="-1953">z[1]=0,z[6]=0</label>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id24"/>
+			<label kind="guard" x="-3631" y="-1738">z[6]&gt;0</label>
+			<label kind="assignment" x="-3631" y="-1708">z[2]=0,z[6]=0</label>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id25"/>
+			<label kind="guard" x="-3823" y="-2185">z[6]&gt;0</label>
+			<label kind="assignment" x="-3823" y="-2155">z[4]=0,z[6]=0</label>
+			<nail x="-3738" y="-2212"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id22"/>
+			<label kind="guard" x="-3442" y="-1738">z[6]&gt;0</label>
+			<label kind="assignment" x="-3442" y="-1708">z[2]=0,z[6]=0</label>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id23"/>
+			<label kind="guard" x="-4116" y="-2185">z[6]&gt;0</label>
+			<label kind="assignment" x="-4116" y="-2155">z[4]=0,z[6]=0</label>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id22"/>
+			<label kind="assignment" x="-3392" y="-1830">z[2]=0</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id29"/>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id29"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id29"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id29"/>
+			<nail x="-4240" y="-1462"/>
+		</transition>
+	</template>
+	<template>
+		<name>sys1</name>
+		<location id="id30" x="127" y="-8">
+			<name x="117" y="-42">final</name>
+		</location>
+		<location id="id31" x="0" y="0">
+		</location>
+		<init ref="id31"/>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="18" y="-21">ch?</label>
+		</transition>
+	</template>
+	<system>system sys,sys1,sys0;</system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; sys0.final &amp;&amp; sys1.final
+			</formula>
+			<comment>
+			</comment>
+		</query>
+	</queries>
+</nta>
