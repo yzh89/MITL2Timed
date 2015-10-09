@@ -780,7 +780,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       t1= build_timed(p->lft);
 
       //create prediction generator with 2m transition and 2m clock;
-      // TODO: how to add the clock reset beyond b (3)
+      // TODO: how to add the clock reset beyond b (5)
       // TODO: add initial node for eventually automata (3)
       float d = p->intvl[1] - p->intvl[0];
       short m = ceil(p->intvl[1]/d) + 1;
@@ -2273,6 +2273,10 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   int genStateNum = 0;
   int refGen[t->stateNum];
 
+
+  // TODO: merge the Gen0 (2)
+  // TODO: merge CHKs for different locations (1)
+
   for (int i =0; i< t->stateNum; i++){
     refGen[i] = -1;
     if (strstr(t->tStates[i].tstateId, "Gen")!=NULL && strstr(t->tStates[i].tstateId, "p(")==NULL && strstr(t->tStates[i].tstateId, "CHK_")==NULL){
@@ -2468,7 +2472,6 @@ TAutomata *create_map_loop(int nodeNum, int ifb, int timeInt){
 |*                Display of the Timed Automata                     *|
 \********************************************************************/
 
-//TODO: print clock guards (10)
 void print_CGuard(CGuard *cg){
   if (!cg){
     fprintf(tl_out, "* ");
