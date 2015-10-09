@@ -2297,13 +2297,20 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   TTrans* tGen = t->tTrans;
   while(tGen){
     if (refGen[tGen->to - &t->tStates[0]]!=-1 && refGen[tGen->from - &t->tStates[0]]!=-1){
-      tt->nxt = tGen;
-      tt = tt->nxt;
-      // printf("%s-> %s \n", tGen->from->tstateId, tGen->to->tstateId);
-      tt->from = &out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]];
-      tt->to = &out->tStates[numOfState + refGen[tGen->to - &t->tStates[0]]];
-      // printf("%s-> %s \n", tt->from->tstateId, tt->to->tstateId);
+      // fprintf(tl_out,"%s -> %s :%i \n", out->tStates[numOfState+refGen[tGen->from - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].output);
       
+      if (out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].output==0 && strstr(out->tStates[numOfState+refGen[tGen->from - &t->tStates[0]]].tstateId, "Gen0")!=NULL){
+        // fprintf(tl_out,"ignore %s -> %s :%i \n", out->tStates[numOfState+refGen[tGen->from - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].output);
+        // do nothing dont copy the edge.
+      }else{
+        tt->nxt = tGen;
+        tt = tt->nxt;
+        // printf("%s-> %s \n", tGen->from->tstateId, tGen->to->tstateId);
+        tt->from = &out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]];
+        tt->to = &out->tStates[numOfState + refGen[tGen->to - &t->tStates[0]]];
+        // printf("%s-> %s \n", tt->from->tstateId, tt->to->tstateId);
+        
+      }
     }
     tGen = tGen->nxt;
   }
@@ -2380,7 +2387,7 @@ TAutomata *create_map(int nodeNum){
   return t;
 }
 
-TAutomata *create_map_loop(int nodeNum, int ifb){
+TAutomata *create_map_loop(int nodeNum, int ifb, int timeInt){
   // nodeNum>=4
   if (nodeNum <4){
     nodeNum =4;
@@ -2396,7 +2403,7 @@ TAutomata *create_map_loop(int nodeNum, int ifb){
   cguard->cCstr = (CCstr *)(CCstr * )  malloc(sizeof(CCstr));
   cguard->cCstr->cIdx = cCount;
   cguard->cCstr->gType = LESSEQUAL;
-  cguard->cCstr->bndry = 1;
+  cguard->cCstr->bndry = timeInt;
   // void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p){
   for (int i=0; i<nodeNum; i++){
     s[i].tstateId = (char *)malloc(sizeof(char)*6);
@@ -2724,7 +2731,7 @@ void mk_timed(Node *p) /* generates an timed automata for p */
 
   print_timed(tAutomata);
 
-  TAutomata* mapAutomata = create_map_loop(4,1);
+  TAutomata* mapAutomata = create_map_loop(4,1,2);
 
   print_timed(mapAutomata);
 
