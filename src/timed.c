@@ -1333,6 +1333,34 @@ void merge_inv(CGuard *target, CGuard *lft, CGuard *rgt, CGuard *top){
 /********************************************************************\
 |*             Linking the Timed Automata                           *|
 \********************************************************************/
+void merge_ttrans_array(TTrans **t, int transNum, TTrans *tOut, TState *from, TState *to){
+  tOut->cIdx = new_set(4);
+  clear_set(tOut->cIdx, 4);
+
+  int tmpBool=0;
+  tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
+  CGuard *tmp;
+  CGuard *cguard[2];
+  for (int l = 0; l< transNum; l++){
+    if (t[l]){
+      merge_sets(tOut->cIdx, t[l]->cIdx,4);
+      if (t[l]->cguard && tmpBool==0){
+        merge_inv(tOut->cguard, t[l]->cguard, NULL,NULL);
+      }else if (t[l]->cguard){
+        tmp = tOut->cguard;
+        tOut->cguard = (CGuard*) malloc(sizeof(CGuard));
+        merge_inv(tOut->cguard, tmp , NULL ,t[l]->cguard);
+      }
+      tmpBool+=(t[l]->cguard != NULL);
+    }
+
+  }
+  if (tmpBool==0) tOut->cguard = (CGuard*) 0;
+
+  tOut->from = from;
+  // fprintf(tl_out, "%s -> %s\n",from->tstateId, to->tstateId );
+  tOut->to = to;
+}
 
 void merge_ttrans(TTrans *t1, TTrans *t2, TTrans *tt, TTrans *tOut, TState *from, TState *to){
   if (t1 && t2 && tt){
@@ -2266,16 +2294,379 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 }
 
 void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
-  merge_timed(t1,t,out);
+
+  // copied from merge timed since if map have multiple symbols need to search in system for the symbol pairs to match.
+  int numOfState = 0;
+  int maxInput = 1;
+  for (int i= 0; i < t->stateNum; i++){
+    maxInput = maxInput < t->tStates[i].inputNum ? t->tStates[i].inputNum : maxInput;
+  }
+  int numOfSyms = count_set(t->tStates[0].sym,3);
+
+  const int maxNumOfState = t1->stateNum* pow(t->stateNum/numOfSyms,numOfSyms) * maxInput;
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState));
+
+  int gen1StateNum[maxNumOfState];
+  int gen2StateNum[maxNumOfState];
+
+  int gen1Count = 0;
+  int gen2Count = 0;
+
+  int t1StateNum[maxNumOfState];
+
+  int matches = 0;
+  
+
+  int matchTable[numOfSyms][maxNumOfState];
+
+  for (int i=0; i<t->stateNum; i++){  
+    
+    for (int j=0; j< t->tStates[i].inputNum; j++) {
+      for (int k=0; k< t1->stateNum; k++){
+        // TODO: merge CHKs for different locations (1)
+        // 1.  if  t1.s[k] syms not same as t.[i] syms 
+        //     find intersection of the syms set and find in the states after k
+        // 2.  merge multiple states (maximum is determined by the number of symbols in the map) if there are more
+        
+        // assume there are only two cases
+        // 1. map and mitl automata have same amount of syms in every states
+        // 2. every state of mitl automata have only one individually 
+        // (3) we are ignoring cases where map have n syms and some mitl automata have i and j syms, i!=j and i+j = n
+        if (t1->tStates[k].output == t->tStates[i].input[j] && same_sets(t1->tStates[k].sym, t->tStates[i].sym, 3) ) {
+          // make product state if the input is the same as the output
+          matchTable[0][matches] = i;
+          t1StateNum[matches++]=k;
+          fprintf(tl_out,"Table: %i %i -- %i\n", i,k,matches-1);
+          numOfSyms=1; // trick the state matcher to think there is only one symbs
+        }else if(t1->tStates[k].output == t->tStates[i].input[j]){
+          int *resSet = intersect_sets(t1->tStates[k].sym, t->tStates[i].sym, 3);
+          int *diffSet = dup_set(t1->tStates[k].sym,  3);
+          while (!empty_set(resSet,3)){
+            rem_set(diffSet, get_set(resSet,3));
+          }
+          resSet = intersect_sets(t1->tStates[k].sym, t->tStates[i].sym, 3);
+          int matchStart = matches;
+          int matchEnd = matches+1;
+          int tmpIdx = get_set(resSet,3);
+          matchTable[tmpIdx][matches] = i;
+          // fprintf(tl_out,"test %i,%i:%i", tmpIdx, matches, i);
+          while (!empty_set(diffSet,3)){
+
+            int symbId = get_set(diffSet,3);
+            int *tmpSet = new_set(3);
+            add_set(tmpSet, symbId);
+
+            int saveStart = matchStart;
+            int found = 0;
+
+            for (int ns = 0; ns<t->stateNum; ns++){
+              for (int ms =0; ms < t->tStates[ns].inputNum; ms++){
+                int cpi=matchStart;
+                // find the one with correct syms and input in l
+                if(ns>=i && t->tStates[ns].input[ms] ==0 && same_sets(tmpSet, t->tStates[ns].sym, 3) ){
+                  found = 1;
+                  for (cpi = matchStart; cpi<matchEnd; cpi++){
+                    for (int cpl = 0; cpl<numOfSyms; cpl++){
+                      matchTable[cpl][cpi+matchEnd-matchStart] = matchTable[cpl][cpi];
+
+                      // fprintf(tl_out,"test cp %i,%i:%i", cpl, cpi+matchEnd-matchStart, matchTable[cpl][cpi]);
+                    }
+                    matchTable[symbId][cpi] = ns;
+                    // fprintf(tl_out,"test new %i,%i:%i", symbId, cpi, ns);
+                    if (empty_set(diffSet,3)) {// if last one
+                      t1StateNum[matches++]=k;
+                      fprintf(tl_out,"Table: ");
+                      for (int ls=0;ls<numOfSyms;ls++){
+                        fprintf(tl_out,"%i -- ", matchTable[ls][matches-1] );
+                        if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_2")!=NULL)
+                          fprintf(tl_out,"x");
+                        else if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_4")!=NULL)
+                          fprintf(tl_out,"y");
+                      }
+                      fprintf(tl_out,"%i : %i\n", k, matches-1);
+                    }
+                  }
+                  matchEnd = matchEnd-matchStart+matchEnd;
+                  matchStart = cpi;
+                }else if (ns<i && t1->tStates[k].output!=0 && t->tStates[ns].input[ms] ==0 && same_sets(tmpSet, t->tStates[ns].sym, 3) ){
+                  found = 1;
+                  for (cpi = matchStart; cpi<matchEnd; cpi++){
+                    for (int cpl = 0; cpl<numOfSyms; cpl++){
+                      matchTable[cpl][cpi+matchEnd-matchStart] = matchTable[cpl][cpi];
+                    }
+                    matchTable[symbId][cpi] = ns;
+                    if (empty_set(diffSet,3)) {// if last one
+                      t1StateNum[matches++]=k;
+                      fprintf(tl_out,"Table: ");
+                      for (int ls=0;ls<numOfSyms;ls++){
+                        fprintf(tl_out,"%i -- ", matchTable[ls][matches-1] );
+                        if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_2")!=NULL)
+                          fprintf(tl_out,"x ");
+                        else if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_4")!=NULL)
+                          fprintf(tl_out,"y ");
+                      }
+                      fprintf(tl_out,"%i : %i\n", k, matches-1);
+                    }
+                  }
+                  matchEnd = matchEnd-matchStart+matchEnd;
+                  matchStart = cpi;
+                }
+                
+              }
+            }
+
+            if (found){
+              // after finishing the loop need to reset end to previous end and start state
+              matchEnd = matchStart;
+              matchStart = saveStart;
+            }else{
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    for (int k=numOfState; k< matches; k++){
+      // merge their stateId name
+      int stateIdlen = 0;
+      for (int l = 0; l< numOfSyms; l++){
+        stateIdlen+=strlen(t->tStates[matchTable[l][k]].tstateId);
+      }
+      s[k].tstateId = (char *) malloc(sizeof(char)*(strlen(t1->tStates[t1StateNum[k]].tstateId)+stateIdlen +5));
+      char* tmpId = (char *) malloc(sizeof(char)*(strlen(t1->tStates[t1StateNum[k]].tstateId)+stateIdlen +5));
+      sprintf(s[k].tstateId,"%s x %s", t1->tStates[t1StateNum[k]].tstateId, t->tStates[matchTable[0][k]].tstateId);
+      strcpy(tmpId,s[k].tstateId);
+      for (int l = 1; l< numOfSyms; l++){
+        sprintf(s[k].tstateId,"%s - %s", tmpId, t->tStates[matchTable[l][k]].tstateId);
+        strcpy(tmpId,s[k].tstateId);
+      }
+      // merge set of symbols
+      s[k].sym = dup_set(t1->tStates[t1StateNum[k]].sym,3);
+      
+      if (strstr(s[k].tstateId,"Gen_1")!=NULL) gen1StateNum[gen1Count++] = k;
+      if (strstr(s[k].tstateId,"Gen_2")!=NULL) gen2StateNum[gen2Count++] = k;
+
+      // merge invariants 
+      int tmpBool=0;
+      s[k].inv = (CGuard*) malloc(sizeof(CGuard)); 
+      CGuard *tmp;
+      for (int l = 0; l< numOfSyms; l++){
+        if (t->tStates[matchTable[l][k]].inv && !tmpBool){
+          merge_inv(s[k].inv, t1->tStates[t1StateNum[k]].inv, NULL ,t->tStates[matchTable[l][k]].inv);
+        }else if (t->tStates[matchTable[l][k]].inv){
+          tmp = s[k].inv;
+          s[k].inv = (CGuard*) malloc(sizeof(CGuard));
+          merge_inv(s[k].inv, tmp , NULL ,t->tStates[matchTable[l][k]].inv);
+        }
+        tmpBool|=(t->tStates[matchTable[l][k]].inv != NULL);
+
+      }
+      if (!tmpBool) s[k].inv = (CGuard*) 0;
+      
+      // merge inputs
+      s[k].inputNum=0;
+      s[k].input= (unsigned short *) malloc(sizeof(unsigned short)*t1->tStates[t1StateNum[k]].inputNum);
+      for (int l=0; l< t1->tStates[t1StateNum[k]].inputNum; l++){
+        s[k].input[s[k].inputNum++] = t1->tStates[t1StateNum[k]].input[l];
+      }
+
+      // merge output
+      s[k].output = t->tStates[i].output;      
+
+      // merge buchi
+      s[k].buchi = t1->tStates[t1StateNum[k]].buchi | t->tStates[i].buchi;
+    }
+    numOfState = matches;
+  }
+
+  //merge transitions
+  TTrans *tt = t1->tTrans;
+  TTrans *tOut = (TTrans *) emalloc_ttrans(1,1);
+  TTrans *tmp = tOut;
+  while (tt){
+    // find tt->from in t1StateNum then get the corresponding t->tStates[] then find the transitions there
+
+    // find the From and to idx for t->tStates that corresponds to tt-> from and tt->to  there should be only one,
+    int t1StateFrom = -1;
+    int t1StateTo= -1;
+    int i = 0;
+    while ((t1StateFrom == -1 || t1StateTo == -1) && i < t->stateNum) {
+      if( &t1->tStates[i] == tt->from) {
+        t1StateFrom = i;
+      }
+      if( &t1->tStates[i] == tt->to) {
+        t1StateTo = i;
+      }
+      i++;
+    }
+
+    /**********************************************************************************************************/
+    /* Find the appearance of those idx in the match table.                                                   */
+    /**********************************************************************************************************/
+
+    for(i=0; i<numOfState; i++){
+      if (t1StateNum[i] == t1StateFrom){
+        for (int j=0; j<numOfState; j++){
+          if (t1StateNum[j] == t1StateTo){
+            // i, j are the indices of one transitions
+
+            //pointer iterate through the linked list to find the transition
+            TTrans* tMatch[numOfSyms+1];
+            int mergable=1;
+            for (int l=0; l<numOfSyms; l++){
+              tMatch[l]= t->tTrans;
+              // find transition from t1StateNum[i] to t1StateNum[j]
+              if (matchTable[l][i] == matchTable[l][j]){
+                tMatch[l] = NULL;
+              }else{
+                while (tMatch[l]){
+                  if ( (tMatch[l]->from == &(t->tStates[matchTable[l][i]])) && (tMatch[l]->to == &(t->tStates[matchTable[l][j]])) ){
+                    break;
+                  }
+                  tMatch[l] = tMatch[l]->nxt;
+                }
+              }
+              if (tMatch[l]==NULL && matchTable[l][i] != matchTable[l][j]){
+                // do not merge at all
+                mergable = 0;
+                break;
+              }
+
+            }
+
+            
+            if (mergable) { // if both is not NULL
+              // merge the transitions t1Match tt
+              tmp->nxt = (TTrans *) emalloc_ttrans(1,1);
+              tMatch[numOfSyms] = tt;
+              merge_ttrans_array(tMatch, numOfSyms+1, tmp->nxt, &s[i], &s[j]);
+              
+              tmp = tmp->nxt;
+            }else{
+              // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
+            }
+
+          }
+        }
+      }
+    }
+
+    tt=tt->nxt;
+  }
+
+  //map location does not go back to itself
+  // for (int k=0; k < t->stateNum; k++){
+
+  //   int tStateTo = k;
+  //   int tStateFrom = k;
+
+  //   for(int i=0; i<numOfState; i++){
+  //     if (tStateNum[i] == tStateFrom){
+  //       for (int j=0; j<numOfState; j++){
+  //         if (tStateNum[j] == tStateTo){
+  //           if (i==j) continue;
+  //           // i, j are the indexes of one transitions
+
+  //           //pointer iterate through the linked list to find the transition
+  //           TTrans* t1Match = t1->tTrans;
+            
+  //           // find transition from t1StateNum[i] to t1StateNum[j]
+  //           if (t1StateNum[i] == t1StateNum[j]){
+  //             t1Match = NULL;
+  //           }else{
+  //             while (t1Match){
+  //               if ( (t1Match->from == &(t1->tStates[t1StateNum[i]])) && (t1Match->to == &(t1->tStates[t1StateNum[j]])) ){
+  //                 break;
+  //               }
+  //               t1Match = t1Match->nxt;
+  //             }
+  //           }
+
+  //           if (t1Match) { // if both is not NULL
+  //             // merge the transitions t1Match t2Match and tt
+  //             tmp->nxt = (TTrans *) emalloc_ttrans(1,1);
+  //             merge_ttrans(t1Match, NULL, NULL, tmp->nxt, &s[i], &s[j]);
+              
+  //             tmp = tmp->nxt;
+  //           }else{
+  //             // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
+  //           }
+
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  // TODO: Gen0 for different location need to be merged. (3)
+  // 1. Combined state Gen0: subformula 1 + subformula 2, so invariants are the same
+  // 2. Gen0:sub1->loc1 have update x1=0 and Gen0:sub2 ->loc1 have update x2=0, merge the updates
+  tt = tOut;
+  // while (tt->nxt) {
+  //   if (strstr(tt->nxt->from->tstateId,"Gen0")!=NULL && strstr(tt->nxt->to->tstateId,"Gen_1")!=NULL){
+  //     int allocation = 1;
+  //     for (int i=0; i< gen1Count; i++){
+  //       if (included_set(tt->nxt->from->sym, s[gen1StateNum[i]].sym, 3) && allocation > 0 ){
+  //         tt->nxt->to = &s[gen1StateNum[i]];
+  //         tt->nxt->from = &s[numOfState + tt->nxt->from - &t1->tStates[0]];
+  //         allocation--;
+  //       }else if (included_set(tt->nxt->from->sym, s[gen1StateNum[i]].sym, 3) && allocation <= 0 ){
+  //         TTrans *temp =tt->nxt;
+  //         tt->nxt =  (TTrans *) emalloc_ttrans(1,1); 
+  //         // create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+  //         copy_ttrans(tt->nxt, temp);
+  //         tt->nxt->to = &s[gen1StateNum[i]];
+
+  //         tt = tt->nxt;
+  //         tt->nxt = temp;
+  //       }
+  //     }
+  //     tt = tt->nxt;
+  //   } else if ( strstr(tt->nxt->from->tstateId,"Gen0")!=NULL && strstr(tt->nxt->to->tstateId,"Gen_2")!=NULL ){
+
+  //     int allocation = 1;
+  //     for (int i=0; i< gen2Count; i++){
+  //       if (included_set(tt->nxt->from->sym, s[gen2StateNum[i]].sym, 3) && allocation > 0){
+  //         tt->nxt->to = &s[gen2StateNum[i]];
+  //         tt->nxt->from = &s[numOfState + tt->nxt->from - &t1->tStates[0]];
+  //         allocation--;
+  //       }else if (included_set(tt->nxt->from->sym, s[gen2StateNum[i]].sym, 3) && allocation <= 0 ){
+  //         TTrans *temp =tt->nxt;
+  //         tt->nxt =  (TTrans *) emalloc_ttrans(1,1); 
+  //         // create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+  //         copy_ttrans(tt->nxt, temp);
+  //         tt->nxt->to = &s[gen2StateNum[i]];
+  //         tt = tt->nxt;
+  //         tt->nxt = temp;
+  //       }
+  //     }
+  //     tt = tt->nxt;
+  //   } else {
+  //     tt = tt->nxt;
+
+  //     tt->to = &s[numOfState + tt->to - &t1->tStates[0]];
+  //     tt->from = &s[numOfState + tt->from - &t1->tStates[0]];
+  //   }
+    
+  // }
+  //create return Automata out
+  // out = (TAutomata *) malloc(sizeof(TAutomata));
+  out->stateNum = numOfState;
+  out->tStates = s;
+  out->tTrans = tOut->nxt;
+  out->eventNum = 0;
+
+
+
   // copy back the states with Gen in t
   // copy t->tStates[i] if it is gen to out->tStates end and it is not in product with other loc states
-  int numOfState = out->stateNum;
+  numOfState = out->stateNum;
   int genStateNum = 0;
   int refGen[t->stateNum];
 
 
   // TODO: merge the Gen0 (2)
-  // TODO: merge CHKs for different locations (1)
 
   for (int i =0; i< t->stateNum; i++){
     refGen[i] = -1;
@@ -2293,7 +2684,7 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   }
 
   //adjust transitions accordingly
-  TTrans* tt = out->tTrans;
+  tt = out->tTrans;
   while(tt->nxt){
     tt = tt->nxt;
   }
@@ -2728,15 +3119,17 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   
 //   final_set = make_set(-1, 0);
   cCount = 0;
+
+  TAutomata* mapAutomata = create_map_loop(4,1,2);
+
+  print_timed(mapAutomata);
+
   tAutomata = build_timed(p); /* generates the alternating automaton */
 
   fprintf(tl_out, "%i\n",cCount);
 
   print_timed(tAutomata);
 
-  TAutomata* mapAutomata = create_map_loop(4,1,2);
-
-  print_timed(mapAutomata);
 
   TAutomata *tResult = (TAutomata *) tl_emalloc(sizeof(TAutomata));
   merge_map_timed(mapAutomata, tAutomata, tResult);

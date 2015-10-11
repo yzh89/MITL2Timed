@@ -204,6 +204,15 @@ int get_set(int *l,int type){ // return one element and remove that elements ret
   return -1;
 }
 
+int count_set(int *l, int type){ /* count number of elements in the sets */
+  int* dup = dup_set(l,type);
+  int result = 0;
+  while (get_set(dup,type)!=-1){
+    result++;
+  }
+  return result;
+}
+
 int same_sets(int *l1, int *l2, int type) /* tests if two sets are identical */
 {
   int i, test = 1;
