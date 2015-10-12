@@ -1415,6 +1415,15 @@ void merge_ttrans(TTrans *t1, TTrans *t2, TTrans *tt, TTrans *tOut, TState *from
       tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
       merge_inv(tOut->cguard, t2->cguard, NULL, NULL);
     }
+  }else if (tt){
+    tOut->cIdx = dup_set(tt->cIdx, 4);
+
+    if (!tt->cguard){
+      tOut->cguard = (CGuard *) 0;
+    }else{
+      tOut->cguard = (CGuard *) malloc(sizeof(CGuard));
+      merge_inv(tOut->cguard, tt->cguard, NULL, NULL);
+    }
   }else{
     printf("ERROR! in merge_ttrans!");
   }
@@ -2174,7 +2183,12 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
               
               tmp = tmp->nxt;
             }else{
-              // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
+              if (strstr(t->tStates[tStateNum[i]].tstateId, "CHK01")!=NULL || strstr(t->tStates[tStateNum[i]].tstateId, "CHK00")!=NULL){
+                tmp->nxt = (TTrans *) emalloc_ttrans(1,1);
+                merge_ttrans(NULL, NULL, tt, tmp->nxt, &s[i], &s[j]);
+                tmp = tmp->nxt;
+              }else
+                printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
             }
 
           }
@@ -2555,38 +2569,48 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
     tt=tt->nxt;
   }
 
-  //map location does not go back to itself
-  // for (int k=0; k < t->stateNum; k++){
+  //map location can stay where it is.
+  // for (int k=0; k < t1->stateNum; k++){
 
-  //   int tStateTo = k;
-  //   int tStateFrom = k;
+  //   int t1StateTo = k;
+  //   int t1StateFrom = k;
 
   //   for(int i=0; i<numOfState; i++){
-  //     if (tStateNum[i] == tStateFrom){
+  //     if (t1StateNum[i] == t1StateFrom){
   //       for (int j=0; j<numOfState; j++){
-  //         if (tStateNum[j] == tStateTo){
+  //         if (t1StateNum[j] == t1StateTo){
   //           if (i==j) continue;
   //           // i, j are the indexes of one transitions
 
-  //           //pointer iterate through the linked list to find the transition
-  //           TTrans* t1Match = t1->tTrans;
-            
-  //           // find transition from t1StateNum[i] to t1StateNum[j]
-  //           if (t1StateNum[i] == t1StateNum[j]){
-  //             t1Match = NULL;
-  //           }else{
-  //             while (t1Match){
-  //               if ( (t1Match->from == &(t1->tStates[t1StateNum[i]])) && (t1Match->to == &(t1->tStates[t1StateNum[j]])) ){
-  //                 break;
+  //                       //pointer iterate through the linked list to find the transition
+  //           TTrans* tMatch[numOfSyms];
+  //           int mergable=1;
+  //           for (int l=0; l<numOfSyms; l++){
+  //             tMatch[l]= t->tTrans;
+  //             // find transition from t1StateNum[i] to t1StateNum[j]
+  //             if (matchTable[l][i] == matchTable[l][j]){
+  //               tMatch[l] = NULL;
+  //             }else{
+  //               while (tMatch[l]){
+  //                 if ( (tMatch[l]->from == &(t->tStates[matchTable[l][i]])) && (tMatch[l]->to == &(t->tStates[matchTable[l][j]])) ){
+  //                   break;
+  //                 }
+  //                 tMatch[l] = tMatch[l]->nxt;
   //               }
-  //               t1Match = t1Match->nxt;
   //             }
+  //             if (tMatch[l]==NULL && matchTable[l][i] != matchTable[l][j]){
+  //               // do not merge at all
+  //               mergable = 0;
+  //               break;
+  //             }
+
   //           }
 
-  //           if (t1Match) { // if both is not NULL
-  //             // merge the transitions t1Match t2Match and tt
+            
+  //           if (mergable) { // if both is not NULL
+  //             // merge the transitions t1Match tt
   //             tmp->nxt = (TTrans *) emalloc_ttrans(1,1);
-  //             merge_ttrans(t1Match, NULL, NULL, tmp->nxt, &s[i], &s[j]);
+  //             merge_ttrans_array(tMatch, numOfSyms, tmp->nxt, &s[i], &s[j]);
               
   //             tmp = tmp->nxt;
   //           }else{
