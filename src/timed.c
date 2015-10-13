@@ -255,8 +255,8 @@ void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input
       s->sym = new_set(3);
       clear_set(s->sym, 3);
       add_set(s->sym, t_get_sym_id(buff));
-      if (output ==1 && strstr(tstateId, "Gen") == NULL) s->input[0] = 1 << t_get_sym_id(buff);
-      else if (strstr(tstateId, "Gen") != NULL){
+      if (output ==1 && strstr(s->tstateId, "Gen") == NULL) s->input[0] = 1 << t_get_sym_id(buff);
+      else if (strstr(s->tstateId, "Gen") != NULL){
         s->input = (unsigned short *) 0;
         s->inputNum = 0;
         free(input);
@@ -2365,7 +2365,6 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
           matchTable[tmpIdx][matches] = i;
           // fprintf(tl_out,"test %i,%i:%i", tmpIdx, matches, i);
           while (!empty_set(diffSet,3)){
-
             int symbId = get_set(diffSet,3);
             int *tmpSet = new_set(3);
             add_set(tmpSet, symbId);
@@ -2392,17 +2391,18 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
                       fprintf(tl_out,"Table: ");
                       for (int ls=0;ls<numOfSyms;ls++){
                         fprintf(tl_out,"%i -- ", matchTable[ls][matches-1] );
-                        if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_2")!=NULL)
-                          fprintf(tl_out,"x");
-                        else if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_4")!=NULL)
-                          fprintf(tl_out,"y");
+                        // if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_2")!=NULL)
+                        //   fprintf(tl_out,"x");
+                        // else if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_4")!=NULL)
+                        //   fprintf(tl_out,"y");
                       }
                       fprintf(tl_out,"%i : %i\n", k, matches-1);
                     }
                   }
                   matchEnd = matchEnd-matchStart+matchEnd;
                   matchStart = cpi;
-                }else if (ns<i && t1->tStates[k].output!=0 && t->tStates[ns].input[ms] ==0 && same_sets(tmpSet, t->tStates[ns].sym, 3) ){
+                }
+                else if (ns<i && t1->tStates[k].output!=0 && t->tStates[ns].input[ms] ==0 && same_sets(tmpSet, t->tStates[ns].sym, 3) ){
                   found = 1;
                   for (cpi = matchStart; cpi<matchEnd; cpi++){
                     for (int cpl = 0; cpl<numOfSyms; cpl++){
@@ -2414,10 +2414,10 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
                       fprintf(tl_out,"Table: ");
                       for (int ls=0;ls<numOfSyms;ls++){
                         fprintf(tl_out,"%i -- ", matchTable[ls][matches-1] );
-                        if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_2")!=NULL)
-                          fprintf(tl_out,"x ");
-                        else if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_4")!=NULL)
-                          fprintf(tl_out,"y ");
+                        // if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_2")!=NULL)
+                        //   fprintf(tl_out,"x ");
+                        // else if (strstr(t->tStates[matchTable[ls][matches-1]].tstateId,"CHK_4")!=NULL)
+                        //   fprintf(tl_out,"y ");
                       }
                       fprintf(tl_out,"%i : %i\n", k, matches-1);
                     }
@@ -3066,7 +3066,7 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
  //    print_set(t->to, 0);
  //    fprintf(tl_out, "\n");
  //  }
-  fprintf(xml, "#!/usr/bin/python\nfrom pyuppaal import *\ndef main():\n\tbuchiLoc = []\n\tlocid = 0\n\tlocations = []\n\ttransitions = []\n");
+  fprintf(xml, "#!/usr/bin/python\nfrom pyuppaal import *\ndef main():\n\tbuchiLoc = []\n\tinitalLoc = []\n\tlocid = 0\n\tlocations = []\n\ttransitions = []\n");
 
   int j = 0;
   char buffer[80];
@@ -3080,10 +3080,14 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
     }else{
       fprintf(xml,"\tlocations.append( Location(invariant=\"%s\", urgent=False, committed=False, name='loc%i', id = 'id'+str(locid)) )\n", buffer, i);
     }
+    if ( (strstr(t->tStates[i].tstateId, "loc0")) && (strstr(t->tStates[i].tstateId, "CHK00: <>_I (a)") || strstr(t->tStates[i].tstateId, "CHK01: <>_I (a)") ) && (strstr(t->tStates[i].tstateId, "CHK00: <>_I (b)") || strstr(t->tStates[i].tstateId, "CHK01: <>_I (b)") ))
+      fprintf(xml,"\tinitalLoc.append(locid)\n");
 
     fprintf(xml, "\tlocid +=1\n");
   }
   fprintf(xml, "\tlocations.append(Location(invariant='', urgent=False, committed=False, name='final', id = 'id'+str(locid)))\n");
+
+  fprintf(xml, "\tlocations.append(Location(invariant='', urgent=False, committed=False, name='initial', id = 'id'+str(locid+1)))\n");
 
   TTrans *tmp;
   tmp = t->tTrans;
@@ -3093,16 +3097,23 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
     CGuard_to_xml(tmp->cguard, buffer);
     setBuffer[0] = '\0';
     set_to_xml(tmp->cIdx, setBuffer);
-    fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
+    if (strstr(tmp->from->tstateId,"CHK_2: <>_I (b)") && strstr(tmp->to->tstateId,"CHK_4: <>_I (b)")){
+      fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s', synchronisation='ch[1]!') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
+    }
+    else if (strstr(tmp->from->tstateId,"CHK_2: <>_I (a)") && strstr(tmp->to->tstateId,"CHK_4: <>_I (a)"))
+      fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s', synchronisation='ch[0]!') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
+    else
+      fprintf(xml, "\ttransitions.append( Transition(locations[%i], locations[%i], guard='%s', assignment='%s') )\n", (int) (tmp->from - &t->tStates[0]), (int) (tmp->to - &t->tStates[0]) , buffer, setBuffer);
     j++;
     tmp = tmp->nxt;
   }
 
   fprintf(xml, "\tfor i in buchiLoc:\n\t\ttransitions.append( Transition(locations[i], locations[locid], guard='', assignment=''))\n");
+  fprintf(xml, "\tfor i in initalLoc:\n\t\ttransitions.append( Transition(locations[locid+1], locations[i], guard='', assignment=''))\n");
 
-  fprintf(xml, "\ttemplate = Template('sys', locations=locations, transitions=transitions, declaration='clock z[%i];', initlocation=locations[0])\n", clockSize);
+  fprintf(xml, "\ttemplate = Template('sys', locations=locations, transitions=transitions, initlocation=locations[locid+1])\n");
 
-  fprintf(xml, "\ttemplate.layout(auto_nails = True);\n\tnta = NTA(system = 'system sys;', templates=[template])\n\tf = open('test.xml', 'w')\n\tf.write(nta.to_xml())\nif __name__ == '__main__':\n\tmain()\n");
+  fprintf(xml, "\ttemplate.layout(auto_nails = True);\n\tnta = NTA(system = 'system sys;', templates=[template], declaration='clock z[%i]; broadcast chan ch[2];')\n\tf = open('test.xml', 'w')\n\tf.write(nta.to_xml())\nif __name__ == '__main__':\n\tmain()\n",clockSize);
 
   fclose(xml);
 
