@@ -39,7 +39,7 @@ byte output_format = OUT_TYPE_SPIN;
 
 FILE	*tl_out;
 
-int	tl_stats     = 0; /* time and size stats */	
+int	tl_stats     = 1; /* time and size stats */	
 int tl_simp_log  = 1; /* logical simplification */
 int tl_simp_diff = 1; /* automata simplification */
 int tl_simp_fly  = 1; /* on the fly simplification */

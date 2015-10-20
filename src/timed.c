@@ -42,8 +42,8 @@ TAutomata *tAutomata;
 int cCount; //clock count
 // int ttrans_count = 0;
 int t_sym_size, t_sym_id = 0, t_node_size, t_clock_size;
-// struct rusage tr_debut, tr_fin;
-// struct timeval t_diff;
+struct rusage tr_debut, tr_fin;
+struct timeval t_diff;
 // int *final_set, node_id = 1, sym_id = 0, node_size, sym_size;
 // int astate_count = 0, atrans_count = 0; 
 
@@ -2350,7 +2350,7 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
           // make product state if the input is the same as the output
           matchTable[0][matches] = i;
           t1StateNum[matches++]=k;
-          fprintf(tl_out,"Table: %i %i -- %i\n", i,k,matches-1);
+          fprintf(tl_out,"Table: %i %i -x- %i\n", i,k,matches-1);
           numOfSyms=1; // trick the state matcher to think there is only one symbs
         }else if(t1->tStates[k].output == t->tStates[i].input[j]){
           int *resSet = intersect_sets(t1->tStates[k].sym, t->tStates[i].sym, 3);
@@ -2474,9 +2474,11 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
           merge_inv(s[k].inv, tmp , NULL ,t->tStates[matchTable[l][k]].inv);
         }
         tmpBool|=(t->tStates[matchTable[l][k]].inv != NULL);
+        if (t->tStates[matchTable[l][k]].inv)
+          fprintf(tl_out, "%i:%i\n", tmpBool, t->tStates[matchTable[l][k]].inv->nType);
 
       }
-      if (!tmpBool) s[k].inv = (CGuard*) 0;
+      if (!tmpBool) merge_inv(s[k].inv, t1->tStates[t1StateNum[k]].inv, NULL ,NULL);
       
       // merge inputs
       s[k].inputNum=0;
@@ -2883,6 +2885,115 @@ TAutomata *create_map_loop(int nodeNum, int ifb, int timeInt){
   return t;
 }
 
+TAutomata *create_map_loop_2(int nodeNum, int ifb, int timeInt){
+  // nodeNum>=4
+  if (nodeNum <2){
+    nodeNum =2;
+  }
+  TAutomata *t = (TAutomata *) tl_emalloc(sizeof(TAutomata));
+  TState *s = (TState *)tl_emalloc(sizeof(TState)*nodeNum*nodeNum);
+  CGuard *cguard;
+  int *clockId;
+
+  //share same cguard
+  cguard = (CGuard *) malloc(sizeof(CGuard));
+  cguard->nType = PREDICATE;
+  cguard->cCstr = (CCstr *)(CCstr * )  malloc(sizeof(CCstr));
+  cguard->cCstr->cIdx = cCount;
+  cguard->cCstr->gType = LESSEQUAL;
+  cguard->cCstr->bndry = timeInt;
+  // void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p){
+  for (int row=0; row<nodeNum; row++){
+    for (int j=0; j< nodeNum; j++){
+      int i =row*nodeNum+j;
+      s[i].tstateId = (char *)malloc(sizeof(char)*6);
+      sprintf(s[i].tstateId, "loc%i%i",row,j);
+
+      create_tstate(&s[i], s[i].tstateId, cguard, (unsigned short *) 0, 0, 0, 0, NULL);
+      s[i].sym = new_set(3);
+      clear_set(s[i].sym,3);
+
+      add_set(s[i].sym, t_get_sym_id("a"));
+      if(ifb)
+        add_set(s[i].sym, t_get_sym_id("b"));
+    }
+  }
+  s[nodeNum-1].output= 1<<t_get_sym_id("a");
+  if(ifb)
+    s[nodeNum*nodeNum-nodeNum].output= 1<<t_get_sym_id("b");
+  TTrans *tt = emalloc_ttrans(1,1);
+  TTrans *tmp = tt;
+
+  //share same cguard and clockId
+  cguard = (CGuard*) malloc(sizeof(CGuard));
+  cguard->nType = PREDICATE;
+  cguard->cCstr = (CCstr * ) malloc(sizeof(CCstr));
+  cguard->cCstr->cIdx = cCount;
+  cguard->cCstr->gType = GREATEREQUAL;
+  cguard->cCstr->bndry = 1;
+  clockId = (int *) malloc(sizeof(int)*1);
+  clockId[0] = cCount;
+
+  for (int row=0; row<nodeNum; row++){
+    for (int j=0; j<nodeNum; j++){
+      int i = row*nodeNum + j;
+      if (row<nodeNum-1 && j<nodeNum-1){
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i],  &s[i+nodeNum]);
+
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i+nodeNum],  &s[i]);
+
+
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i],  &s[i+1]);
+
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i+1],  &s[i]);
+      }else if (row==nodeNum-1 && j<nodeNum-1){
+
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i],  &s[i+1]);
+
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i+1],  &s[i]);
+      }else if (j==nodeNum-1 && row<nodeNum-1){
+        i = row*nodeNum+nodeNum-1;
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i],  &s[i+nodeNum]);
+
+        tmp->nxt = emalloc_ttrans(1,1);
+        tmp = tmp->nxt;
+        // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
+        create_ttrans(tmp, cguard, clockId, 1, &s[i+nodeNum],  &s[i]);  
+      }
+
+    }
+    
+  }
+  cCount++;
+
+  t->tTrans = tt->nxt;
+  t->tStates = s;
+  t->stateNum = nodeNum*nodeNum;
+  t->tEvents = NULL;
+  t->eventNum = 0;
+  return t;
+}
 /********************************************************************\
 |*                Display of the Timed Automata                     *|
 \********************************************************************/
@@ -3141,7 +3252,7 @@ void timed_to_xml(TAutomata *t, int clockSize, FILE *xml) /* dumps the alternati
 
 void mk_timed(Node *p) /* generates an timed automata for p */
 {
-  // if(tl_stats) getrusage(RUSAGE_SELF, &tr_debut);
+  if(tl_stats) getrusage(RUSAGE_SELF, &tr_debut);
 
   t_clock_size = t_calculate_clock_size(p) + 1; /* number of states in the automaton */
   // t_label = (Node **) tl_emalloc(t_node_size * sizeof(Node *));
@@ -3155,7 +3266,7 @@ void mk_timed(Node *p) /* generates an timed automata for p */
 //   final_set = make_set(-1, 0);
   cCount = 0;
 
-  TAutomata* mapAutomata = create_map_loop(4,1,2);
+  TAutomata* mapAutomata = create_map_loop_2(6,1,2);
 
   print_timed(mapAutomata);
 
@@ -3194,13 +3305,12 @@ void mk_timed(Node *p) /* generates an timed automata for p */
 //     }
 //   }
   
-//   if(tl_stats) {
-//     getrusage(RUSAGE_SELF, &tr_fin);
-//     timeval_subtract (&t_diff, &tr_fin.ru_utime, &tr_debut.ru_utime);
-//     fprintf(tl_out, "\nBuilding and simplification of the alternating automaton: %i.%06is",
-// 		t_diff.tv_sec, t_diff.tv_usec);
-//     fprintf(tl_out, "\n%i states, %i transitions\n", astate_count, atrans_count);
-//   }
+  if(tl_stats) {
+    getrusage(RUSAGE_SELF, &tr_fin);
+    timeval_subtract (&t_diff, &tr_fin.ru_utime, &tr_debut.ru_utime);
+    fprintf(tl_out, "\nBuilding and simplification of the alternating automaton: %i.%06is",
+		t_diff.tv_sec, t_diff.tv_usec);
+  }
 
 //   releasenode(1, p);
 //   tfree(label);
