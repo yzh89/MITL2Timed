@@ -1140,11 +1140,13 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->tTrans = tG;
       tA->tStates = sG;
       tA->stateNum = 2*m+1;
+      tA->tEvents = NULL;
 
       tB = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       tB->tTrans = tC;
       tB->tStates = sC;
       tB->stateNum = 3*m+2;
+      tB->tEvents = NULL;
       
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
 
@@ -2034,6 +2036,9 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
   if (t2->tEvents != NULL && t1->tEvents != NULL){
     out->tEvents = t2->tEvents;
   }
+  free_ttrans(t->tTrans, 1);
+  free_ttrans_until(t1->tTrans,t1->tEvents);
+  free_ttrans_until(t2->tTrans,t2->tEvents);
 
   //create return Automata out
   // out = (TAutomata *) malloc(sizeof(TAutomata));
@@ -2041,6 +2046,8 @@ void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out)
   out->tStates = s;
   out->tTrans = tOut->nxt;
   out->eventNum = events;
+
+  free_ttrans(tOut,0);
 
 }
 
@@ -2299,12 +2306,19 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
       }
     }
   }
+
+  // free every transition before t1.event
+  free_ttrans_until(t1->tTrans, t1->tEvents);
+  free_ttrans(t->tTrans, 1);
+
   //create return Automata out
   // out = (TAutomata *) malloc(sizeof(TAutomata));
   out->stateNum = numOfState + events;
   out->tStates = s;
   out->tTrans = tOut->nxt;
   out->eventNum = events;
+
+  free_ttrans(tOut,0);
 }
 
 void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
@@ -2682,6 +2696,8 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   out->eventNum = 0;
 
 
+  free_ttrans_until(t1->tTrans, t1->tEvents);
+  free_ttrans(tOut,0);
 
   // copy back the states with Gen in t
   // copy t->tStates[i] if it is gen to out->tStates end and it is not in product with other loc states
@@ -2731,7 +2747,15 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
         
       }
     }
-    tGen = tGen->nxt;
+
+    if (tGen != tt) {
+      // if tGen is not add back to output free the ttrans
+      TTrans* tmp = tGen;
+      tGen = tGen->nxt;
+      free_ttrans(tmp, 0);
+    } else{
+      tGen = tGen->nxt;
+    }
   }
   tt->nxt = NULL;
 
@@ -2880,6 +2904,8 @@ TAutomata *create_map_loop(int nodeNum, int ifb, int timeInt){
   t->stateNum = nodeNum;
   t->tEvents = NULL;
   t->eventNum = 0;
+
+  free_ttrans(tt,0);
   return t;
 }
 
@@ -3155,7 +3181,7 @@ void mk_timed(Node *p) /* generates an timed automata for p */
 //   final_set = make_set(-1, 0);
   cCount = 0;
 
-  TAutomata* mapAutomata = create_map_loop(4,1,2);
+  TAutomata* mapAutomata = create_map_loop(4,0,2);
 
   print_timed(mapAutomata);
 
@@ -3180,6 +3206,8 @@ void mk_timed(Node *p) /* generates an timed automata for p */
     exit(1);
   }
   timed_to_xml(tResult, t_clock_size, xml);
+
+  free_ttrans(tResult->tTrans,1);
 
 //   if(tl_verbose) {
 //     fprintf(tl_out, "\nAlternating automaton before simplification\n");

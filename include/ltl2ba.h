@@ -326,4 +326,6 @@ typedef struct TAutomata{
   void mk_timed(Node *);
   int calculate_sym_size(Node *);
 
+  void free_ttrans_until(TTrans *, TTrans *);
+
 // #endif

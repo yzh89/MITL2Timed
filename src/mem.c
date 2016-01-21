@@ -60,7 +60,7 @@ int ballocs = 0, bfrees = 0, bpool = 0;
 
 // #ifdef TIMED
   TTrans *ttrans_list = (TTrans *)0; //Transition list after been freed. 
-  int tallocs = 0, tfrees = 0, tpool = 0;
+  int tallocs = 0, tfrees = 0, tpool = 0, tleft = 0;
 // #endif
 
 union M {
@@ -159,6 +159,11 @@ void free_atrans(ATrans *t, int rec) {
   afrees++;
 }
 
+void free_tstate(TState *t, int numOfState){
+  // free every state of unuseful automata
+}
+
+
 void free_all_atrans() {
   ATrans *t;
   while(atrans_list) {
@@ -176,7 +181,7 @@ void free_all_atrans() {
 // clocks on the guards
 TTrans* emalloc_ttrans(int transNum, int cNum) { 
   TTrans *result;
-  if(!ttrans_list) {
+  if(!ttrans_list && transNum!=0) {
 
     result = (TTrans *)tl_emalloc(sizeof(TTrans));
     TTrans *tmp=result;
@@ -185,6 +190,8 @@ TTrans* emalloc_ttrans(int transNum, int cNum) {
     tmp->from = (TState *)0;
     tpool++;
 
+    tallocs++;
+
     for (int i=1; i<transNum; i++){
       tmp->nxt = (TTrans *)tl_emalloc(sizeof(TTrans));
       tmp = tmp->nxt;
@@ -192,6 +199,7 @@ TTrans* emalloc_ttrans(int transNum, int cNum) {
       tmp->to = (TState *)0;
       tmp->from = (TState *)0;    
       tpool++;
+      tallocs++;
     }
     
  }
@@ -199,15 +207,39 @@ TTrans* emalloc_ttrans(int transNum, int cNum) {
     result = ttrans_list;
     ttrans_list = ttrans_list->nxt;
     result->nxt = (TTrans *)0;
-    if (transNum>1) emalloc_ttrans(transNum -1, cNum);
+
+    printf("Reusing..%d\n",transNum);
+    if (transNum>1) result->nxt = emalloc_ttrans(transNum -1, cNum);
+    tleft++;
+
+    tallocs++;
 
   }
-  tallocs++;
   return result;
 } 
 void free_ttrans(TTrans *t, int rec) {
   if(!t) return;
   if(rec) free_ttrans(t->nxt, rec);
+  // if (t->from!=NULL && t->to!=NULL)
+  //   printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
+  // else
+  //   printf("Free header\n");
+  t->nxt = ttrans_list;
+  ttrans_list = t;
+  tfrees++;
+}
+
+void free_ttrans_until(TTrans *t, TTrans *tend){
+  if (!t) return;
+  if (t==tend){
+    return;
+  }else{
+    free_ttrans_until(t->nxt,tend);
+  }
+  // if (t->from!=NULL && t->to!=NULL)
+  //   printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
+  // else
+  //   printf("Free header\n");
   t->nxt = ttrans_list;
   ttrans_list = t;
   tfrees++;
@@ -285,7 +317,7 @@ a_stats(void)
 {	long	p, a, f;
 	int	i;
 
-	printf(" size\t  pool\tallocs\t frees\n");
+	printf(" size\t  pool\tallocs\t frees\t reuse\n");
 
 	for (i = 0; i < A_LARGE; i++)
 	{	p = event[POOL][i];
@@ -303,4 +335,6 @@ a_stats(void)
 	       gpool, gallocs, gfrees);
 	printf("btrans\t%6d\t%6d\t%6d\n", 
 	       bpool, ballocs, bfrees);
+  printf("ttrans\t%6d\t%6d\t%6d\t%6d\n", 
+         tpool, tallocs, tfrees, tleft);
 }
