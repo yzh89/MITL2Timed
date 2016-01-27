@@ -164,7 +164,7 @@ void free_tstate(TState *t, int numOfState){
   for (int i=0; i<numOfState ; i++){
     // printf("Free state:%s\n", t[i].tstateId);
     free(t[i].input);
-    free(t[i].inv);
+    free_CGuard(t[i].inv);
     // if (t[i].inv){
     //   printf("Free inv:");
     //   print_CGuard(t[i].inv);
@@ -252,21 +252,18 @@ void free_CGuard(CGuard * cg){
       case AND:
         free_CGuard(cg->lft);
         free_CGuard(cg->rgt);
-        free(cg->cCstr);
         free(cg);
         break;
 
       case OR:
         free_CGuard(cg->lft);
         free_CGuard(cg->rgt);
-        free(cg->cCstr);
         free(cg);
         break;
 
       case START:
         free(cg->lft->cCstr);
         free(cg->lft);
-        free(cg->cCstr);
         free(cg);
         break;
 
@@ -276,7 +273,6 @@ void free_CGuard(CGuard * cg){
         free(cg->lft);
         free(cg->rgt->cCstr);
         free(cg->rgt);
-        free(cg->cCstr);
         free(cg);
         break;
       }
@@ -292,24 +288,24 @@ void free_CGuard(CGuard * cg){
 void free_ttrans(TTrans *t, int rec) {
   if(!t) return;
   if(rec>0) free_ttrans(t->nxt, rec);
-  if (t->from!=NULL && t->to!=NULL)
-    printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
-  else
-    printf("Free header\n");
+  // if (t->from!=NULL && t->to!=NULL)
+    // printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
+  // else
+    // printf("Free header\n");
 
   if (t->cguard!=NULL && rec==2){
     // printf("Freeing guards:");
     // print_CGuard(t->cguard);
-    // free_CGuard(t->cguard);
+    free_CGuard(t->cguard);
     // printf("\n");
   }
   if (t->cIdx!=NULL){
-    printf("Free clock set:");
-    print_set(t->cIdx,4);
+    // printf("Free clock set:");
+    // print_set(t->cIdx,4);
     tfree(t->cIdx);
-    printf("\n");
+    // printf("\n");
   }
-  printf("Done..\n");
+  // printf("Done..\n");
 
   t->cguard = (CGuard *)0;  
   t->to = (TState *)0;
@@ -327,23 +323,23 @@ void free_ttrans_until(TTrans *t, TTrans *tend){
   }else{
     free_ttrans_until(t->nxt,tend);
   }
-  if (t->from!=NULL && t->to!=NULL)
-    printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
-  else
-    printf("Free header\n");
+  // if (t->from!=NULL && t->to!=NULL)
+    // printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
+  // else
+    // printf("Free header\n");
   if (t->cguard!=NULL){
     // printf("Freeing guards:");
     // print_CGuard(t->cguard);
-    // free_CGuard(t->cguard);
+    free_CGuard(t->cguard);
     // printf("\n");
   }
   if (t->cIdx!=NULL){
-    printf("Free clock set:");
-    print_set(t->cIdx,4);
+    // printf("Free clock set:");
+    // print_set(t->cIdx,4);
     tfree(t->cIdx);
-    printf("\n");
+    // printf("\n");
   }
-  printf("Done..\n");
+  // printf("Done..\n");
 
   t->cguard = (CGuard *)0;  
   t->to = (TState *)0;
@@ -360,11 +356,12 @@ void free_all_ttrans() {
     t = ttrans_list;
     ttrans_list = t->nxt;
     if (t->cguard!=NULL){
-      printf("Freeing guards:");
-      print_CGuard(t->cguard);
+      // printf("Freeing guards:");
+      // print_CGuard(t->cguard);
       free_CGuard(t->cguard);
-      printf("\n");
+      // printf("\n");
     }
+    // tfree(t->cIdx);
     tfree(t);
   }
 }
