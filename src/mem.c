@@ -306,7 +306,7 @@ void free_ttrans(TTrans *t, int rec) {
     // printf("\n");
   }
   // printf("Done..\n");
-
+  t->cIdx = NULL;
   t->cguard = (CGuard *)0;  
   t->to = (TState *)0;
   t->from = (TState *)0;  
@@ -341,7 +341,8 @@ void free_ttrans_until(TTrans *t, TTrans *tend){
   }
   // printf("Done..\n");
 
-  t->cguard = (CGuard *)0;  
+  t->cguard = (CGuard *)0;
+  t->cIdx = NULL;
   t->to = (TState *)0;
   t->from = (TState *)0;  
 
@@ -361,7 +362,9 @@ void free_all_ttrans() {
       free_CGuard(t->cguard);
       // printf("\n");
     }
-    // tfree(t->cIdx);
+    if (t->cIdx!=NULL){
+      tfree(t->cIdx);
+    }
     tfree(t);
   }
 }
