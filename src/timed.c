@@ -112,15 +112,15 @@ int t_calculate_sym_size(Node *p) /* returns the number of predicates */
   case OR:
   case U_OPER:
   case V_OPER:
-    return(calculate_sym_size(p->lft) + calculate_sym_size(p->rgt));
+    return(t_calculate_sym_size(p->lft) + t_calculate_sym_size(p->rgt));
 #ifdef NXT
   case NEXT:
-    return(calculate_sym_size(p->lft));
+    return(t_calculate_sym_size(p->lft));
 #endif
   case NOT:
-    return (calculate_sym_size(p->lft));
+    return (t_calculate_sym_size(p->lft));
   case EVENTUALLY_I:
-    return(calculate_sym_size(p->lft) + 1);
+    return(t_calculate_sym_size(p->lft) + 1);
   case PREDICATE:
     return 1;
   default:

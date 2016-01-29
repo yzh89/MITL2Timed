@@ -107,7 +107,7 @@ tl_emalloc(int U)
 	}
 	m->size = (u|A_USER);
 
-  printf("ALLOC %d : %x - %x \n", u, m, (&m->size)+u);
+  // printf("ALLOC %d : %x - %x \n", u, m, (&m->size)+u);
 
 	for (r = 1; r < u; )
 		(&m->size)[r++] = 0;
@@ -124,12 +124,12 @@ tfree(void *v)
 
 	--m;
 	if ((m->size&0xFF000000) != A_USER){
-    printf("CORRUPT %x \n", m);
+    // printf("CORRUPT %x \n", m);
 		Fatal("releasing a free block", (char *)0);
   }
   
 	u = (m->size &= 0xFFFFFF);
-  printf("FREE %d, %x \n", u, m);
+  // printf("FREE %d, %x \n", u, m);
 	if (u >= A_LARGE)
 	{	log(FREE, 0, 1);
 		/* free(m); */
