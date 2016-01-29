@@ -94,8 +94,10 @@ tl_emalloc(int U)
 			log(POOL, u, r);
 			freelist[u] = (union M *)
 				emalloc((int) r*u*sizeof(union M));
+
 			All_Mem += (unsigned long) r*u*sizeof(union M);
 			m = freelist[u] + (r-2)*u;
+
 			for ( ; m >= freelist[u]; m -= u)
 				m->link = m+u;
 		}
@@ -104,6 +106,8 @@ tl_emalloc(int U)
 		freelist[u] = m->link;
 	}
 	m->size = (u|A_USER);
+
+  printf("ALLOC %d : %x - %x \n", u, m, (&m->size)+u);
 
 	for (r = 1; r < u; )
 		(&m->size)[r++] = 0;
@@ -119,10 +123,13 @@ tfree(void *v)
 	long u;
 
 	--m;
-	if ((m->size&0xFF000000) != A_USER)
+	if ((m->size&0xFF000000) != A_USER){
+    printf("CORRUPT %x \n", m);
 		Fatal("releasing a free block", (char *)0);
-
+  }
+  
 	u = (m->size &= 0xFFFFFF);
+  printf("FREE %d, %x \n", u, m);
 	if (u >= A_LARGE)
 	{	log(FREE, 0, 1);
 		/* free(m); */
@@ -174,6 +181,7 @@ void free_tstate(TState *t, int numOfState){
     // printf("Free sym ...\n");
     if (t[i].sym!=NULL){
       // print_set(t[i].sym, 3);
+      clear_set(t[i].sym, 3);
       tfree(t[i].sym);
       // printf("\n");
     }
