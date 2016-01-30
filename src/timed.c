@@ -22,10 +22,7 @@
 /* presented at the 13th International Conference on Computer Aided       */
 /* Verification, CAV 2001, Paris, France.                                 */
 /* Proceedings - LNCS 2102, pp. 53-65                                     */
-/*                                                                        */
-/* Send bug-reports and/or questions to Paul Gastin                       */
-/* http://www.lsv.ens-cachan.fr/~gastin                                   */
-// #ifdef TIMED
+
 #include "ltl2ba.h"
 
 /********************************************************************\
@@ -35,47 +32,26 @@
 extern FILE *tl_out;
 extern int tl_verbose, tl_stats, tl_simp_diff;
 
-// Node **t_label;
 char **t_sym_table;
 TAutomata *tAutomata;
-// TTrans **t_transition; //array of timed automata transitions
 int cCount; //clock count
-// int ttrans_count = 0;
 int t_sym_size, t_sym_id = 0, t_node_size, t_clock_size;
 // struct rusage tr_debut, tr_fin;
 // struct timeval t_diff;
-// int *final_set, node_id = 1, sym_id = 0, node_size, sym_size;
-// int astate_count = 0, atrans_count = 0; 
 
-// ATrans *build_alternating(Node *p);
 void merge_bin_timed(TAutomata *t1, TAutomata *t2, TAutomata *t, TAutomata *out);
 void merge_timed(TAutomata *t1,TAutomata *t, TAutomata *out);
 void merge_event_timed(TAutomata *, TAutomata *, TAutomata *, TAutomata *);
+
+void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p);
+void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to);
+
 void print_timed(TAutomata *t);
 void print_sub_formula(Node *n, char* subform);
+
 /********************************************************************\
 |*              Generation of the timed automata                    *|
 \********************************************************************/
-
-// int t_calculate_node_size(Node *p) /* returns the number of temporal nodes */
-// {
-//   switch(p->ntyp) {
-//   case AND:
-//   case OR:
-//     return(t_calculate_node_size(p->lft) + t_calculate_node_size(p->rgt)+ 1);
-//   case U_OPER:
-//   case V_OPER:
-//     return(t_calculate_node_size(p->lft) + t_calculate_node_size(p->rgt) + 4);
-// #ifdef NXT
-//   case NEXT:
-//     return(t_calculate_node_size(p->lft) + 2);
-// #endif
-//   default:
-//     return 1;
-//     break;
-//   }
-// }
-
 
 int t_calculate_clock_size(Node *p) /* returns the number of clocks needed */
 {
@@ -90,10 +66,6 @@ int t_calculate_clock_size(Node *p) /* returns the number of clocks needed */
   case U_OPER:
   case V_OPER:
     return(t_calculate_clock_size(p->lft) + t_calculate_clock_size(p->rgt) + 1);
-#ifdef NXT
-  case NEXT:
-    return(t_calculate_clock_size(p->lft) + 1);
-#endif
   case EVENTUALLY_I:{
     float d = p->intvl[1] - p->intvl[0];
     short m = ceil(p->intvl[1]/d) + 1;
@@ -113,10 +85,6 @@ int t_calculate_sym_size(Node *p) /* returns the number of predicates */
   case U_OPER:
   case V_OPER:
     return(t_calculate_sym_size(p->lft) + t_calculate_sym_size(p->rgt));
-#ifdef NXT
-  case NEXT:
-    return(t_calculate_sym_size(p->lft));
-#endif
   case NOT:
     return (t_calculate_sym_size(p->lft));
   case EVENTUALLY_I:
@@ -128,49 +96,6 @@ int t_calculate_sym_size(Node *p) /* returns the number of predicates */
   }
 }
 
-// During the input output merge duplicate a ttrans (1)
-// TTrans *dup_ttrans(TTrans *trans)   
-// {
-//   TTrans *result;
-//   if(!trans) return trans;
-//   result = emalloc_ttrans(1);
-//   return result;
-// }
-
-// void do_merge_trans(ATrans **result, ATrans *trans1, ATrans *trans2) 
-// { /* merges two transitions */
-//   if(!trans1 || !trans2) {
-//     free_atrans(*result, 0);
-//     *result = (ATrans *)0;
-//     return;
-//   }
-//   if(!*result)
-//     *result = emalloc_atrans();
-//   do_merge_sets((*result)->to, trans1->to,  trans2->to,  0);
-//   do_merge_sets((*result)->pos, trans1->pos, trans2->pos, 1);
-//   do_merge_sets((*result)->neg, trans1->neg, trans2->neg, 1);
-//   if(!empty_intersect_sets((*result)->pos, (*result)->neg, 1)) {
-//     free_atrans(*result, 0);
-//     *result = (ATrans *)0;
-//   }
-// }
-
-// ATrans *merge_trans(ATrans *trans1, ATrans *trans2) /* merges two transitions */
-// {
-//   ATrans *result = emalloc_atrans();
-//   do_merge_trans(&result, trans1, trans2);
-//   return result;
-// }
-
-// int already_done(Node *p) /* finds the id of the node, if already explored */
-// {
-//   int i;
-//   for(i = 1; i<node_id; i++) 
-//     if (isequal(p, label[i])) 
-//       return i;
-//   return -1;
-// }
-
 int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
 {
   int i;
@@ -181,60 +106,6 @@ int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
   strcpy(t_sym_table[t_sym_id], s);
   return t_sym_id++;
 }
-
-// ATrans *boolean(Node *p) /* computes the transitions to boolean nodes -> next & init */
-// {
-//   ATrans *t1, *t2, *lft, *rgt, *result = (ATrans *)0;
-//   int id;
-//   switch(p->ntyp) {
-//   case TRUE:
-//     result = emalloc_atrans();
-//     clear_set(result->to,  0);
-//     clear_set(result->pos, 1);
-//     clear_set(result->neg, 1);
-//   case FALSE:
-//     break;
-//   case AND:
-//     lft = boolean(p->lft);
-//     rgt = boolean(p->rgt);
-//     for(t1 = lft; t1; t1 = t1->nxt) {
-//       for(t2 = rgt; t2; t2 = t2->nxt) {
-// 	ATrans *tmp = merge_trans(t1, t2);
-// 	if(tmp) {
-// 	  tmp->nxt = result;
-// 	  result = tmp;
-// 	}
-//       }
-//     }
-//     free_atrans(lft, 1);
-//     free_atrans(rgt, 1);
-//     break;
-//   case OR:
-//     lft = boolean(p->lft);
-//     for(t1 = lft; t1; t1 = t1->nxt) {
-//       ATrans *tmp = dup_trans(t1);
-//       tmp->nxt = result;
-//       result = tmp;
-//     }
-//     free_atrans(lft, 1);
-//     rgt = boolean(p->rgt);
-//     for(t1 = rgt; t1; t1 = t1->nxt) {
-//       ATrans *tmp = dup_trans(t1);
-//       tmp->nxt = result;
-//       result = tmp;
-//     }
-//     free_atrans(rgt, 1);
-//     break;
-//   default:
-//     build_alternating(p);
-//     result = emalloc_atrans();
-//     clear_set(result->to,  0);
-//     clear_set(result->pos, 1);
-//     clear_set(result->neg, 1);
-//     add_set(result->to, already_done(p));
-//   }
-//   return result;
-// }
 
 void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p){
   s->tstateId = (char *) malloc(sizeof(char)*(strlen(tstateId)));
@@ -412,8 +283,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
   
   TTrans *t = (TTrans *)0, *tmp, *tC = (TTrans *)0, *tG = (TTrans *)0;
   TState *s, *sC, *sG;
-  TAutomata *tA, *tB;
-  TAutomata *tOut;
+  TAutomata *tA, *tB; // tA is the output automata
+  TAutomata *tOut;  //tOut is the output of automata merger
 
   char *stateName=NULL;
   unsigned short *input=NULL;
@@ -547,6 +418,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->stateNum = 2;
       tA->tEvents = NULL;
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
+
+      // t1, tA freed inside merge function
       merge_timed(t1,tA,tOut);
 
       tA = tOut;
@@ -647,8 +520,9 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->stateNum = 4;
       tA->tEvents = NULL;
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
+      
+      // t1, t2, tA freed inside merge function
       merge_bin_timed(t1,t2,tA,tOut);
-
       tA = tOut;
       break;
 
@@ -743,8 +617,10 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->stateNum = 4;
       tA->tEvents = NULL;
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
+      
+      // t1, t2, tA freed inside merge function
       merge_bin_timed(t1,t2,tA,tOut);
-      // TODO: free tA, t1, t2 (9)
+
       tA = tOut;
       break;
 
@@ -836,8 +712,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
       for (int i = 0; i < m; i++){
         // (2*i -> 2*i+1) :  * | yi (2i+1):= 0
-        //reset which clock
-        
+        // reset which clock
         clockId[0] = cCount+i*2+1;
         // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
         create_ttrans(tmp, (CGuard*) 0, clockId, 1, &sG[2*i],  &sG[2*i+1]);
@@ -849,27 +724,25 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
         if (i != m-1){
           
-          //reset which clock
+          // reset which clock
           clockId[0] = cCount+i*2+2;
           // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
           create_ttrans(tmp, cguard, clockId, 1, &sG[2*i+1],  &sG[2*i+2]);
-
           tmp = tmp->nxt;
 
         } else {
 
-          //reset which clock
+          // reset which clock
           clockId[0] = cCount;
           // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
           create_ttrans(tmp, cguard, clockId, 1, &sG[2*i+1],  &sG[0]);
-
           tmp = tmp->nxt;
         }
 
       }
 
       // add the initial transition to generator state 0 and 1
-      //reset which clock
+      // reset which clock
       clockId[0] = cCount;
       // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
       create_ttrans(tmp, (CGuard *) 0, clockId, 1, &sG[2*m],  &sG[0]);
@@ -1053,7 +926,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         tmp = tmp->nxt;
 
         // (3*i+1 -> 3*i+2) :  * | z (2m):= 0 
-        //reset which clock
+        // reset which clock
         clockId[0] = cCount+2*m;
         // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
         create_ttrans(tmp, (CGuard*) 0, clockId, 1, &sC[3*i+1],  &sC[3*i+2]);
@@ -1112,8 +985,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
 
+      // t1, tA, tB freed inside merge function
       merge_event_timed(t1,tA,tB,tOut);
-      // TODO: free tA, tB, t1 (9)
       tA = tOut;
       break;
     }
@@ -1154,7 +1027,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tmp = tmp->nxt;
 
       // (1 -> 0) : z > 0 | z := 0
-      //sharing cguard and clock resets
+      // Sharing cguard and clock resets
       // void create_ttrans(TTrans *t, CGuard *cguard, int *cIdxs, int clockNum, TState *from, TState *to)
       create_ttrans(tmp, cguard, clockId, 1, &s[1],  &s[0]);
 
@@ -1171,7 +1044,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
       merge_bin_timed(t1,t2,tA,tOut);
-      // TODO: free tA, t1, t2 (9)
+      // t1, t2, tA freed inside merge function
       tA = tOut;
       break;
 
@@ -1227,8 +1100,8 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       tA->tEvents = NULL;
 
       tOut = (TAutomata *) tl_emalloc(sizeof(TAutomata));
+      // t1, tA, tB freed inside merge function
       merge_bin_timed(t1,t2,tA,tOut);
-      // free tA
       tA = tOut;
       break;
 
@@ -1236,8 +1109,6 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       break;
   }
 
-  // t_transition[ttrans_count] = t;
-  // t_label[ttrans_count++] = p; 
   return(tA);
 }
 
@@ -2167,7 +2038,7 @@ void merge_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
                 merge_ttrans(NULL, NULL, tt, tmp->nxt, &s[i], &s[j]);
                 tmp = tmp->nxt;
               }else{
-                printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
+                // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
               }
             }
 
@@ -2508,11 +2379,11 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   while (tt){
     // find tt->from in t1StateNum then get the corresponding t->tStates[] then find the transitions there
 
-    // find the From and to idx for t->tStates that corresponds to tt-> from and tt->to  there should be only one,
+    // find the From and to idx for t1->tStates that corresponds to tt-> from and tt->to  there should be only one,
     int t1StateFrom = -1;
     int t1StateTo= -1;
     int i = 0;
-    while ((t1StateFrom == -1 || t1StateTo == -1) && i < t->stateNum) {
+    while ((t1StateFrom == -1 || t1StateTo == -1) && i < t1->stateNum) {
       if( &t1->tStates[i] == tt->from) {
         t1StateFrom = i;
       }
@@ -2543,6 +2414,7 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
               }else{
                 while (tMatch[l]){
                   if ( (tMatch[l]->from == &(t->tStates[matchTable[l][i]])) && (tMatch[l]->to == &(t->tStates[matchTable[l][j]])) ){
+                    
                     break;
                   }
                   tMatch[l] = tMatch[l]->nxt;
@@ -2565,7 +2437,7 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 
               tmp = tmp->nxt;
             }else{
-              // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[tStateNum[i]].tstateId, t->tStates[tStateNum[j]].tstateId);
+              // printf("Cannot merge transition of the following: \n t1 %s -> %s \n t %s -> %s \n", t1->tStates[t1StateNum[i]].tstateId, t1->tStates[t1StateNum[j]].tstateId, t->tStates[matchTable[0][i]].tstateId, t->tStates[matchTable[0][j]].tstateId);
             }
 
           }
@@ -2633,7 +2505,7 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   // TODO: Gen0 for different location need to be merged. (3)
   // 1. Combined state Gen0: subformula 1 + subformula 2, so invariants are the same
   // 2. Gen0:sub1->loc1 have update x1=0 and Gen0:sub2 ->loc1 have update x2=0, merge the updates
-  tt = tOut;
+  // tt = tOut;
   // while (tt->nxt) {
   //   if (strstr(tt->nxt->from->tstateId,"Gen0")!=NULL && strstr(tt->nxt->to->tstateId,"Gen_1")!=NULL){
   //     int allocation = 1;
@@ -3196,7 +3068,7 @@ void mk_timed(Node *p) /* generates an timed automata for p */
 //   final_set = make_set(-1, 0);
   cCount = 0;
 
-  TAutomata* mapAutomata = create_map_loop(4,0,2);
+  TAutomata* mapAutomata = create_map_loop(6,1,2);
 
 
   print_timed(mapAutomata);
