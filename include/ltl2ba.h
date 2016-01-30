@@ -320,10 +320,15 @@ typedef struct TAutomata{
 
   float *tl_GetIntvl(float *);
   Node  *tl_nn_t(int, Node *, Node *,float *);
-  TTrans* emalloc_ttrans(int , int );
+  TTrans* emalloc_ttrans(int);
   void free_ttrans(TTrans *, int );
   void free_all_ttrans();
   void mk_timed(Node *);
   int calculate_sym_size(Node *);
+  void print_CGuard(CGuard *);
+  void free_CGuard(CGuard *);
+
+  void free_ttrans_until(TTrans *, TTrans *);
+  void free_tstate(TState *, int);
 
 // #endif

@@ -60,7 +60,7 @@ int ballocs = 0, bfrees = 0, bpool = 0;
 
 // #ifdef TIMED
   TTrans *ttrans_list = (TTrans *)0; //Transition list after been freed. 
-  int tallocs = 0, tfrees = 0, tpool = 0;
+  int tallocs = 0, tfrees = 0, tpool = 0, tleft = 0;
 // #endif
 
 union M {
@@ -94,8 +94,10 @@ tl_emalloc(int U)
 			log(POOL, u, r);
 			freelist[u] = (union M *)
 				emalloc((int) r*u*sizeof(union M));
+
 			All_Mem += (unsigned long) r*u*sizeof(union M);
 			m = freelist[u] + (r-2)*u;
+
 			for ( ; m >= freelist[u]; m -= u)
 				m->link = m+u;
 		}
@@ -104,6 +106,8 @@ tl_emalloc(int U)
 		freelist[u] = m->link;
 	}
 	m->size = (u|A_USER);
+
+  // printf("ALLOC %d : %x - %x \n", u, m, (&m->size)+u);
 
 	for (r = 1; r < u; )
 		(&m->size)[r++] = 0;
@@ -119,10 +123,13 @@ tfree(void *v)
 	long u;
 
 	--m;
-	if ((m->size&0xFF000000) != A_USER)
+	if ((m->size&0xFF000000) != A_USER){
+    // printf("CORRUPT %x \n", m);
 		Fatal("releasing a free block", (char *)0);
-
+  }
+  
 	u = (m->size &= 0xFFFFFF);
+  // printf("FREE %d, %x \n", u, m);
 	if (u >= A_LARGE)
 	{	log(FREE, 0, 1);
 		/* free(m); */
@@ -159,6 +166,32 @@ void free_atrans(ATrans *t, int rec) {
   afrees++;
 }
 
+// free every state of unuseful automata
+void free_tstate(TState *t, int numOfState){
+  for (int i=0; i<numOfState ; i++){
+    // printf("Free state:%s\n", t[i].tstateId);
+    free(t[i].input);
+    free_CGuard(t[i].inv);
+    // if (t[i].inv){
+    //   printf("Free inv:");
+    //   print_CGuard(t[i].inv);
+    //   free_CGuard(t[i].inv);
+    //   printf("\n");
+    // }
+    // printf("Free sym ...\n");
+    if (t[i].sym!=NULL){
+      // print_set(t[i].sym, 3);
+      clear_set(t[i].sym, 3);
+      tfree(t[i].sym);
+      // printf("\n");
+    }
+    
+    free(t[i].tstateId);
+  }
+  tfree(t);
+}
+
+
 void free_all_atrans() {
   ATrans *t;
   while(atrans_list) {
@@ -174,40 +207,153 @@ void free_all_atrans() {
 // #ifdef TIMED
 // Allocate ttrans , transNum = the num of the transitions, cNum is the maximum
 // clocks on the guards
-TTrans* emalloc_ttrans(int transNum, int cNum) { 
+TTrans* emalloc_ttrans(int transNum) { 
   TTrans *result;
-  if(!ttrans_list) {
+  if(!ttrans_list && transNum!=0) {
 
     result = (TTrans *)tl_emalloc(sizeof(TTrans));
     TTrans *tmp=result;
-    tmp->cIdx = (int *) malloc(sizeof(int)*cNum);
+    tmp->cIdx = (int *) 0;
     tmp->to = (TState *)0;
     tmp->from = (TState *)0;
+    tmp->cguard = (CGuard *)0;
     tpool++;
+
+    tallocs++;
 
     for (int i=1; i<transNum; i++){
       tmp->nxt = (TTrans *)tl_emalloc(sizeof(TTrans));
       tmp = tmp->nxt;
-      tmp->cIdx = (int *) malloc(sizeof(int)*cNum);
+      tmp->cIdx = (int *) 0;
       tmp->to = (TState *)0;
-      tmp->from = (TState *)0;    
+      tmp->from = (TState *)0;
+      tmp->cguard = (CGuard *)0;
       tpool++;
+      tallocs++;
     }
     
  }
   else {
     result = ttrans_list;
+    result->cIdx = (int *) 0;
+    result->to = (TState *)0;
+    result->from = (TState *)0;
+    result->cguard = (CGuard *)0;
     ttrans_list = ttrans_list->nxt;
     result->nxt = (TTrans *)0;
-    if (transNum>1) emalloc_ttrans(transNum -1, cNum);
+
+    // printf("Reusing..%d\n",transNum);
+    if (transNum>1) result->nxt = emalloc_ttrans(transNum -1);
+    tleft++;
+
+    tallocs++;
 
   }
-  tallocs++;
   return result;
 } 
+
+void free_CGuard(CGuard * cg){
+  if (!cg){
+    return;
+  }else{
+    switch (cg->nType){
+      case AND:
+        free_CGuard(cg->lft);
+        free_CGuard(cg->rgt);
+        free(cg);
+        break;
+
+      case OR:
+        free_CGuard(cg->lft);
+        free_CGuard(cg->rgt);
+        free(cg);
+        break;
+
+      case START:
+        free(cg->lft->cCstr);
+        free(cg->lft);
+        free(cg);
+        break;
+
+      case STOP:
+      {
+        free(cg->lft->cCstr);
+        free(cg->lft);
+        free(cg->rgt->cCstr);
+        free(cg->rgt);
+        free(cg);
+        break;
+      }
+
+      case PREDICATE:
+        free(cg->cCstr);
+        free(cg);
+        break;
+    }
+  }
+}
+
 void free_ttrans(TTrans *t, int rec) {
   if(!t) return;
-  if(rec) free_ttrans(t->nxt, rec);
+  if(rec>0) free_ttrans(t->nxt, rec);
+  // if (t->from!=NULL && t->to!=NULL)
+    // printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
+  // else
+    // printf("Free header\n");
+
+  if (t->cguard!=NULL && rec==2){
+    // printf("Freeing guards:");
+    // print_CGuard(t->cguard);
+    free_CGuard(t->cguard);
+    // printf("\n");
+  }
+  if (t->cIdx!=NULL){
+    // printf("Free clock set:");
+    // print_set(t->cIdx,4);
+    tfree(t->cIdx);
+    // printf("\n");
+  }
+  // printf("Done..\n");
+  t->cIdx = NULL;
+  t->cguard = (CGuard *)0;  
+  t->to = (TState *)0;
+  t->from = (TState *)0;  
+
+  t->nxt = ttrans_list;
+  ttrans_list = t;
+  tfrees++;
+}
+
+void free_ttrans_until(TTrans *t, TTrans *tend){
+  if (!t) return;
+  if (t==tend){
+    return;
+  }else{
+    free_ttrans_until(t->nxt,tend);
+  }
+  // if (t->from!=NULL && t->to!=NULL)
+    // printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
+  // else
+    // printf("Free header\n");
+  if (t->cguard!=NULL){
+    // printf("Freeing guards:");
+    // print_CGuard(t->cguard);
+    free_CGuard(t->cguard);
+    // printf("\n");
+  }
+  if (t->cIdx!=NULL){
+    // printf("Free clock set:");
+    // print_set(t->cIdx,4);
+    tfree(t->cIdx);
+    // printf("\n");
+  }
+  // printf("Done..\n");
+
+  t->cguard = (CGuard *)0;
+  t->cIdx = NULL;
+  t->to = (TState *)0;
+  t->from = (TState *)0;  
+
   t->nxt = ttrans_list;
   ttrans_list = t;
   tfrees++;
@@ -218,9 +364,15 @@ void free_all_ttrans() {
   while(ttrans_list) {
     t = ttrans_list;
     ttrans_list = t->nxt;
-    tfree(t->to);
-    tfree(t->from);
-    tfree(t->cIdx);
+    if (t->cguard!=NULL){
+      // printf("Freeing guards:");
+      // print_CGuard(t->cguard);
+      free_CGuard(t->cguard);
+      // printf("\n");
+    }
+    if (t->cIdx!=NULL){
+      tfree(t->cIdx);
+    }
     tfree(t);
   }
 }
@@ -285,7 +437,7 @@ a_stats(void)
 {	long	p, a, f;
 	int	i;
 
-	printf(" size\t  pool\tallocs\t frees\n");
+	printf(" size\t  pool\tallocs\t frees\t reuse\n");
 
 	for (i = 0; i < A_LARGE; i++)
 	{	p = event[POOL][i];
@@ -303,4 +455,6 @@ a_stats(void)
 	       gpool, gallocs, gfrees);
 	printf("btrans\t%6d\t%6d\t%6d\n", 
 	       bpool, ballocs, bfrees);
+  printf("ttrans\t%6d\t%6d\t%6d\t%6d\n", 
+         tpool, tallocs, tfrees, tleft);
 }

@@ -1,14 +1,13 @@
-LTL2BA - Forked and, to distinguish from the original, referred to as ltl2gba.
-Modified by Scott C. Livingston, Caltech, USA.
-Copyright (c) 2013  Scott C. Livingston
-Available at https://github.com/slivingston/ltl2gba
+MITL2Timed - transforms a MITL formula to a timed automaton based on LTL2BA. Forked from 
+https://github.com/slivingston/ltl2gba.
 
-A new version sequence has begun to avoid confusion with the original LTL2BA.
-It is of the form 1.2-scl.  Consult the last section of this README
-file for a list of changes.
+Modified by Yuchen Zhou, University of Maryland, USA.
+Copyright (c) 2015  Yuchen Zhou
+Available at https://github.com/yzh89/MITL2ta
 
 
-1. LICENSE
+1. LICENSE OF LTL2BA
+
 
 LTL2BA - Version 1.0 - October 2001
 Written by Denis Oddoux, LIAFA, France                                 
@@ -18,6 +17,10 @@ LTL2BA - Version 1.1 - August 2007
 Modified by Paul Gastin, LSV, France                                 
 Copyright (c) 2007  Paul Gastin                                       
 Available at http://www.lsv.ens-cachan.fr/~gastin/ltl2ba
+
+Modified by Scott C. Livingston, Caltech, USA.
+Copyright (c) 2013  Scott C. Livingston
+Available at https://github.com/slivingston/ltl2gba.
                                                                   
 This program is free software; you can redistribute it and/or modify   
 it under the terms of the GNU General Public License as published by   
@@ -61,22 +64,22 @@ Here are the files that contain some code from Spin v3.4.1 :
 	rewrt.c  (	     tl_rewrt.c)
 	trans.c	 (	     tl_trans.c)
 
-2. COMPILING
+2. Changes for MITL2Timed
+Main changes is the addition of file timed.c to create the timed automata based on MITL.
+parse.c and trans.c is modified according to parse the input and generate the output correctly. 
+Additional python scripts are generated alone the way to create UPPAAL models for model checking.
 
-open the archive :
-> gunzip ltl2ba-1.1.tar.gz
-> tar xf ltl2ba-1.1.tar
-> cd ltl2ba-1.1
+3. COMPILING
 
 compile the program
 > make
 
-3. EXECUTING
+4. EXECUTING (for MITL2Timed)
 
 run the program
-> ./ltl2gba -f "formula"
+> ./mitl2ta -f "formula"
 
-The formula is an LTL formula, and may contain propositional symbols, 
+The formula is an MITL formula, and may contain propositional symbols, 
 boolean operators, temporal operators, and parentheses.
 The syntax used is the one used in the 'Spin' model-checker
 
@@ -98,29 +101,14 @@ Temporal operators:
         V   (release)
         X   (next)
 
+        <>_[l,r] (eventually with interval l to r)
+        []_[l,r] (always with interval l to r)
+
 Use spaces between any symbols.
 
-The result is a never claim in Promela that can be given to the Spin
-model checker to verify properties on a system.  Other output formats
-are available; consult the last section of this README file.
+5. Map information is hard coded at current stage. 
+The robot can move up or down and right or left if there is any. It can
+be easily extends to larger grid.
 
-run the command
-> ./ltl2gba -h
-to see the possible options for executing the program
-
-4. CHANGES IN VERSION 1.1
-
-- fixing a bug in the way sets were used for strongly connected components. Thanks to Joachim Klein (klein@tcs.inf.tu-dresden.de) who found the bug and proposed a patch to fix it.
-- fixing a bug in the simplification with strongly connected components for the generalized Büchi automaton. 
-- improving the simplification with strongly connected components for the generalized Büchi automaton.
-- using getrusage to compute running times for the statistics
-- some other minor updates.
-
-5. CHANGES IN VERSION 1.2-scl
-
-- add "-t TYPE" flag for selection of output formats besides Promela
-  never claims.  By default the final nondeterministic Buechi
-  automaton is dumped in the requested format.  Possible formats are
-  - spin: (default), never claim as in previous versions;
-  - dot: Graphviz DOT (http://graphviz.org/);
-  - gexf: Gephi GEXF (http://gexf.net/format/).
+pos0 	pos1:b
+pos2:a 	pos3
