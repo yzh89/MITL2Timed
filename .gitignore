@@ -27,6 +27,9 @@
 *.i*86
 *.x86_64
 *.hex
+mitl2ta
+MITL2TA
+scripts/uppaal.py
 
 # Debug files
 *.dSYM/

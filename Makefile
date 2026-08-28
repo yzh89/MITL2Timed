@@ -35,7 +35,7 @@
 CC=gcc
 IDIR = include
 # CFLAGS= -O3 -g -DNXT -DTIMED
-CFLAGS= -g -DNXT -std=c11 -I$(IDIR)
+CFLAGS= -g -DNXT -std=c11 -I$(IDIR) -fsanitize=address
 
 LDIR = lib
 SDIR = src

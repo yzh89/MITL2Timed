@@ -108,7 +108,7 @@ int t_get_sym_id(char *s) /* finds the id of a predicate, or attributes one */
 }
 
 void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p){
-  s->tstateId = (char *) malloc(sizeof(char)*(strlen(tstateId)));
+  s->tstateId = (char *) malloc(sizeof(char)*(strlen(tstateId) + 1));
   strcpy(s->tstateId, tstateId);
   s->inv = inv;
 
@@ -120,20 +120,20 @@ void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input
   s->sym = NULL;
   if (p){
     if (p->lft){
-      char buff[40];
+      char buff[256];
       buff[0] = '\0';
       print_sub_formula(p, buff);
-      s->tstateId = (char *) realloc(s->tstateId, sizeof(char)*(strlen(s->tstateId) +strlen(buff)+3));
+      s->tstateId = (char *) realloc(s->tstateId, sizeof(char)*(strlen(s->tstateId) + strlen(buff) + 4));
       strcat(s->tstateId, ": ");
       strcat(s->tstateId, buff);
       s->sym = new_set(3);
       clear_set(s->sym, 3);
       add_set(s->sym, t_get_sym_id(buff));
-      if (output ==1 && strstr(s->tstateId, "Gen") == NULL) s->input[0] = 1 << t_get_sym_id(buff);
+      if (output == 1 && strstr(s->tstateId, "Gen") == NULL) s->input[0] = 1 << t_get_sym_id(buff);
       else if (strstr(s->tstateId, "Gen") != NULL){
         s->input = (unsigned short *) 0;
         s->inputNum = 0;
-        free(input);
+        if (input) free(input);
       }
     }else{
       s->sym = new_set(3); //3 is symolic set. sym_set_size is used to determine the allocation size
@@ -637,7 +637,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
       for (int i =0; i< m; i++){
         // create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p)
-        stateName= (char *) malloc (sizeof(char)*(strlen("Gen_"))+3);
+        stateName= (char *) malloc (32);
         sprintf(stateName, "Gen_%d", 2*i+1);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
 
@@ -655,7 +655,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
         create_tstate(&sG[0+i*2], stateName, cguard, input, 1, 0, 0, p); //output 0 first stage
         free(stateName);
 
-        stateName= (char *) malloc (sizeof(char)*(strlen("Gen_"))+3);
+        stateName= (char *) malloc (32);
         sprintf(stateName, "Gen_%d", 2*i+2);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
 
@@ -675,7 +675,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       }
 
       // add a state to disable all clocks first
-      stateName= (char *) malloc (sizeof(char)*(strlen("Gen0")));
+      stateName= (char *) malloc (32);
       sprintf(stateName, "Gen0");
       input = (unsigned short *) malloc(sizeof(unsigned short)*1);
       cguard = (CGuard*) malloc(sizeof(CGuard));
@@ -762,7 +762,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
       for (int i = 0; i < m; i++){
         // s1 (!p: *) -- y1 < b
-        stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
+        stateName= (char *) malloc (32);
         sprintf(stateName, "CHK_%d", 3*i+1);
         input = (unsigned short *) malloc(sizeof(unsigned short)*1);
         input[0] = 0;
@@ -778,7 +778,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
 
         if (i != m-1){
           //s2 (p: *) -- x2 < a
-          stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
+          stateName= (char *) malloc (32);
           sprintf(stateName, "CHK_%d", 3*i+2);
           input = (unsigned short *) malloc(sizeof(unsigned short)*1);
           input[0] = 1;
@@ -793,7 +793,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
           free(stateName);
 
           //s3 (!p: *) -- z < d && x2 < a
-          stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
+          stateName= (char *) malloc (32);
           sprintf(stateName, "CHK_%d", 3*i+3);
           input = (unsigned short *) malloc(sizeof(unsigned short)*1);
           input[0] = 0;
@@ -816,7 +816,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
           free(stateName);
         }else{
           //s2 (p: *) -- x1 < a
-          stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
+          stateName= (char *) malloc (32);
           sprintf(stateName, "CHK_%d", 3*i+2);
           input = (unsigned short *) malloc(sizeof(unsigned short)*1);
           input[0] = 1;
@@ -831,7 +831,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
           free(stateName);
 
           //s3 (!p: *) -- z < d && x2 < a
-          stateName= (char *) malloc (sizeof(char)*(strlen("CHK_")+3));
+          stateName= (char *) malloc (32);
           sprintf(stateName, "CHK_%d", 3*i+3);
           input = (unsigned short *) malloc(sizeof(unsigned short)*1);
           input[0] = 0;
@@ -856,7 +856,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       }
 
       // add CHK00 and CHK01 state to link to s1 and s2 s3 first layer
-      stateName= (char *) malloc (sizeof(char)*(strlen("CHK00")));
+      stateName= (char *) malloc (32);
       sprintf(stateName, "CHK00");
       input = (unsigned short *) malloc(sizeof(unsigned short)*2);
       input[0] = 1;
@@ -871,7 +871,7 @@ TAutomata *build_timed(Node *p) /* builds an timed automaton for p */
       create_tstate(&sC[3*m], stateName, cguard, input, 2, NULLOUT, 0, p); //output 0 in s2 state
       free(stateName);
 
-      stateName= (char *) malloc (sizeof(char)*(strlen("CHK01")));
+      stateName= (char *) malloc (32);
       sprintf(stateName, "CHK01");
       input = (unsigned short *) malloc(sizeof(unsigned short)*2);
       input[0] = 1;
@@ -2189,8 +2189,8 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
   }
   int numOfSyms = count_set(t->tStates[0].sym,3);
 
-  const int maxNumOfState = t1->stateNum* pow(t->stateNum/numOfSyms,numOfSyms) * maxInput;
-  TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState+t1->eventNum));
+  const int maxNumOfState = t1->stateNum * pow(t->stateNum/numOfSyms, numOfSyms) * maxInput;
+  TState *s = (TState *) tl_emalloc(sizeof(TState)*(maxNumOfState + t->stateNum + 10));
 
   int gen1StateNum[maxNumOfState];
   int gen2StateNum[maxNumOfState];
@@ -2230,11 +2230,14 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
           while (!empty_set(resSet,3)){
             rem_set(diffSet, get_set(resSet,3));
           }
+          tfree(resSet);
           resSet = intersect_sets(t1->tStates[k].sym, t->tStates[i].sym, 3);
           int matchStart = matches;
           int matchEnd = matches+1;
           int tmpIdx = get_set(resSet,3);
           matchTable[tmpIdx][matches] = i;
+          tfree(resSet);
+          tfree(diffSet);
           // fprintf(tl_out,"test %i,%i:%i", tmpIdx, matches, i);
           while (!empty_set(diffSet,3)){
             int symbId = get_set(diffSet,3);
@@ -2300,6 +2303,8 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
                 
               }
             }
+
+            tfree(tmpSet);
 
             if (found){
               // after finishing the loop need to reset end to previous end and start state
@@ -2589,8 +2594,10 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
 
   //adjust transitions accordingly
   tt = out->tTrans;
-  while(tt->nxt){
-    tt = tt->nxt;
+  if (tt) {
+    while(tt->nxt){
+      tt = tt->nxt;
+    }
   }
 
   TTrans* tGen = t->tTrans;
@@ -2602,8 +2609,13 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
         // fprintf(tl_out,"ignore %s -> %s :%i \n", out->tStates[numOfState+refGen[tGen->from - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].tstateId, out->tStates[numOfState+refGen[tGen->to - &t->tStates[0]]].output);
         // do nothing dont copy the edge.
       }else{
-        tt->nxt = tGen;
-        tt = tt->nxt;
+        if (!tt) {
+          out->tTrans = tGen;
+          tt = out->tTrans;
+        } else {
+          tt->nxt = tGen;
+          tt = tt->nxt;
+        }
         // printf("%s-> %s \n", tGen->from->tstateId, tGen->to->tstateId);
         tt->from = &out->tStates[numOfState + refGen[tGen->from - &t->tStates[0]]];
         tt->to = &out->tStates[numOfState + refGen[tGen->to - &t->tStates[0]]];
@@ -2621,7 +2633,9 @@ void merge_map_timed(TAutomata *t1, TAutomata *t, TAutomata *out){
       tGen = tGen->nxt;
     }
   }
-  tt->nxt = NULL;
+  if (tt) {
+    tt->nxt = NULL;
+  }
 
   out->stateNum = numOfState+genStateNum;
 
@@ -2723,7 +2737,7 @@ TAutomata *create_map_loop(int nodeNum, int ifb, int timeInt){
   int *clockId;
 
   // void create_tstate(TState *s, char *tstateId, CGuard *inv, unsigned short *input, unsigned short inputNum, unsigned short output, unsigned short buchi, Node* p){
-  char tstateId[6];
+  char tstateId[32];
   for (int i=0; i<nodeNum; i++){
     sprintf(tstateId, "loc%i",i);
 
@@ -3103,6 +3117,9 @@ void mk_timed(Node *p) /* generates an timed automata for p */
   free_all_ttrans();
   releasenode(1, p);
 
+  for (int i = 0; i < t_sym_id; i++) {
+    if (t_sym_table[i]) free(t_sym_table[i]);
+  }
   tfree(t_sym_table);
   fclose(xml);
 

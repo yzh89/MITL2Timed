@@ -132,7 +132,7 @@ tfree(void *v)
   // printf("FREE %d, %x \n", u, m);
 	if (u >= A_LARGE)
 	{	log(FREE, 0, 1);
-		/* free(m); */
+		free(m);
 	} else
 	{	log(FREE, u, 1);
 		m->link = freelist[u];
@@ -296,24 +296,13 @@ void free_CGuard(CGuard * cg){
 void free_ttrans(TTrans *t, int rec) {
   if(!t) return;
   if(rec>0) free_ttrans(t->nxt, rec);
-  // if (t->from!=NULL && t->to!=NULL)
-    // printf("Free ttrans: %s, %s\n", t->from->tstateId, t->to->tstateId);
-  // else
-    // printf("Free header\n");
 
-  if (t->cguard!=NULL && rec==2){
-    // printf("Freeing guards:");
-    // print_CGuard(t->cguard);
+  if (t->cguard!=NULL){
     free_CGuard(t->cguard);
-    // printf("\n");
   }
   if (t->cIdx!=NULL){
-    // printf("Free clock set:");
-    // print_set(t->cIdx,4);
     tfree(t->cIdx);
-    // printf("\n");
   }
-  // printf("Done..\n");
   t->cIdx = NULL;
   t->cguard = (CGuard *)0;  
   t->to = (TState *)0;
